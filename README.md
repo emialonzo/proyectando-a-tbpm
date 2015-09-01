@@ -29,14 +29,15 @@ Como elemento principal de comunicación con el cliente se quiere utilizar una n
 El objetivo de este proyecto es especificar un lenguaje para descripción de procesos de negocio en forma textual y transformaciones para la generación automática de los modelos y perspectivas asociadas (flujo de control, recursos, datos) desde dicha descripción, incluyendo un prototipo funcional de la propuesta.
 
 ## Resultado esperados
-[  ] Relevamiento de estrategias de generación de modelos de procesos de negocio desde texto
 
-[ ] Selección y adaptación de las propuestas para la representación del flujo de control, recursos y datos
+* [ ] Relevamiento de estrategias de generación de modelos de procesos de negocio desde texto
 
-[x] Especificación de lenguaje para descripción de procesos de negocio en forma textual y transformaciones para la generación automática de los modelos y perspectivas asociadas (flujo de control, recursos, datos)
+* [ ] Selección y adaptación de las propuestas para la representación del flujo de control, recursos y datos
 
-• Prototipo funcional para la generación automática de modelos de procesos de negocio desde texto
+* [ ] Especificación de lenguaje para descripción de procesos de negocio en forma textual y transformaciones para la generación automática de los modelos y perspectivas asociadas (flujo de control, recursos, datos)
 
-• Caso de estudio de aplicación de la propuesta en un dominio específico
+* [ ] Prototipo funcional para la generación automática de modelos de procesos de negocio desde texto
 
-• Informe del proyecto de grado final y durante todo el proyecto por capítulos según etapas
+* [ ] Caso de estudio de aplicación de la propuesta en un dominio específico
+
+* [ ] Informe del proyecto de grado final y durante todo el proyecto por capítulos según etapas
