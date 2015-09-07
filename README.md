@@ -1,4 +1,4 @@
-# Proyecto de genrador
+# Proyecto de geenrador
 
 ## Desarrollado por
     Nombre: 	Emiliano Alonzo Fulchi
@@ -17,7 +17,7 @@
     E-mail: 	dcalegar@fing.edu.uy
 
 
-## Resuen
+## Resumen
 El modelado en el proceso de desarrollo de software es realizado en general como documentación del sistema que difícilmente es mantenida luego de implementado y liberado el mismo. Por el contrario, el Desarrollo Dirigido por Modelos (Model Driven Development, MDD) basa el desarrollo de software en modelos, utilizando como artefactos de primer orden metamodelos, modelos y lenguajes que permiten transformaciones entre éstos. Las transformaciones pueden ser horizontales al mismo nivel de abstracción entre modelos o artefactos equivalentes semánticamente, o verticales refinando el nivel de abstracción mediante transformaciones sucesivas de un modelo en otro modelo del mismo sistema hasta llegar al código asociado.
 
 Un elemento clave para el desarrollo de sistemas que cumplan con las expectativas y planteos de los clientes es la captura de requerimientos, los artefactos generados para comunicación con el cliente en dicha etapa, y los acuerdos alcanzados en base al entendimiento común de los mismos. Existen diversas propuestas para agilizar esta etapa y alcanzar acuerdos que sirvan de base para el desarrollo a realizar, como por ejemplo la realización temprana de prototipos evolutivos, esto es prototipos no desechables sino integrables en el sistema final. Se han utilizado distintos artefactos de comunicación con los clientes, como los casos de uso, que han aportado a lograr estos acuerdos pero sin alcanzar la aceptación esperada.
