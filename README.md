@@ -1,4 +1,4 @@
-# Proyecto de geenrador
+# Proyecto de generador
 
 ## Desarrollado por
     Nombre: 	Emiliano Alonzo Fulchi
