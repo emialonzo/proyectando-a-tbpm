@@ -1,0 +1,17 @@
+digraph G{
+  tarea1 [shape=box];
+  tarea2 [shape=box];
+  tarea3 [shape=box];
+  condition [shape=diamond];
+  start  [shape=circle, label="", style=filled,fillcolor=green];
+  end  [shape=circle, label="", style=filled,fillcolor=red];
+
+  start -> tarea1;
+  tarea1 -> condition;
+  condition -> tarea2;
+  condition -> tarea3;
+  tarea2 -> end;
+  tarea3 -> end;
+
+
+}
