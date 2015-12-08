@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collaboration_0i99z6v">
+    <bpmn:participant id="Participant_1d9t24q" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Despertar">
+      <bpmn:outgoing>SequenceFlow_168ghto</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_1qj3jgk" name="escuchar zappa">
+      <bpmn:incoming>SequenceFlow_168ghto</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1c05fcu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yg0bi1</bpmn:outgoing>
+      <bpmn:standardLoopCharacteristics />
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_168ghto" sourceRef="StartEvent_1" targetRef="Task_1qj3jgk" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yg0bi1" sourceRef="Task_1qj3jgk" targetRef="ExclusiveGateway_12xgzii" />
+    <bpmn:sequenceFlow id="SequenceFlow_0w67fe8" name="si" sourceRef="ExclusiveGateway_12xgzii" targetRef="EndEvent_17wmv18" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_12xgzii" name="tengo sueño?" default="SequenceFlow_1c05fcu">
+      <bpmn:incoming>SequenceFlow_1yg0bi1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w67fe8</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1c05fcu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1c05fcu" sourceRef="ExclusiveGateway_12xgzii" targetRef="Task_1qj3jgk" />
+    <bpmn:endEvent id="EndEvent_17wmv18" name="dormir">
+      <bpmn:incoming>SequenceFlow_0w67fe8</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1x2v589</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_01zgfde" attachedToRef="Task_1qj3jgk">
+      <bpmn:outgoing>SequenceFlow_1x2v589</bpmn:outgoing>
+      <bpmn:errorEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1x2v589" sourceRef="BoundaryEvent_01zgfde" targetRef="EndEvent_17wmv18" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0i99z6v">
+      <bpmndi:BPMNShape id="Participant_1d9t24q_di" bpmnElement="Participant_1d9t24q">
+        <dc:Bounds x="123" y="78" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="198" y="191" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="171" y="227" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1qj3jgk_di" bpmnElement="Task_1qj3jgk">
+        <dc:Bounds x="359" y="169" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_168ghto_di" bpmnElement="SequenceFlow_168ghto">
+        <di:waypoint xsi:type="dc:Point" x="234" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="359" y="209" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="251.5" y="199" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_12xgzii_di" bpmnElement="ExclusiveGateway_12xgzii" isMarkerVisible="true">
+        <dc:Bounds x="529" y="184" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="157" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yg0bi1_di" bpmnElement="SequenceFlow_1yg0bi1">
+        <di:waypoint xsi:type="dc:Point" x="459" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="529" y="209" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="442.5" y="199" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_17wmv18_di" bpmnElement="EndEvent_17wmv18">
+        <dc:Bounds x="649" y="191" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="158" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w67fe8_di" bpmnElement="SequenceFlow_0w67fe8">
+        <di:waypoint xsi:type="dc:Point" x="579" y="209" />
+        <di:waypoint xsi:type="dc:Point" x="649" y="209" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="559.5" y="188" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c05fcu_di" bpmnElement="SequenceFlow_1c05fcu">
+        <di:waypoint xsi:type="dc:Point" x="554" y="234" />
+        <di:waypoint xsi:type="dc:Point" x="554" y="297" />
+        <di:waypoint xsi:type="dc:Point" x="409" y="297" />
+        <di:waypoint xsi:type="dc:Point" x="409" y="249" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="449" y="199" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_01zgfde_di" bpmnElement="BoundaryEvent_01zgfde">
+        <dc:Bounds x="441" y="231" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="414" y="267" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1x2v589_di" bpmnElement="SequenceFlow_1x2v589">
+        <di:waypoint xsi:type="dc:Point" x="459" y="267" />
+        <di:waypoint xsi:type="dc:Point" x="459" y="314" />
+        <di:waypoint xsi:type="dc:Point" x="667" y="314" />
+        <di:waypoint xsi:type="dc:Point" x="667" y="227" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="527" y="239" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
