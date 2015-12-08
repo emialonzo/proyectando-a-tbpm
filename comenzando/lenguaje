@@ -1,0 +1,12 @@
+Llaman pedido de pizza
+Telefonista, anota pedido
+Telefonista, entrega pedido a cocinero
+Cocinero revisa pedido
+Cocinero selecciona ingredientes
+Cocinero prepara pizza
+Cocinero entrega pizza caja
+Caja empaqueta pizza y prepara ticket
+Caja si ticket == credito Preparar crédito sino prepararEfectivo
+Una vez finalizado entrega pizza y ticket al repartidor.
+Repartido entrega pizza y cobra
+Una vez finalizado retorna

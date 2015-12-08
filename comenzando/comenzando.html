@@ -1,0 +1,64 @@
+<h2 id="componentes-abracados-bpmn2">Componentes abracados BPMN2</h2>
+<h3 id="procesos">Procesos</h3>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;definitions</span>  
+<span class="ot">  xmlns=</span><span class="st">&quot;http://www.omg.org/spec/BPMN/20100524/MODEL&quot;</span>
+<span class="ot">  xmlns:activiti=</span><span class="st">&quot;http://activiti.org/bpmn&quot;</span>
+<span class="ot">  targetNamespace=</span><span class="st">&quot;Examples&quot;</span><span class="kw">&gt;</span>
+
+  <span class="kw">&lt;process</span><span class="ot"> id=</span><span class="st">&quot;myProcess&quot;</span><span class="ot"> name=</span><span class="st">&quot;My First Process&quot;</span><span class="kw">&gt;</span>
+  <span class="co">&lt;!-- Aca va el resto de la definición del proceso --&gt;</span>
+  <span class="kw">&lt;/process&gt;</span>
+
+<span class="kw">&lt;/definitions&gt;</span></code></pre>
+<h3 id="tareas">tareas</h3>
+<h4 id="tareas-de-usuario">Tareas de usuario</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;userTask</span><span class="ot"> id=</span><span class="st">&quot;theTask&quot;</span><span class="ot"> name=</span><span class="st">&quot;Important task&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<h3 id="mensajes">Mensajes</h3>
+<h4 id="mensajes-de-secuencia">Mensajes de secuencia</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;sequenceFlow</span><span class="ot"> id=</span><span class="st">&quot;flow1&quot;</span><span class="ot"> sourceRef=</span><span class="st">&quot;theStart&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;theTask&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<h3 id="gateways">Gateways</h3>
+<h4 id="exclusivo">Exclusivo</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;exclusiveGateway</span><span class="ot"> id=</span><span class="st">&quot;exclusiveGw&quot;</span><span class="ot"> name=</span><span class="st">&quot;Exclusive Gateway&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> id=</span><span class="st">&quot;flow2&quot;</span><span class="ot"> sourceRef=</span><span class="st">&quot;exclusiveGw&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;theTask1&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;conditionExpression</span><span class="ot"> xsi:type=</span><span class="st">&quot;tFormalExpression&quot;</span><span class="kw">&gt;</span>${input == 1}<span class="kw">&lt;/conditionExpression&gt;</span>
+<span class="kw">&lt;/sequenceFlow&gt;</span>
+
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> id=</span><span class="st">&quot;flow3&quot;</span><span class="ot"> sourceRef=</span><span class="st">&quot;exclusiveGw&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;theTask2&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;conditionExpression</span><span class="ot"> xsi:type=</span><span class="st">&quot;tFormalExpression&quot;</span><span class="kw">&gt;</span>${input == 2}<span class="kw">&lt;/conditionExpression&gt;</span>
+<span class="kw">&lt;/sequenceFlow&gt;</span>
+
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> id=</span><span class="st">&quot;flow4&quot;</span><span class="ot"> sourceRef=</span><span class="st">&quot;exclusiveGw&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;theTask3&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;conditionExpression</span><span class="ot"> xsi:type=</span><span class="st">&quot;tFormalExpression&quot;</span><span class="kw">&gt;</span>${input == 3}<span class="kw">&lt;/conditionExpression&gt;</span>
+<span class="kw">&lt;/sequenceFlow&gt;</span></code></pre>
+<h3 id="paralelo">Paralelo</h3>
+<pre class="sourceCode xml"><code class="sourceCode xml">    <span class="kw">&lt;parallelGateway</span><span class="ot"> id=</span><span class="st">&quot;myParallelGateway&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;startEvent</span><span class="ot"> id=</span><span class="st">&quot;theStart&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> id=</span><span class="st">&quot;flow1&quot;</span><span class="ot"> sourceRef=</span><span class="st">&quot;theStart&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;fork&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;parallelGateway</span><span class="ot"> id=</span><span class="st">&quot;fork&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;fork&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;receivePayment&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;fork&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;shipOrder&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;userTask</span><span class="ot"> id=</span><span class="st">&quot;receivePayment&quot;</span><span class="ot"> name=</span><span class="st">&quot;Receive Payment&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;receivePayment&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;join&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;userTask</span><span class="ot"> id=</span><span class="st">&quot;shipOrder&quot;</span><span class="ot"> name=</span><span class="st">&quot;Ship Order&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;shipOrder&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;join&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;parallelGateway</span><span class="ot"> id=</span><span class="st">&quot;join&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;join&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;archiveOrder&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;userTask</span><span class="ot"> id=</span><span class="st">&quot;archiveOrder&quot;</span><span class="ot"> name=</span><span class="st">&quot;Archive Order&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;sequenceFlow</span><span class="ot"> sourceRef=</span><span class="st">&quot;archiveOrder&quot;</span><span class="ot"> targetRef=</span><span class="st">&quot;theEnd&quot;</span> <span class="kw">/&gt;</span>
+
+<span class="kw">&lt;endEvent</span><span class="ot"> id=</span><span class="st">&quot;theEnd&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<h3 id="eventos">Eventos</h3>
+<h4 id="evento-comienzo">Evento comienzo</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;startEvent</span><span class="ot"> id=</span><span class="st">&quot;start&quot;</span><span class="ot"> name=</span><span class="st">&quot;Evento inicio&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<h4 id="evento-fin">Evento fin</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;endEvent</span><span class="ot"> id=</span><span class="st">&quot;end&quot;</span><span class="ot"> name=</span><span class="st">&quot;my end event&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<h4 id="eventos-tiempo">Eventos tiempo</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;timerEventDefinition&gt;</span>
+    <span class="kw">&lt;timeDuration&gt;</span>P10D<span class="kw">&lt;/timeDuration&gt;</span>
+<span class="kw">&lt;/timerEventDefinition&gt;</span></code></pre>
