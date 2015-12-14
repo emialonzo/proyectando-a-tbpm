@@ -10,3 +10,25 @@ Caja si ticket == credito Preparar crédito sino prepararEfectivo
 Una vez finalizado entrega pizza y ticket al repartidor.
 Repartido entrega pizza y cobra
 Una vez finalizado retorna
+
+
+anonimo registra usuario ingresa nombre, telefono, direccion
+sistema envia confirmacion por correo electronico
+anonimo abre link en email <--
+anonimo mostrar mensaje exito
+
+estudiante ejecuta tarea solicitar beca
+
+inicio
+t es una tarea ejecuta por x
+x ejecuta t
+
+t1 es una tarea con ...
+t3 es webserivce con ...
+
+al inicio se ejecuta [en paralelo] t1, t2, t3.
+luego de t1, se ejecuta [en paralelo] t4, t5
+luego de t2, se ejecuta t6 [si (x > 0)]
+luego de t2, se ejecuta t5
+
+mientras (condicion) t, luego t2 -- necesario?

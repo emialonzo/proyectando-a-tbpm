@@ -62,3 +62,35 @@
 <pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;timerEventDefinition&gt;</span>
     <span class="kw">&lt;timeDuration&gt;</span>P10D<span class="kw">&lt;/timeDuration&gt;</span>
 <span class="kw">&lt;/timerEventDefinition&gt;</span></code></pre>
+<h3 id="participantes">participantes</h3>
+<h4 id="lanes">lanes</h4>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;bpmn:process</span><span class="ot"> id=</span><span class="st">&quot;id proceos para ref&quot;</span><span class="ot"> isExecutable=</span><span class="st">&quot;false&quot;</span><span class="kw">&gt;</span>
+<span class="co">&lt;!-- dentro de la def del proceso --&gt;</span>
+  <span class="kw">&lt;bpmn:laneSet&gt;</span><span class="co">&lt;!-- puede haber varos lanes --&gt;</span>
+    <span class="kw">&lt;bpmn:lane</span><span class="ot"> id=</span><span class="st">&quot;id lane&quot;</span><span class="ot"> name=</span><span class="st">&quot;nombre del lane&quot;</span><span class="kw">&gt;</span> <span class="co">&lt;!-- definicion de lane --&gt;</span>
+      <span class="kw">&lt;bpmn:flowNodeRef&gt;</span>Id de tarea en el lane<span class="kw">&lt;/bpmn:flowNodeRef&gt;</span></code></pre>
+<h2 id="lenguaje-definido">lenguaje definido</h2>
+<pre><code>inicio
+t es una tarea ejecuta por x
+x ejecuta t
+
+t1 es una tarea con ...
+t3 es webserivce con ...
+
+al inicio se ejecuta [en paralelo] t1, t2, t3.
+luego de t1, se ejecuta [en paralelo] t4, t5
+luego de t2, se ejecuta t6 [si (x &gt; 0)]
+luego de t2, se ejecuta t5
+si pasan x minutos en t1, se ejecuta fin</code></pre>
+<h4 id="palbras-reservadas">Palbras reservadas</h4>
+<pre><code>inicio
+fin
+es una tarea
+es webservice
+en paralelo
+si
+si pasan
+minutos
+se ejecuta
+luego
+</code></pre>

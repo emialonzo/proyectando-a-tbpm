@@ -1,0 +1,8 @@
+[Usuario] solicita un nuevo producto para el sistema ingresando nombre, volúmen, cantidad y precio.
+[Administrador] procesa la solicitud ingresando aceptada?.
+Usuario recibe notificacion
+Si solicitud es aceptada==true, se procesa su aceptación.
+sino procesa apelación ingresando apelar?
+si apelar == true comenzar proceso apelación
+sino fin
+fin

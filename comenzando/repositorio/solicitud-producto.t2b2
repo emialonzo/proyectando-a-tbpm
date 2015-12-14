@@ -1,0 +1,14 @@
+-- tareas --
+nueva solicitud: ingresando nombre, volúmen, cantidad
+procesar solicitud: ingresando solicitud_aceptada?
+recibir notificacion,
+procesar aceptación: retorna validez_de_la_aceptación, comentarios
+incliur proceso apelar
+
+-- flujos --
+nueva solicitud ->(emvia, conecta, luego, despues) procesar solicitud [si condicion]
+procesar solicitud -> 
+
+-- usuarios --
+Usuario autenticado puede: nueva solicitud, recibir notificacion, procesar aceptacion, apelar
+Admin: procesar solicitud

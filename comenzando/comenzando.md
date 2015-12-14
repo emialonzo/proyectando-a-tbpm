@@ -86,3 +86,42 @@
     <timeDuration>P10D</timeDuration>
 </timerEventDefinition>
 ```
+
+### participantes
+#### lanes
+``` xml
+<bpmn:process id="id proceos para ref" isExecutable="false">
+<!-- dentro de la def del proceso -->
+  <bpmn:laneSet><!-- puede haber varos lanes -->
+    <bpmn:lane id="id lane" name="nombre del lane"> <!-- definicion de lane -->
+      <bpmn:flowNodeRef>Id de tarea en el lane</bpmn:flowNodeRef>
+```
+## lenguaje definido
+```
+inicio
+t es una tarea ejecuta por x
+x ejecuta t
+
+t1 es una tarea con ...
+t3 es webserivce con ...
+
+al inicio se ejecuta [en paralelo] t1, t2, t3.
+luego de t1, se ejecuta [en paralelo] t4, t5
+luego de t2, se ejecuta t6 [si (x > 0)]
+luego de t2, se ejecuta t5
+si pasan x minutos en t1, se ejecuta fin
+```
+#### Palbras reservadas
+```
+inicio
+fin
+es una tarea
+es webservice
+en paralelo
+si
+si pasan
+minutos
+se ejecuta
+luego
+
+```
