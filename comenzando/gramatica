@@ -1,0 +1,16 @@
+start
+  = s:secuencia {return s;}
+  / lab:articulo {return 10;}
+
+secuencia = sen:sentencia ws sec:secuencia {return sen + "\n" + sec;}
+		/ sentencia:sentencia {return sentencia;}
+
+sentencia  = actor:actor ws accion:accion fin
+	{ return "acotor->" + actor.join() + " accion->" + accion.join();}
+
+actor   = articulo ws nombre:[a-z]i+ { return nombre}
+accion = ([a-z]i+ ws)*
+
+ws "whitespace" = [ \t\n\r]*
+articulo = "el" / "la"
+fin = "."
