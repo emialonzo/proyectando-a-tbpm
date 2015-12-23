@@ -1,0 +1,22 @@
+{
+  "name": "text_to_bpmn",
+  "version": "1.0.0",
+  "description": "Procesar un lenguaje descripto por una gramática libre de contexto y obtener un modelo BPMN",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-packager . $npm_package_productName --out=dist --ignore='^/dist$' --prune --asar --all --version=$npm_package_electronVersion"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "bpmn-js": "^0.12.1",
+    "jquery": "1.9.1",
+    "pegjs": "^0.9.0"
+  }
+}
