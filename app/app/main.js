@@ -1,23 +1,28 @@
 // var $ = require("jquery");
 var parser = require("./parser.js");
+var makeBpmn = require("./makeBpmn");
 // var bpmnImg = require("./xml2img.js");
 
-
-
 function getAbstractModel(){
+  console.log("getAbstractModel");
   var text = $("#id-modelo-texto").val();
   var modelo = parser.parse(text);
   $("#id-modelo-abstracto").text(jsonToString(modelo));
+  console.log(makeBpmn.getActors(modelo));
   return modelo;
 }
 
 function safe_tags(str) {
+  console.log("safe_tags");
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
 }
 
 function jsonToString(str){
+  console.log("jsonToString");
   return JSON.stringify(str,null, 2);
 }
+
+var abc;
 
 $(function() {
   parser.init();
@@ -136,5 +141,7 @@ var ejemploModeloAbstracto = parser.parse(ejemploTexto);
   $("#id-modelo-texto").val(ejemploTexto);
   $("#id-xml-code").text(ejemploBpmn);
   $("#id-modelo-abstracto").text(jsonToString(ejemploModeloAbstracto));
+  abc = ejemploModeloAbstracto;
+  console.info(makeBpmn.getActors(ejemploModeloAbstracto));
   // bpmnImg.getImage(ejemploBpmn);
 });
