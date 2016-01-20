@@ -1,4 +1,4 @@
-start = s:secuencia
+start = s:secuencia ws {return s;}
 
 ws "whitespace" = [ \t\n\r]*
 articulo = "el" / "la" / "los" / "las"
@@ -28,7 +28,15 @@ id_o = "si se cumple"
 defecto = "si no"
 condicion = cond:[a-z]i+ ws { return cond.join("");}
 sent_o = ws id_o","
-         ws primero:(condicion "entonces" ws sentencia)
-         resto:((ws condicion:condicion "entonces" ws sentencia)*
-         (ws defecto ws sentencia) / (ws "si no" ws sentencia))
+         ws primero:(con:condicion "entonces" ws sen:sentencia
+         {return {"condcion":con, "sentencia":sen}})
+         resto:(
+         (ws con:condicion "entonces" ws sen:sentencia
+         {return {"condcion":con, "sentencia":sen}})+
+             (ws defecto ws sen:sentencia
+             {return {"condcion":"defecto", "sentencia":sen}})
+               /
+         (ws "si no" ws sen:sentencia
+         {return {"condcion":"defecto", "sentencia":sen}})
+               )
          {return [primero].concat(resto);}

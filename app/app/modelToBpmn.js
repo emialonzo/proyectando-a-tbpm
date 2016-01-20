@@ -6,6 +6,7 @@ var ejemploBpmn = `
     xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
     xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+
     <bpmn:collaboration id="Collaboration_08s4zor">
         <bpmn:participant id="Participant_0j5ydp8" name="restaurante" processRef="Process_1" />
     </bpmn:collaboration>

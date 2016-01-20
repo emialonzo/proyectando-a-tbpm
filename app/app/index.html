@@ -51,6 +51,11 @@
       <!-- barra lateral -->
       <div class="col-sm-3 col-md-2 sidebar">
 
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalGramatica">
+          Gramatica
+        </button>
+
         <ul class="nav nav-sidebar">
           <div class="input-group">
             <input type="text" class="form-control" placeholder="Carpeta..." class="carpeta-input">
@@ -100,6 +105,26 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="modalGramatica" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Gramatica</h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" rows="20" id="fgramatica"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="modal-actualizar" class="btn btn-primary">Actualizar</button>
+          <button type="button" id="modal-save" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap core JavaScript
   ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
@@ -107,8 +132,9 @@
   <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
   <!-- para toquetear -->
-  <script type="text/javascript" src=main.js>
-
+  <script type="text/javascript" src="main.js" >
+  </script>
+  <script type="text/javascript" src="util_parser.js" >
   </script>
 
 

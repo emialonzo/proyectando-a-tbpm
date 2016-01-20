@@ -5,9 +5,27 @@ var gramatica = null;
 var parser = null;
 
 var init = function(path){
-  path = path || __dirname + '/gramatica.pegjs';
+  var path = path || __dirname + '/gramatica.pegjs';
   gramatica = fs.readFileSync(path).toString();
   parser = PEG.buildParser(gramatica);
+}
+
+var getGramatica = function(){
+  return gramatica;
+}
+
+var actualizarGramatica = function(nueva_gramatica){
+  gramatica = nueva_gramatica;
+  parser = PEG.buildParser(gramatica);
+  console.log("Gramatica actualizada");
+}
+
+var guardarGramatica = function(){
+  var path = __dirname + '/gramatica.pegjs'
+  fs.writeFile(path, gramatica, function (err) {
+    if (err) return console.error(err);
+    console.log("Gramatica guardada en " + path);
+  });
 }
 
 var parseText = function(text){
@@ -25,5 +43,8 @@ var parseText = function(text){
 
 module.exports = {
   init : init,
-  parse : parseText
+  parse : parseText,
+  actualizarGramatica : actualizarGramatica,
+  guardarGramatica : guardarGramatica,
+  gramatica : getGramatica
 }

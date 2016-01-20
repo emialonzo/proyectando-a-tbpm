@@ -4,6 +4,74 @@ var _ = require("underscore");
 
 var gramatica = null;
 var parser = null;
+var bpmn = {};
+var laneSet = {
+  lane : []
+};
+laneSet.lane.push(
+  {
+    "_id" : "idLane1",
+    "_name": "Lane1",
+    "flowNodeRef": {
+      "__text":"idTarea1"
+    }
+  }
+);
+
+var filtroXOR = function(memo, elem){
+  //"tipo": "xor",
+  if(elem.tipo != "xor"){
+    return memo.push(elem);
+  }
+  else{
+    return _.chain(memo)
+      .push(elem)
+      .union(elem.sentencia)
+      .push({
+        "tipo": "CierroXOR"
+      })
+  }
+}
+
+var filtros = function (model){
+  var res = _.reduce(model, filtroXOR, []);
+}
+
+function mapJson(model, fun){
+  if(_.isArray(model)){
+    _.each(model, mapJson);
+  }
+  else{
+    procesarObject(model);
+  }
+}
+
+const task = "TASK";
+var pruebaAnidada = [
+  {"tipo": task, "lane":"usuario x", "accion":"baila rapido"},
+  {"tipo": "XOR", "lane":"usuario y", "accion":[
+    {"tipo": task, "lane":"usuario z", "accion":"baila rapido"},
+    {"tipo": task, "lane":"usuario w", "accion":"baila rapido"},
+    {"tipo": task, "lane":"usuario s", "accion":"baila rapido"}
+  ]},
+  {"tipo": "AND", "lane":"usuario r", "accion":[
+    {"tipo": task, "lane":"usuario l", "accion":"baila agil"},
+    {"tipo": task, "lane":"usuario j", "accion":"baila lento"},
+    {"tipo": task, "lane":"usuario k", "accion":"baila torpe"}
+  ]
+}
+];
+// `<bpmn:laneSet>
+//     <bpmn:lane id="Lane_0t1npma" name="cocinero">
+//         <bpmn:flowNodeRef>Task_1h4lllm</bpmn:flowNodeRef>
+//     </bpmn:lane>
+//     <bpmn:lane id="Lane_1hwq0iu" name="mozo">
+//         <bpmn:flowNodeRef>Task_1l1l4c6</bpmn:flowNodeRef>
+//         <bpmn:flowNodeRef>Task_1xffedn</bpmn:flowNodeRef>
+//         <bpmn:flowNodeRef>EndEvent_1doakpt</bpmn:flowNodeRef>
+//         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+//     </bpmn:lane>
+// </bpmn:laneSet>`
 
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
@@ -14,8 +82,6 @@ var init = function(path){
 var getActors = function(model){
   return _.uniq(_.map(_.flatten(model), function(elem){ return elem.actor; }));
 }
-
-var bpmn = {}
 
 var fillLaneSet = function(elem){
   bpmn.lanes.push(elem.acotr);
@@ -34,32 +100,9 @@ var makeBpmn = function(model){
 
 }
 
-var head = `<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions
-    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
-    `;
-var pools = `<bpmn:collaboration id="Collaboration_08s4zor">
-    <bpmn:participant id="Participant_0j5ydp8" name="restaurante" processRef="Process_1" />
-</bpmn:collaboration>`
-
-var lanes = `<bpmn:laneSet>
-    <bpmn:lane id="Lane_0t1npma" name="cocinero">
-        <bpmn:flowNodeRef>Task_1h4lllm</bpmn:flowNodeRef>
-    </bpmn:lane>
-    <bpmn:lane id="Lane_1hwq0iu" name="mozo">
-        <bpmn:flowNodeRef>Task_1l1l4c6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_1xffedn</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_1doakpt</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-    </bpmn:lane>
-</bpmn:laneSet>`
-
 module.exports = {
   init : init,
   makeBpmn : makeBpmn,
-  getActors : getActors
+  getActors : getActors,
+  filtros:filtros
 }
