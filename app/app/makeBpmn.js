@@ -19,22 +19,29 @@ laneSet.lane.push(
 );
 
 var filtroXOR = function(memo, elem){
-  //"tipo": "xor",
-  if(elem.tipo != "xor"){
-    return memo.push(elem);
+  console.log("TIPOS: ultimo memo: " + _.last(memo) + " elemento" + elem.tipo);
+  // console.info("tipo memo:" + typeof(memo));
+  // console.info("elem.tipo:" + elem.tipo);
+  var list = [];
+  if(elem.tipo == "xor"){
+    console.error("ES xor");
+    var cierroXor = {
+      "tipo": "CierroXOR"
+    };
+    list = _.union(list, [elem], filtroXOR(elem.sentencia), [cierroXor]);
+  } else if (typeof elem.condicion !== 'undefined') {
+    list.push(filtroXOR(elem.sentencia));
   }
-  else{
-    return _.chain(memo)
-      .push(elem)
-      .union(elem.sentencia)
-      .push({
-        "tipo": "CierroXOR"
-      })
+  else {
+    console.info("NO es xor");
+    list.push(elem);
   }
+  return _.union(memo, list);
 }
 
 var filtros = function (model){
   var res = _.reduce(model, filtroXOR, []);
+  return res;
 }
 
 function mapJson(model, fun){
