@@ -19,24 +19,75 @@ laneSet.lane.push(
 );
 
 var filtroXOR = function(memo, elem){
-  console.log("TIPOS: ultimo memo: " + _.last(memo) + " elemento" + elem.tipo);
+  // console.log("TIPOS: ultimo memo: " + _.last(memo) + " elemento" + elem.tipo);
   // console.info("tipo memo:" + typeof(memo));
   // console.info("elem.tipo:" + elem.tipo);
+  console.log("*****************************");
+  console.log(elem);
   var list = [];
-  if(elem.tipo == "xor"){
+
+  if((!_.isUndefined(elem.tipo)) && (elem.tipo == "xor")){
     console.error("ES xor");
     var cierroXor = {
       "tipo": "CierroXOR"
     };
-    list = _.union(list, [elem], filtroXOR(elem.sentencia), [cierroXor]);
-  } else if (typeof elem.condicion !== 'undefined') {
-    list.push(filtroXOR(elem.sentencia));
+    console.log("elem.sentencia:" + JSON.stringify(elem.sentencia));
+    // list = _.union([elem], filtroXOR([], elem.sentencia), [cierroXor]);
+
+  }
+  else if (!_.isUndefined(elem.condicion)) {
+    console.info("condicion");
+    list.push(filtroXOR(memo , elem.sentencia));
   }
   else {
-    console.info("NO es xor");
+    console.info("NO es xor, es: " + elem.tipo);
     list.push(elem);
   }
   return _.union(memo, list);
+}
+
+var cierro = {
+  "tipo": "cierro",
+  "sentencia" : "Nodo para balanceo de compuertas."
+};
+
+var cierro = function (tag){
+  return {
+    "tipo": "cierro",
+    "sentencia" : "Nodo para balanceo de compuertas.",
+    "tag": tag
+  }
+}
+
+// noList();
+
+function procesar_nivel(lista){
+  var ret = [];
+  while (lista.length > 0) {
+    var elem = lista.shift();
+    console.info("***************");
+    console.info("Elem:"+JSON.stringify(elem));
+    console.log("TIPO:"+elem.tipo );
+    if((!_.isUndefined(elem.tipo)) && (elem.tipo == "task")){
+      console.log("---->task");
+    } else if((!_.isUndefined(elem.tipo)) && (elem.tipo == "cierro")){
+      console.log("!!!compuerta de cerrar");
+    }
+    else {
+      console.log("----->no task:"+ elem.tipo);
+      var aux = elem.sentencia;
+      if(aux instanceof Array){
+        var aux_elem = cierro(elem.tipo);
+        aux.push(aux_elem);
+        Array.prototype.unshift.apply(lista, aux);
+      }else{
+        lista.unshift(aux);
+      }
+    }
+    ret.push(elem);
+    console.info("***************");
+  }
+  return ret;
 }
 
 var filtros = function (model){
@@ -99,11 +150,14 @@ var start = function(model){
   var actor = model[0].actor;
   model.unshift()
 }
+
 var makeBpmn = function(model){
-  bpmn.laneset = [];
-  for(var i=0; i < model.length; i++){
-    var elem = model[i];
-  }
+  // bpmn.laneset = [];
+  // for(var i=0; i < model.length; i++){
+  //   var elem = model[i];
+  // }
+  // return bpmn;
+  return filtros(model);
 
 }
 
@@ -111,5 +165,6 @@ module.exports = {
   init : init,
   makeBpmn : makeBpmn,
   getActors : getActors,
-  filtros:filtros
+  filtros:filtros,
+  procesar:procesar_nivel
 }

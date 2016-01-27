@@ -15,7 +15,9 @@ var textosPruebas = [
 
 "el administrador lista tareas pendientes. " +
 "el administrador entrega tareas a ventas. " +
-"al mismo tiempo, 1 el administrador presenta informe de tareas a direccion. 2 el vendedor toma tareas. "
+"al mismo tiempo, 1 el administrador presenta informe de tareas a direccion. 2 el vendedor toma tareas. 3 el vendedor toma tareas. " +
+"si se cumple, hayTrabajo entonces el juan trabaja. otraCondicion entonces el pepe baila la cumparcita. otraCondicionXXX entonces el pepe baila la cumparcita. si no el tio carlos canta."
+
 ]
 
 // var options = {
@@ -32,9 +34,20 @@ function parseAllText(listaTexttos){
   return _.map(listaTexttos, function(elem){ return parser.parse(elem);})
 };
 
+function makeAllBpmn(lista){
+  return _.map(lista, function(elem){ return makeBpmn.makeBpmn(elem);})
+};
+
+function makeAllNivel(lista){
+  return _.map(lista, function(elem){ return makeBpmn.procesar(elem);})
+};
+
+
 
 textosPruebas.shift();
 console.log(textosPruebas);
 parser.init();
-// console.log(parseAllText(textosPruebas));
 _.map(parseAllText(textosPruebas), function(elem){ console.log(prettyjson.render(elem, options)); })
+_.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
+_.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
+_.map(makeAllNivel(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
