@@ -4,6 +4,7 @@ var _ = require("underscore");
 
 var gramatica = null;
 var parser = null;
+var globalId = 1;
 var bpmn = {};
 var proceso = {
   laneSet : {
@@ -310,7 +311,7 @@ module.exports = {
   makeBpmn : makeBpmn,
   getActors : getActors,
   filtros:filtros,
-  procesar:procesar_nivel
+  procesar:procesar_nivel,
   start : start,
   obtenerLanes : obtenerLanes,
   obtenerTareas : obtenerTareas,
