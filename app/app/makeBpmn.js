@@ -4,6 +4,7 @@ var _ = require("underscore");
 
 var gramatica = null;
 var parser = null;
+var globalId = 1;
 var bpmn = {};
 var proceso = {
   laneSet : {
