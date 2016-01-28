@@ -288,11 +288,22 @@ var generarFlujo = function(elem, elemAnterior) {
 //inicializo algunos valores necesarios
 // evento de inicio, evento de fin ....
 var start = function(model) {
-  proceso.startEvent = {"__prefix":"bpmn","_id":"StartEvent_1"};
-  proceso.endEvent = {"__prefix":"bpmn","_id":"EndEvent_1"}
-//  proceso.laneSet.lane = [];
-  //var actor = model[0].actor;
-  //model.unshift()
+  proceso.startEvent = {
+    "outgoing": {
+      "__prefix":"bpmn",
+      "__text":"SequenceFlow_id"
+    },
+    "__prefix":"bpmn",
+    "_id":"StartEvent_1"
+  };
+  proceso.endEvent = {
+    "incoming": {
+      "__prefix":"bpmn",
+      "__text":"SequenceFlow_id"
+    }
+    "__prefix":"bpmn",
+    "_id":"EndEvent_1"
+  }
 }
 
 var makeBpmn = function(model){
