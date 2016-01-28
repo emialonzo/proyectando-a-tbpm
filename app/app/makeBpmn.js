@@ -300,7 +300,7 @@ var start = function(model) {
     "incoming": {
       "__prefix":"bpmn",
       "__text":"SequenceFlow_id"
-    }
+    },
     "__prefix":"bpmn",
     "_id":"EndEvent_1"
   }
@@ -321,7 +321,7 @@ module.exports = {
   makeBpmn : makeBpmn,
   getActors : getActors,
   filtros:filtros,
-  procesar:procesar_nivel
+  procesar:procesar_nivel,
   start : start,
   obtenerLanes : obtenerLanes,
   obtenerTareas : obtenerTareas,
