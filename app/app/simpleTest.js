@@ -51,3 +51,14 @@ _.map(parseAllText(textosPruebas), function(elem){ console.log(prettyjson.render
 _.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(makeAllNivel(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
+
+
+//var modelo = parseAllText(textosPruebas)[0];
+//console.log(modelo);
+//makeBpmn.start();
+// console.log(parseAllText(textosPruebas));
+//_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); })
+//_.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
+//console.log(makeBpmn.laneSet);
+//_.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
+//console.log(prettyjson.render(makeBpmn.proceso, options));
