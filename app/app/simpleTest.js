@@ -16,7 +16,8 @@ var textosPruebas = [
 "el administrador lista tareas pendientes. " +
 "el administrador entrega tareas a ventas. " +
 "al mismo tiempo, 1 el administrador presenta informe de tareas a direccion. 2 el vendedor toma tareas. 3 el vendedor toma tareas. " +
-"si se cumple, hayTrabajo entonces el juan trabaja. otraCondicion entonces el pepe baila la cumparcita. otraCondicionXXX entonces el pepe baila la cumparcita. si no el tio carlos canta."
+"si se cumple, hayTrabajo entonces el juan trabaja. otraCondicion entonces el pepe baila la cumparcita. otraCondicionXXX entonces el pepe baila la cumparcita. si no el tio carlos canta." +
+"el tronco baila algo nuevo."
 
 ]
 
@@ -31,11 +32,11 @@ var options = {
 
 function parseAllText(listaTexttos){
   // return _.map(listaTexttos, function(elem){ return prettyjson.render(parser.parse(elem), options);})
-  return _.map(listaTexttos, function(elem){ return parser.parse(elem);})
+  return _.map(listaTexttos, function(texto){ return parser.parse(texto);})
 };
 
-function makeAllBpmn(lista){
-  return _.map(lista, function(elem){ return makeBpmn.makeBpmn(elem);})
+function makeAllBpmn(listaModelos){
+  return _.map(listaModelos, function(modelo){ return makeBpmn.makeBpmn(modelo);})
 };
 
 function makeAllNivel(lista){
@@ -47,7 +48,7 @@ function makeAllNivel(lista){
 textosPruebas.shift();
 console.log(textosPruebas);
 parser.init();
-_.map(parseAllText(textosPruebas), function(elem){ console.log(prettyjson.render(elem, options)); })
+// _.map(            parseAllText(textosPruebas) , function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
-_.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
-_.map(makeAllNivel(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
+//_.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
+//_.map(makeAllNivel(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })

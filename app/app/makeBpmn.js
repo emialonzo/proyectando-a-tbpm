@@ -1,10 +1,11 @@
-var PEG = require("pegjs");
-var fs = require("fs");
-var _ = require("underscore");
+var PEG = require('pegjs')
+var fs = require('fs')
+var _ = require('underscore')
 
 var gramatica = null;
 var parser = null;
 var bpmn = {};
+var globalId = 0;
 var laneSet = {
   lane : []
 };
@@ -18,10 +19,7 @@ laneSet.lane.push(
   }
 );
 
-var filtroXOR = function(memo, elem){
-  // console.log("TIPOS: ultimo memo: " + _.last(memo) + " elemento" + elem.tipo);
-  // console.info("tipo memo:" + typeof(memo));
-  // console.info("elem.tipo:" + elem.tipo);
+var filtroXOR = function (memo, elem){
   console.log("*****************************");
   console.log(elem);
   var list = [];
@@ -46,20 +44,114 @@ var filtroXOR = function(memo, elem){
   return _.union(memo, list);
 }
 
-var cierro = {
-  "tipo": "cierro",
-  "sentencia" : "Nodo para balanceo de compuertas."
+function agregarId(modelo){
+
 };
+
+// var cierro = {
+//   "tipo": "cierro",
+//   "sentencia" : "Nodo para balanceo de compuertas."
+// };
 
 var cierro = function (tag){
   return {
     "tipo": "cierro",
     "sentencia" : "Nodo para balanceo de compuertas.",
-    "tag": tag
+    "tag": tag,
+    "id": globalId++
+  }
+}
+var cierrogw = function (elem){
+  return {
+    "tipo": "cierro",
+    "sentencia" : "Nodo para balanceo de compuertas.",
+    "tag": elem.tipo,
+    "ref": elem.id,
+    "id": globalId++
   }
 }
 
+
 // noList();
+
+
+function iterarModelo(modelo, funcionProcesarNodo){
+  var ret = [];
+  while(modelo.length >0){
+    var elem = modelo.shift();
+    elem.id = globalId++;
+    console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    if(elem.sentencia instanceof Array){
+      elem.sentencia = recursivoAgregarId(elem.sentencia);
+    }else if (elem.tipo != "task") {
+      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
+    }
+    ret.push(elem);
+  }
+  return ret;
+}
+
+// var gateway = ['xor','and'];
+var gateway = {
+  'xor':true,
+  'and':true
+}
+function isGateway(tipo){
+  return tipo in gateway;
+}
+
+
+function recursivoBalance(modelo){
+  var ret = [];
+  while(modelo.length >0){
+    var elem = modelo.shift();
+    elem.id = globalId++;
+    // console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    if(isGateway(elem.tipo)){
+      modelo.unshift(cierrogw(elem));
+    }
+    if(elem.sentencia instanceof Array){
+      elem.sentencia = recursivoBalance(elem.sentencia);
+    }else if (elem.tipo == "condicion") {
+      elem.sentencia = recursivoBalance([elem.sentencia]).pop();
+    }
+    ret.push(elem);
+  }
+  return ret;
+}
+
+// recursivoFlujo(modelo, null, null, null)
+function recursivoFlujo(modelo, actual, anterior, posterior){
+  var ret = [];
+  while(modelo.length >0){
+    var elem = modelo.shift();
+    elem.id = globalId++;
+    console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    if(elem.sentencia instanceof Array){
+      elem.sentencia = recursivoAgregarId(elem.sentencia);
+    }else if (elem.tipo == "condicion") {
+      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
+    }
+    ret.push(elem);
+  }
+  return ret;
+}
+
+function recursivoAgregarId(modelo){
+  var ret = [];
+  while(modelo.length >0){
+    var elem = modelo.shift();
+    elem.id = globalId++;
+    console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    if(elem.sentencia instanceof Array){
+      elem.sentencia = recursivoAgregarId(elem.sentencia);
+    }else if (elem.tipo == "condicion") {
+      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
+    }
+    ret.push(elem);
+  }
+  return ret;
+}
 
 function procesar_nivel(lista){
   var ret = [];
@@ -104,33 +196,6 @@ function mapJson(model, fun){
   }
 }
 
-const task = "TASK";
-var pruebaAnidada = [
-  {"tipo": task, "lane":"usuario x", "accion":"baila rapido"},
-  {"tipo": "XOR", "lane":"usuario y", "accion":[
-    {"tipo": task, "lane":"usuario z", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario w", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario s", "accion":"baila rapido"}
-  ]},
-  {"tipo": "AND", "lane":"usuario r", "accion":[
-    {"tipo": task, "lane":"usuario l", "accion":"baila agil"},
-    {"tipo": task, "lane":"usuario j", "accion":"baila lento"},
-    {"tipo": task, "lane":"usuario k", "accion":"baila torpe"}
-  ]
-}
-];
-// `<bpmn:laneSet>
-//     <bpmn:lane id="Lane_0t1npma" name="cocinero">
-//         <bpmn:flowNodeRef>Task_1h4lllm</bpmn:flowNodeRef>
-//     </bpmn:lane>
-//     <bpmn:lane id="Lane_1hwq0iu" name="mozo">
-//         <bpmn:flowNodeRef>Task_1l1l4c6</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>Task_1xffedn</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>EndEvent_1doakpt</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-//     </bpmn:lane>
-// </bpmn:laneSet>`
-
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
   gramatica = fs.readFileSync(path).toString();
@@ -157,14 +222,14 @@ var makeBpmn = function(model){
   //   var elem = model[i];
   // }
   // return bpmn;
-  return filtros(model);
+  return recursivoBalance(recursivoAgregarId(model));
 
 }
 
 module.exports = {
-  init : init,
-  makeBpmn : makeBpmn,
-  getActors : getActors,
-  filtros:filtros,
-  procesar:procesar_nivel
+  init: init,
+  makeBpmn: makeBpmn,
+  getActors: getActors,
+  filtros: filtros,
+  procesar: procesar_nivel
 }
