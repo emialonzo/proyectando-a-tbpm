@@ -13,9 +13,18 @@ var conv = new x2js();
 
 
 var textosPruebas = [
+/*
+  "el cocinero cocina pedido. " +
+  "el mozo entraga el pedido. " +
+  "el cliente come la comida. " +
+  "el mozo cobra al cliente.  " +
+  "el cliente paga."
+*/
 "el cocinero cocina pedido. " +
 "al mismo tiempo, 1 el mozo sirve pedido. 2 la hermana es servida en la mesa. " +
-"si se cumple, hayTrabajo entonces el mozo trabaja. si no el cocinero canta. " +
+"si se cumple, " +
+"condicionA entonces el mozo trabaja. " +
+"si no el cocinero se rasca." +
 "la hermana baila la gracamiglia."
 /*
 ,
@@ -57,8 +66,6 @@ function makeAllNivel(lista){
   return _.map(lista, function(elem){ return makeBpmn.procesar(elem);})
 };
 
-
-
 //textosPruebas.shift();
 //console.log(textosPruebas);
 //parser.init();
@@ -73,10 +80,24 @@ var modelo = parseAllText(textosPruebas)[0];
 makeBpmn.start();
 modelo = makeBpmn.recursivoAgregarId(modelo);
 
+//console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
 //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); })
+//console.log("######################### PROCESO ##################################");
 _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
-_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
+//_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(elem); })
+
+//console.log("########################### FLUJOS ################################");
+
+var j=0;
+for (var i=0 ; i<modelo.length-1 ; i++) {
+  makeBpmn.generarFlujo(modelo[j], modelo[++j]);
+}
+
+makeBpmn.conectarStartEvent(modelo);
+makeBpmn.conectarEndEvent(modelo);
+
+_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
