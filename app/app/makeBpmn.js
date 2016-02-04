@@ -1,10 +1,15 @@
 var PEG = require("pegjs");
 var fs = require("fs");
 var _ = require("underscore");
+var prettyjson = require('prettyjson');
 
 var gramatica = null;
 var parser = null;
 var globalId = 1;
+var Task_globalID = 1;
+var SequenceFlow_GlobalID = 1;
+var ParallelGateway_GlobalID = 1;
+var ExclusiveGateway_GlobalID = 1;
 var bpmn = {};
 var proceso = {
   laneSet : {
@@ -14,8 +19,8 @@ var proceso = {
   task : [],
   exclusiveGateway : [],
   parallelGateway : [],
-  sequenceFlow : [],
-  endEvent : {}
+  endEvent : {},
+  sequenceFlow : []
 };
 var isPrimeraTarea = true;
 
@@ -66,10 +71,6 @@ var cierrogw = function (elem){
   }
 }
 
-
-// noList();
-
-
 function iterarModelo(modelo, funcionProcesarNodo){
   var ret = [];
   while(modelo.length >0){
@@ -91,17 +92,16 @@ var gateway = {
   'xor':true,
   'and':true
 }
+
 function isGateway(tipo){
   return tipo in gateway;
 }
-
 
 function recursivoBalance(modelo){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
     elem.id = globalId++;
-    // console.log("--->" , globalId , " " , JSON.stringify(elem) );
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
     }
@@ -115,13 +115,11 @@ function recursivoBalance(modelo){
   return ret;
 }
 
-// recursivoFlujo(modelo, null, null, null)
 function recursivoFlujo(modelo, actual, anterior, posterior){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
     elem.id = globalId++;
-    console.log("--->" , globalId , " " , JSON.stringify(elem) );
     if(elem.sentencia instanceof Array){
       elem.sentencia = recursivoAgregarId(elem.sentencia);
     }else if (elem.tipo == "condicion") {
@@ -137,7 +135,7 @@ function recursivoAgregarId(modelo){
   while(modelo.length >0){
     var elem = modelo.shift();
     elem.id = globalId++;
-    console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    //console.log("--->" , elem.id , " " , JSON.stringify(elem) );
     if(elem.sentencia instanceof Array){
       elem.sentencia = recursivoAgregarId(elem.sentencia);
     }else if (elem.tipo == "condicion") {
@@ -191,33 +189,6 @@ function mapJson(model, fun){
   }
 }
 
-const task = "TASK";
-var pruebaAnidada = [
-  {"tipo": task, "lane":"usuario x", "accion":"baila rapido"},
-  {"tipo": "XOR", "lane":"usuario y", "accion":[
-    {"tipo": task, "lane":"usuario z", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario w", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario s", "accion":"baila rapido"}
-  ]},
-  {"tipo": "AND", "lane":"usuario r", "accion":[
-    {"tipo": task, "lane":"usuario l", "accion":"baila agil"},
-    {"tipo": task, "lane":"usuario j", "accion":"baila lento"},
-    {"tipo": task, "lane":"usuario k", "accion":"baila torpe"}
-  ]
-}
-];
-// `<bpmn:laneSet>
-//     <bpmn:lane id="Lane_0t1npma" name="cocinero">
-//         <bpmn:flowNodeRef>Task_1h4lllm</bpmn:flowNodeRef>
-//     </bpmn:lane>
-//     <bpmn:lane id="Lane_1hwq0iu" name="mozo">
-//         <bpmn:flowNodeRef>Task_1l1l4c6</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>Task_1xffedn</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>EndEvent_1doakpt</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-//     </bpmn:lane>
-// </bpmn:laneSet>`
-
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
   gramatica = fs.readFileSync(path).toString();
@@ -236,6 +207,12 @@ var obtenerLanes = function(elem) {
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
          "_name": elem.sentencia.actor,"__prefix":"bpmn"});
     }
+  } else if (elem.tipo == "condicion") {
+    if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.sentencia.actor}) == null) {
+      proceso.laneSet.lane.push(
+        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.sentencia.actor,
+         "_name": elem.sentencia.sentencia.actor,"__prefix":"bpmn"});
+    }
   } else if (elem.tipo == "xor") {
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
@@ -249,41 +226,101 @@ var obtenerLanes = function(elem) {
   }
 }
 
-//recorro todas las tareas para ir asignandolas a los lanes
+// recorre las tareas para ir asignandolas a los lanes
 // las compuertas se asignan a los lanes en un paso posterior (generarFlujo)
+// se asignan los flujos de salida de cada tarea y compuerta
 var obtenerTareas = function(elem) {
   if (elem.tipo == "task") {
     var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.sentencia.actor});
-    lane.flowNodeRef.push(
-      {"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
-    proceso.task.push(
-      {"incoming":{},"outgoing":{},"_id":"Task_"+elem.sentencia.accion,
-       "_name":elem.sentencia.accion,"__prefix":"bpmn"});
+    var nodo = {"__prefix":"bpmn","__text":"Task_"+elem.id};
+    lane.flowNodeRef.push(nodo);
+    var tarea =
+      {"incoming":{},
+       "outgoing":{"__prefix":"bpmn", "__text":"SequenceFlow_"+SequenceFlow_GlobalID++},
+       "_id":"Task_"+elem.id,
+       "_name":elem.sentencia.accion,"__prefix":"bpmn"
+      };
+    proceso.sequenceFlow.push({
+        "_id":tarea.outgoing.__text,"_sourceRef":nodo.__text,
+        "_targetRef":"","__prefix":"bpmn"});
+    proceso.task.push(tarea);
     if (isPrimeraTarea) {
       isPrimeraTarea = false;
-      lane.flowNodeRef.push({"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
+      lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
+      tarea.incoming = {"__prefix":"bpmn", "__text":"SequenceFlow_1"}
     }
+  } else if (elem.tipo == "condicion") {
+    obtenerTareas(elem.sentencia);
   } else if (elem.tipo == "xor") {
-    proceso.exclusiveGateway.push(
-      {"incoming":{},"outgoing":{},"_id":"ExclusiveGateway_identificador",
-       "_default":"default_o_no","__prefix":"bpmn"});
+    var abre = {"incoming":[],"outgoing":[],"_id":"ExclusiveGateway_"+ExclusiveGateway_GlobalID++,
+     "_default":"","__prefix":"bpmn"};
+    proceso.exclusiveGateway.push(abre);
     for (var i=0; i < elem.sentencia.length; i++) {
+      var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
+      abre.outgoing.push(flujo);
+      proceso.sequenceFlow.push({
+          "_id":flujo.__text,"_sourceRef":abre._id,
+          "_targetRef":"","__prefix":"bpmn"});
       obj = elem.sentencia[i];
       obtenerTareas(obj);
+      if (obj.condicion == "defecto") {
+        abre._default = flujo.__text;
+      }
     }
+    var cierra = {"incoming":[],"outgoing":[],"_id":"ExclusiveGateway_"+ExclusiveGateway_GlobalID++,
+      "__prefix":"bpmn"};
+    var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
+    cierra.outgoing.push(flujo);
+    proceso.sequenceFlow.push({
+        "_id":flujo.__text,"_sourceRef":cierra._id,
+        "_targetRef":"","__prefix":"bpmn"});
+    proceso.exclusiveGateway.push(cierra);
+
   } else if (elem.tipo == "and") {
-    proceso.parallelGateway.push(
-      {"incoming":{}, "outgoing":{}, "_id":"ParallelGateway_identificador", "__prefix":"bpmn" });
+    var abre = {"incoming":[], "outgoing":[],"_id":"ParallelGateway_"+ParallelGateway_GlobalID++,
+       "__prefix":"bpmn" };
+    proceso.parallelGateway.push(abre);
     for (var i=0; i < elem.sentencia.length; i++) {
+      var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
+      abre.outgoing.push(flujo);
+      proceso.sequenceFlow.push({
+          "_id":flujo.__text,"_sourceRef":abre._id,
+          "_targetRef":"","__prefix":"bpmn"});
       obj = elem.sentencia[i];
       obtenerTareas(obj);
     }
+    var cierra = {"incoming":[], "outgoing":[],
+      "_id":"ParallelGateway_"+ParallelGateway_GlobalID++, "__prefix":"bpmn" };
+    var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
+    cierra.outgoing.push(flujo);
+    proceso.sequenceFlow.push({
+        "_id":flujo.__text,"_sourceRef":cierra._id,
+        "_targetRef":"","__prefix":"bpmn"});
+    proceso.parallelGateway.push(cierra);
   }
 }
 
 // recorro el modelo nuevamente para construir el flujo del proceso
-var generarFlujo = function(elem, elemAnterior) {
-
+var generarFlujo = function(elem, anteriores) {
+  console.log("################# ELEM #################");
+  console.log(prettyjson.render(elem));
+  console.log("############ ANTERIORES ################");
+  console.log(prettyjson.render(anteriores));
+  console.log("########################################");
+  for (var i=0; i<anteriores.length; i++) {
+    var elemAnt = anteriores[i];
+    var flujo = _.find(proceso.sequenceFlow, function(val) {return val._id == elemAnt.outgoing.__text});
+    console.log("######## Flujo #######");
+    console.log(prettyjson.render(flujo));
+    console.log("######################");
+    flujo._targetRef = elem._id;
+    elem.incoming.push(
+      {
+        "__prefix":"bpmn",
+        "__text":flujo._id
+      }
+    );
+  }
 }
 
 //inicializo algunos valores necesarios
@@ -292,16 +329,18 @@ var start = function(model) {
   proceso.startEvent = {
     "outgoing": {
       "__prefix":"bpmn",
-      "__text":"SequenceFlow_id"
+      "__text":"SequenceFlow_"+SequenceFlow_GlobalID++
     },
     "__prefix":"bpmn",
     "_id":"StartEvent_1"
   };
+  proceso.sequenceFlow.push({
+      "_id":proceso.startEvent.outgoing.__text,
+      "_sourceRef":proceso.startEvent._id,
+      "_targetRef":"",
+      "__prefix":"bpmn"});
   proceso.endEvent = {
-    "incoming": {
-      "__prefix":"bpmn",
-      "__text":"SequenceFlow_id"
-    },
+    "incoming": {},
     "__prefix":"bpmn",
     "_id":"EndEvent_1"
   }
@@ -326,5 +365,6 @@ module.exports = {
   start : start,
   obtenerLanes : obtenerLanes,
   obtenerTareas : obtenerTareas,
-  proceso : proceso
+  proceso : proceso,
+  recursivoAgregarId:recursivoAgregarId
 }
