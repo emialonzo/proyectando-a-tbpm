@@ -100,7 +100,7 @@ function recursivoBalance(modelo){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
-    elem.id = globalId++;
+    //elem.id = globalId++;
     // console.log("--->" , globalId , " " , JSON.stringify(elem) );
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
@@ -115,18 +115,19 @@ function recursivoBalance(modelo){
   return ret;
 }
 
-// recursivoFlujo(modelo, null, null, null)
-function recursivoFlujo(modelo, actual, anterior, posterior){
+// recursivoFlujo(modelo, 0)
+function recursivoFlujo(modelo, anterior){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
-    elem.id = globalId++;
+    elem.anterior = anterior;
     console.log("--->" , globalId , " " , JSON.stringify(elem) );
     if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
+      elem.sentencia = recursivoFlujo(elem.sentencia, elem.id);
     }else if (elem.tipo == "condicion") {
-      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
+      elem.sentencia = recursivoFlujo([elem.sentencia], elem.anterior).pop();
     }
+    anterior = elem.id;
     ret.push(elem);
   }
   return ret;
@@ -136,13 +137,16 @@ function recursivoAgregarId(modelo){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
+
     elem.id = globalId++;
+
     console.log("--->" , globalId , " " , JSON.stringify(elem) );
     if(elem.sentencia instanceof Array){
       elem.sentencia = recursivoAgregarId(elem.sentencia);
     }else if (elem.tipo == "condicion") {
       elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
     }
+
     ret.push(elem);
   }
   return ret;
@@ -192,31 +196,6 @@ function mapJson(model, fun){
 }
 
 const task = "TASK";
-var pruebaAnidada = [
-  {"tipo": task, "lane":"usuario x", "accion":"baila rapido"},
-  {"tipo": "XOR", "lane":"usuario y", "accion":[
-    {"tipo": task, "lane":"usuario z", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario w", "accion":"baila rapido"},
-    {"tipo": task, "lane":"usuario s", "accion":"baila rapido"}
-  ]},
-  {"tipo": "AND", "lane":"usuario r", "accion":[
-    {"tipo": task, "lane":"usuario l", "accion":"baila agil"},
-    {"tipo": task, "lane":"usuario j", "accion":"baila lento"},
-    {"tipo": task, "lane":"usuario k", "accion":"baila torpe"}
-  ]
-}
-];
-// `<bpmn:laneSet>
-//     <bpmn:lane id="Lane_0t1npma" name="cocinero">
-//         <bpmn:flowNodeRef>Task_1h4lllm</bpmn:flowNodeRef>
-//     </bpmn:lane>
-//     <bpmn:lane id="Lane_1hwq0iu" name="mozo">
-//         <bpmn:flowNodeRef>Task_1l1l4c6</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>Task_1xffedn</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>EndEvent_1doakpt</bpmn:flowNodeRef>
-//         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-//     </bpmn:lane>
-// </bpmn:laneSet>`
 
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
@@ -234,97 +213,97 @@ var obtenerLanes = function(elem) {
     if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
       proceso.laneSet.lane.push(
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
-         "_name": elem.sentencia.actor,"__prefix":"bpmn"});
-    }
-  } else if (elem.tipo == "xor") {
-    for (var i=0; i < elem.sentencia.length; i++) {
-      obj = elem.sentencia[i];
-      obtenerLanes(obj);
-    }
-  } else if (elem.tipo == "and") {
-    for (var i=0; i < elem.sentencia.length; i++) {
-      obj = elem.sentencia[i];
-      obtenerLanes(obj);
-    }
-  }
-}
-
-//recorro todas las tareas para ir asignandolas a los lanes
-// las compuertas se asignan a los lanes en un paso posterior (generarFlujo)
-var obtenerTareas = function(elem) {
-  if (elem.tipo == "task") {
-    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.sentencia.actor});
-    lane.flowNodeRef.push(
-      {"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
-    proceso.task.push(
-      {"incoming":{},"outgoing":{},"_id":"Task_"+elem.sentencia.accion,
-       "_name":elem.sentencia.accion,"__prefix":"bpmn"});
-    if (isPrimeraTarea) {
-      isPrimeraTarea = false;
-      lane.flowNodeRef.push({"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
-    }
-  } else if (elem.tipo == "xor") {
-    proceso.exclusiveGateway.push(
-      {"incoming":{},"outgoing":{},"_id":"ExclusiveGateway_identificador",
-       "_default":"default_o_no","__prefix":"bpmn"});
-    for (var i=0; i < elem.sentencia.length; i++) {
-      obj = elem.sentencia[i];
-      obtenerTareas(obj);
-    }
-  } else if (elem.tipo == "and") {
-    proceso.parallelGateway.push(
-      {"incoming":{}, "outgoing":{}, "_id":"ParallelGateway_identificador", "__prefix":"bpmn" });
-    for (var i=0; i < elem.sentencia.length; i++) {
-      obj = elem.sentencia[i];
-      obtenerTareas(obj);
+        "_name": elem.sentencia.actor,"__prefix":"bpmn"});
+      }
+    } else if (elem.tipo == "xor") {
+      for (var i=0; i < elem.sentencia.length; i++) {
+        obj = elem.sentencia[i];
+        obtenerLanes(obj);
+      }
+    } else if (elem.tipo == "and") {
+      for (var i=0; i < elem.sentencia.length; i++) {
+        obj = elem.sentencia[i];
+        obtenerLanes(obj);
+      }
     }
   }
-}
 
-// recorro el modelo nuevamente para construir el flujo del proceso
-var generarFlujo = function(elem, elemAnterior) {
+  //recorro todas las tareas para ir asignandolas a los lanes
+  // las compuertas se asignan a los lanes en un paso posterior (generarFlujo)
+  var obtenerTareas = function(elem) {
+    if (elem.tipo == "task") {
+      var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.sentencia.actor});
+      lane.flowNodeRef.push(
+        {"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
+        proceso.task.push(
+          {"incoming":{},"outgoing":{},"_id":"Task_"+elem.sentencia.accion,
+          "_name":elem.sentencia.accion,"__prefix":"bpmn"});
+          if (isPrimeraTarea) {
+            isPrimeraTarea = false;
+            lane.flowNodeRef.push({"__prefix":"bpmn","__text":"Task_"+elem.sentencia.accion});
+          }
+        } else if (elem.tipo == "xor") {
+          proceso.exclusiveGateway.push(
+            {"incoming":{},"outgoing":{},"_id":"ExclusiveGateway_identificador",
+            "_default":"default_o_no","__prefix":"bpmn"});
+            for (var i=0; i < elem.sentencia.length; i++) {
+              obj = elem.sentencia[i];
+              obtenerTareas(obj);
+            }
+          } else if (elem.tipo == "and") {
+            proceso.parallelGateway.push(
+              {"incoming":{}, "outgoing":{}, "_id":"ParallelGateway_identificador", "__prefix":"bpmn" });
+              for (var i=0; i < elem.sentencia.length; i++) {
+                obj = elem.sentencia[i];
+                obtenerTareas(obj);
+              }
+            }
+          }
 
-}
+          // recorro el modelo nuevamente para construir el flujo del proceso
+          var generarFlujo = function(elem, elemAnterior) {
 
-//inicializo algunos valores necesarios
-// evento de inicio, evento de fin ....
-var start = function(model) {
-  proceso.startEvent = {
-    "outgoing": {
-      "__prefix":"bpmn",
-      "__text":"SequenceFlow_id"
-    },
-    "__prefix":"bpmn",
-    "_id":"StartEvent_1"
-  };
-  proceso.endEvent = {
-    "incoming": {
-      "__prefix":"bpmn",
-      "__text":"SequenceFlow_id"
-    }
-    "__prefix":"bpmn",
-    "_id":"EndEvent_1"
-  }
-}
+          }
 
-var makeBpmn = function(model){
-  // bpmn.laneset = [];
-  // for(var i=0; i < model.length; i++){
-  //   var elem = model[i];
-  // }
-  // return bpmn;
-  return recursivoBalance(recursivoAgregarId(model));
+          //inicializo algunos valores necesarios
+          // evento de inicio, evento de fin ....
+          var start = function(model) {
+            proceso.startEvent = {
+              "outgoing": {
+                "__prefix":"bpmn",
+                "__text":"SequenceFlow_id"
+              },
+              "__prefix":"bpmn",
+              "_id":"StartEvent_1"
+            };
+            proceso.endEvent = {
+              "incoming": {
+                "__prefix":"bpmn",
+                "__text":"SequenceFlow_id"
+              },
+              "__prefix":"bpmn",
+              "_id":"EndEvent_1"
+            }
+          }
 
-}
+          var makeBpmn = function(model){
+            // bpmn.laneset = [];
+            // for(var i=0; i < model.length; i++){
+            //   var elem = model[i];
+            // }
+            // return bpmn;
+            return recursivoFlujo(recursivoBalance(recursivoAgregarId(model)),0);
 
-module.exports = {
-  init : init,
-  makeBpmn : makeBpmn,
-  getActors : getActors,
-  filtros:filtros,
-  procesar:procesar_nivel,
-  start : start,
-  obtenerLanes : obtenerLanes,
-  obtenerTareas : obtenerTareas,
-  proceso : proceso
-}
+          }
+
+          module.exports = {
+            init : init,
+            makeBpmn : makeBpmn,
+            getActors : getActors,
+            filtros:filtros,
+            procesar:procesar_nivel,
+            start : start,
+            obtenerLanes : obtenerLanes,
+            obtenerTareas : obtenerTareas,
+            proceso : proceso
+          }

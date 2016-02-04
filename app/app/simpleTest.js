@@ -3,6 +3,12 @@ var makeBpmn = require("./makeBpmn");
 var _ = require("underscore");
 var prettyjson = require('prettyjson');
 
+var x2js = require('x2js'); //new X2JS();
+var conv = new x2js();
+// conv.json2xml_str(json);
+
+
+
 
 
 
