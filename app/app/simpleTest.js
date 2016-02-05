@@ -7,6 +7,8 @@ var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 // conv.json2xml_str(json);
 
+var pd = require('pretty-data').pd;
+
 
 
 
@@ -78,5 +80,7 @@ modelo = makeBpmn.recursivoAgregarId(modelo);
 _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
-_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
-//_.map(makeBpmn.proceso, function(elem){ console.log(elem); })
+// _.map(makeBpmn.proceso, function(elem){ console.log(">>>"+elem); })
+console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
+// _.map(makeBpmn.proceso, function(elem){ console.log(pd.xml(conv.json2xml_str(elem))); })
+// _.map(makeBpmn.proceso, function(elem){ console.log(elem); })
