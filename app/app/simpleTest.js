@@ -7,14 +7,19 @@ var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 // conv.json2xml_str(json);
 
-var pd = require('pretty-data').pd;
-
 
 
 
 
 
 var textosPruebas = [
+/*
+  "el cocinero cocina pedido. " +
+  "el mozo entraga el pedido. " +
+  "el cliente come la comida. " +
+  "el mozo cobra al cliente.  " +
+  "el cliente paga."
+*/
 "el cocinero cocina pedido. " +
 "al mismo tiempo, 1 el mozo sirve pedido. 2 la hermana es servida en la mesa. " +
 "si se cumple, hayTrabajo entonces el mozo trabaja. si no el cocinero canta. " +
@@ -75,8 +80,10 @@ var modelo = parseAllText(textosPruebas)[0];
 makeBpmn.start();
 modelo = makeBpmn.recursivoAgregarId(modelo);
 
+//console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
 //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); })
+//console.log("######################### PROCESO ##################################");
 _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
