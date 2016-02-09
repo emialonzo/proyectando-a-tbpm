@@ -6,6 +6,13 @@ var prettyjson = require('prettyjson');
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 // conv.json2xml_str(json);
+var pd = require('pretty-data').pd;
+var fs = require('fs');
+var Viz = require('viz.js');
+
+
+
+
 
 
 
@@ -21,7 +28,7 @@ var textosPruebas = [
   "el cliente paga."
 */
 "el cocinero cocina pedido. " +
-"al mismo tiempo, 1 el mozo sirve pedido. 2 la hermana es servida en la mesa. " +
+// "al mismo tiempo, 1 el mozo sirve pedido. 2 la hermana es servida en la mesa. " +
 "si se cumple, hayTrabajo entonces el mozo trabaja. si no el cocinero canta. " +
 "la hermana baila la gracamiglia."
 /*
@@ -76,8 +83,42 @@ function makeAllNivel(lista){
 
 parser.init();
 var modelo = parseAllText(textosPruebas)[0];
+
+console.log("**************************************************************************************");
+console.log("***************************************** Modelo ***********************************************");
+console.log("**************************************************************************************");
+console.log(pd.json(modelo));
+console.log("**************************************************************************************");
+console.log("***************************************** Transformado ***********************************************");
+console.log("**************************************************************************************");
+modelo = makeBpmn.makeBpmn(modelo);
+console.log(modelo);
+var file = makeBpmn.toDot(modelo);
+console.log("**************************************************************************************");
+console.log("***************************************** fin *****************************************");
+console.log("**************************************************************************************");
+fs.writeFile("modelo.txt", "file", function (err) {
+  if (err){
+    console.log(err);
+    return console.log(err);
+  }
+
+  console.log("se guardo el dot");
+});
+console.log(file);
+// console.log(Viz(file, { format: "svg" }));
+// result = Viz(file, { format: "svg" });
+// fs.writeFile('modelo.svg', Viz(file, { format: "svg" }), function (err) {
+//   if (err) return console.log(err);
+//   console.log("se guardo el svg");
+// });
+
+process.exit();
+
+
 //console.log(modelo);
 makeBpmn.start();
+
 modelo = makeBpmn.recursivoAgregarId(modelo);
 
 //console.log("######################### MODELO ##################################");
@@ -89,5 +130,6 @@ _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
 _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
 // _.map(makeBpmn.proceso, function(elem){ console.log(">>>"+elem); })
 console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
+
 // _.map(makeBpmn.proceso, function(elem){ console.log(pd.xml(conv.json2xml_str(elem))); })
 // _.map(makeBpmn.proceso, function(elem){ console.log(elem); })

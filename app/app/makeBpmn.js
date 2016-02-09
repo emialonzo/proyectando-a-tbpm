@@ -132,13 +132,13 @@ function recursivoFlujo(nodo, ant, sig){
     if(largo_secuencia>1){
       // console.log("::: antes:nodo.sentencia[0]");
       // console.log(nodo.sentencia[0]);
-      nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, nodo.sentencia[1].id);
+      nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
       // console.log("::: despues:nodo.sentencia[0]");
       // console.log(nodo.sentencia[0].tipo);
       for (var i = 1; i < largo_secuencia - 1; i++) {
         // console.log("::: antes:nodo.sentencia[i]");
         // console.log( nodo.sentencia[i]);
-        nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.sentencia[i-1].sig, nodo.sentencia[i+1].id);
+        nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.sentencia[i-1].sig, [nodo.sentencia[i+1].id]);
         // console.log("::: despues:nodo.sentencia[i]");
         // console.log(nodo.sentencia[i].tipo);
       }
@@ -154,7 +154,7 @@ function recursivoFlujo(nodo, ant, sig){
     nodo.sig = [];
     for (var i = 0; i < nodo.sentencia.length ; i++) {
       nodo.sig.push(nodo.sentencia[i].id);
-      nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.id, sig);
+      nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.id], sig);
     }
   }
   return nodo;
@@ -165,7 +165,10 @@ function dotTask(nodo){
 }
 
 function dotGw(nodo){
-  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.tipo + "\", , shape=diamond];";
+  if(nodo.tipo == "cierro"){
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia + "(" + nodo.ref + ")" + "\",  shape=diamond];";
+  }
+  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.tipo + "\",  shape=diamond];";
 }
 
 function dotFlow(nodo, lista){
@@ -173,66 +176,162 @@ function dotFlow(nodo, lista){
   if(!_.isUndefined(nodo.sig)){
     console.log("tipo:" + nodo.tipo + "\tid:" + nodo.id + " siguientes:" + nodo.sig);
     var aux;
+    console.log(">>>>>>>> " + nodo.sig.length);
     for (var i = 0; i < nodo.sig.length; i++) {
       aux = nodo.id + " -> " + nodo.sig[i] + ";";
+      console.log(">Agregando< " + aux);
       ret.push(aux);
+      // lista.push(aux);
     }
   }
   return ret;
 }
 
+var taskdot={};
+var gwdot=[];
+var  flujodot=[];
+
+
+function dotRec(nodo){
+  console.log("Aplicacion recursiva " +flujodot.length);
+  // console.log(nodo);
+  //FIXME
+  //no cuento nodos indefinidos, no deberia haberlos
+  if(_.isUndefined(nodo)) {console.log("moco");return;}
+  // console.log(">>>>><>>" + pd.json(nodo));
+  if(nodo.tipo=="task") {
+    //agrego tarea al lane
+    if(_.isUndefined(taskdot[nodo.sentencia.actor])){
+      taskdot[nodo.sentencia.actor] = [];
+    }
+    taskdot[nodo.sentencia.actor].push(dotTask(nodo));
+
+    //agrego su flujo
+    // var getFlujo = dotFlow(nodo);
+    // console.log("-->" + getFlujo);
+    // flujo = _.union(flujo, getFlujo);
+    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
+  }
+  else if(nodo.tipo=="secuencia"){
+    //para cada elemento que tenga dentro le aplico la funcion
+    // for (var i = 0; i < nodo.sentencia.length; i++) {
+    //   dotRec(nodo.sentencia[i]);
+    // }
+    _.map(_.compact(nodo.sentencia), dotRec);
+  }else if(nodo.tipo=="cierro"){
+    //agrego shape para la compuerta
+    gwdot.push(dotGw(nodo));
+
+    //agrego flujo
+    // flujo = _.union(flujo, dotFlow(nodo));
+    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
+  }
+  else if(isGateway(nodo.tipo)){
+    //agrego shape
+    gwdot.push(dotGw(nodo));
+
+    //agrego flujo
+    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
+    // flujo = _.union(flujo,dotFlow(nodo));
+
+    //invoco la funcion para cada nodo siguiente
+    // for (var i = 0; i < nodo.sentencia.length; i++) {
+    //   dotRec(nodo.sentencia[i]);
+    // }
+    _.map(_.compact(nodo.sentencia), dotRec);
+  }
+};
+
+var file = [];
+function printFile() {
+  file.push("digraph G01 {");
+  file.push("rankdir=LR; node [shape=box, style=rounded];");
+  for (var key in taskdot) {
+     var listaTareas = taskdot[key];
+      file.push("subgraph cluster" + key + " { rankdir=LR;")
+      file.push("labeljust=l;");
+      file.push("label=\"Lane:" + key  + "\";");
+     for (var prop in listaTareas) {
+       file.push(listaTareas[prop]);
+        // console.log(prop + " = " );
+     }
+     file.push("");
+     file.push("}");
+     file.push("");
+  }
+  _.map(gwdot, function(elem){file.push(elem);});
+  _.map(flujodot, function(elem){file.push(elem);});
+  file.push("}");
+}
+
+
+var secuencias = {};
+function ajustarSecuencia(nodo){
+  if(nodo.tipo=="task"){
+    return [nodo.id];
+  }
+  if(nodo.tipo=="cierro"){
+    return [nodo.id];
+  }
+  else if(nodo.tipo=="secuencia"){
+    var sig;
+    for (var i = nodo.sentencia.length-1; i >= 0 ; i--) {
+      sig = ajustarSecuencia(nodo.sentencia[i]);
+    }
+    secuencias[nodo.id] = sig;
+  }
+  else if(isGateway(nodo.tipo)){
+    for (var i = 0; i < nodo.sentencia.length; i++) {
+      ajustarSecuencia(nodo.sentencia[i]);
+    }
+    return [nodo.id];
+  }
+}
+
+function ajustarDot(){
+  var flujito = [];
+  for (var i = 0; i < flujodot.length; i++) {
+    var str = flujodot[i];
+    var clave = str.substring(0, str.lastIndexOf("-"));
+    clave = clave.replace(/\s/g, '');
+    if(flujito.length == 0){
+      flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
+      flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
+      flujito.push("");
+      flujito.push("S -> " + clave + " ;");
+    }
+    if(_.isUndefined(secuencias[clave])){
+      flujito.push(str);
+    }else{
+      var mask = str.substring(0,str.lastIndexOf(">")+1);
+      for (var j = 0; j < secuencias[clave].length; j++) {
+        flujito.push(mask + secuencias[clave][j]);
+      }
+    }
+  }
+  return flujito;
+}
+
+
 var toDot = function(modelo){
-  var task={}, gw=[], flujo=[];
-  console.log(flujo + flujo.length);
+  file = [];
+  console.log(flujodot + flujodot.length);
   console.log("Convertir a DOT");
   console.log(modelo);
-  function dotRec(nodo){
-    console.log("Aplicacion recursiva " +flujo.length);
-    // console.log(nodo);
-    //FIXME
-    //no cuento nodos indefinidos, no deberia haberlos
-    if(_.isUndefined(nodo)) {console.log("moco");return;}
-    // console.log(">>>>><>>" + pd.json(nodo));
-    if(nodo.tipo=="task") {
-      //agrego tarea al lane
-      if(_.isUndefined(task[nodo.sentencia.actor])){
-        task[nodo.sentencia.actor] = [];
-      }
-      task[nodo.sentencia.actor].push(dotTask(nodo));
-      //agrego su flujo
-      var a = dotFlow(nodo);
-      console.log("-->" + a);
-      flujo = _.union(flujo, a);
-    }
-    else if(nodo.tipo=="secuencia"){
-      //para cada elemento que tenga dentro le aplico la funcion
-      // for (var i = 0; i < nodo.sentencia.length; i++) {
-      //   dotRec(nodo.sentencia[i]);
-      // }
-      _.map(_.compact(nodo.sentencia), dotRec);
-    }else if(nodo.tipo=="cierro"){
-      //agrego shape para la compuerta
-      gw.push(dotGw(nodo));
-      //agrego flujo
-      flujo = _.union(flujo, dotFlow(nodo));
-    }
-    else if(isGateway(nodo.tipo)){
-      //agrego shape
-      gw.push(dotGw(nodo));
-      //agrego flujo
-      flujo = _.union(flujo,dotFlow(nodo));
-      //invoco la funcion para cada nodo siguiente
-      for (var i = 0; i < nodo.sentencia.length; i++) {
-        dotRec(nodo.sentencia[i]);
-      }
-    }
-  };
-    dotRec(modelo);
-    console.log("---> depurando");
-    console.log(task);
-    console.log(gw);
-    console.log(flujo);
-  }
+
+  dotRec(modelo);
+  console.log("---> depurando" + flujodot.length);
+  console.log(taskdot);
+  console.log(gwdot);
+  ajustarSecuencia(modelo);
+  flujodot = ajustarDot();
+  console.log(flujodot);
+  console.log(" ************* Mostrando dot ************* ");
+  printFile();
+  console.log(file);
+  return file.join("\n");
+  // return file.join("\n");
+}
 
 
 
@@ -264,6 +363,8 @@ function recursivoBalance(modelo){
   }
   return ret;
 }
+
+
 
 function procesar_nivel(lista){
   var ret = [];
