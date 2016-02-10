@@ -270,14 +270,11 @@ function printFile() {
 function ajustarSecuencia(nodo){
 
   secuencias = {};
-  console.log(pd.json(nodo));
   ajustarSecuenciaRecursivo(nodo);
-  console.log(pd.json(secuencias));
   return secuencias;
 
   function ajustarSecuenciaRecursivo(nodo){
       if(nodo.tipo=="secuencia"){
-        console.log("******************" + nodo.id + "---->" + (nodo.id +1) );
         secuencias[nodo.id] = nodo.id +1;
         for (var i = 0; i < nodo.sentencia.length; i++) {
           ajustarSecuenciaRecursivo(nodo.sentencia[i]);
@@ -293,6 +290,7 @@ function ajustarSecuencia(nodo){
 
 }
 
+//inserta dot con los flujos iniciales, y por cada flujo detectado, controla que la parte de la derecha del flujo no sea una secuenca
 function ajustarDot(flujodot, secuencias){
   var flujito = [];
   flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
@@ -302,16 +300,7 @@ function ajustarDot(flujodot, secuencias){
   var clave = str.substring(0, str.lastIndexOf("-"));
   flujito.push("S -> " + clave + " ;");
 
-  // flujodot.forEach(function(elem) {
-  //   flujito.push(elem);
-  // });
-
-  console.info("Secuencia es " + pd.json(secuencias));
-  console.info("::" + secuencias["3"]);
-  console.info("::" + _.isUndefined(secuencias["3"]));
-  console.info("::" + _.isUndefined(secuencias["4"]));
-
-  for (var i = 1; i < flujodot.length; i++) {
+  for (var i = 0; i < flujodot.length; i++) {
     var str = flujodot[i];
 
     var clave = str.substring(str.lastIndexOf(">")+1, str.lastIndexOf(";")); //parte derecha
