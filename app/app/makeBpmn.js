@@ -121,14 +121,14 @@ function recursivoFlujo(nodo, ant, sig){
   }
   // console.log(":: Buscando flujo en el nodo ");
   // console.info(nodo);
-  console.log("::: " + ant + "<---" + nodo.id + "--->" + sig );
+  // console.log("::: " + ant + "<---" + nodo.id + "--->" + sig );
 
   nodo.sig = sig;
   nodo.ant = ant;
 
   if(nodo.tipo == "secuencia"){
     var largo_secuencia = nodo.sentencia.length;
-    console.log("largo:" + largo_secuencia);
+    // console.log("largo:" + largo_secuencia);
     if(largo_secuencia>1){
       // console.log("::: antes:nodo.sentencia[0]");
       // console.log(nodo.sentencia[0]);
@@ -174,12 +174,12 @@ function dotGw(nodo){
 function dotFlow(nodo, lista){
   var ret = [];
   if(!_.isUndefined(nodo.sig)){
-    console.log("tipo:" + nodo.tipo + "\tid:" + nodo.id + " siguientes:" + nodo.sig);
+    // console.log("tipo:" + nodo.tipo + "\tid:" + nodo.id + " siguientes:" + nodo.sig);
     var aux;
-    console.log(">>>>>>>> " + nodo.sig.length);
+    // console.log(">>>>>>>> " + nodo.sig.length);
     for (var i = 0; i < nodo.sig.length; i++) {
       aux = nodo.id + " -> " + nodo.sig[i] + ";";
-      console.log(">Agregando< " + aux);
+      // console.log(">Agregando< " + aux);
       ret.push(aux);
       // lista.push(aux);
     }
@@ -192,7 +192,7 @@ var gwdot=[];
 var  flujodot=[];
 
 
-function dotRec(nodo){
+function dotRec(nodo, flujodot){
   console.log("Aplicacion recursiva " +flujodot.length);
   // console.log(nodo);
   //FIXME
@@ -217,7 +217,7 @@ function dotRec(nodo){
     // for (var i = 0; i < nodo.sentencia.length; i++) {
     //   dotRec(nodo.sentencia[i]);
     // }
-    _.map(_.compact(nodo.sentencia), dotRec);
+    _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
   }else if(nodo.tipo=="cierro"){
     //agrego shape para la compuerta
     gwdot.push(dotGw(nodo));
@@ -238,7 +238,7 @@ function dotRec(nodo){
     // for (var i = 0; i < nodo.sentencia.length; i++) {
     //   dotRec(nodo.sentencia[i]);
     // }
-    _.map(_.compact(nodo.sentencia), dotRec);
+    _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
   }
 };
 
@@ -265,48 +265,72 @@ function printFile() {
 }
 
 
-var secuencias = {};
+// var secuencias = {};
+//construyo un objeto que para cada nodo de tipo secuencia le asocia el nodo siguiente
 function ajustarSecuencia(nodo){
-  if(nodo.tipo=="task"){
-    return [nodo.id];
+
+  secuencias = {};
+  console.log(pd.json(nodo));
+  ajustarSecuenciaRecursivo(nodo);
+  console.log(pd.json(secuencias));
+  return secuencias;
+
+  function ajustarSecuenciaRecursivo(nodo){
+      if(nodo.tipo=="secuencia"){
+        console.log("******************" + nodo.id + "---->" + (nodo.id +1) );
+        secuencias[nodo.id] = nodo.id +1;
+        for (var i = 0; i < nodo.sentencia.length; i++) {
+          ajustarSecuenciaRecursivo(nodo.sentencia[i]);
+        }
+      }
+      else if(isGateway(nodo.tipo)){
+        for (var i = 0; i < nodo.sentencia.length; i++) {
+          ajustarSecuenciaRecursivo(nodo.sentencia[i]);
+        }
+      }
   }
-  if(nodo.tipo=="cierro"){
-    return [nodo.id];
-  }
-  else if(nodo.tipo=="secuencia"){
-    var sig;
-    for (var i = nodo.sentencia.length-1; i >= 0 ; i--) {
-      sig = ajustarSecuencia(nodo.sentencia[i]);
-    }
-    secuencias[nodo.id] = sig;
-  }
-  else if(isGateway(nodo.tipo)){
-    for (var i = 0; i < nodo.sentencia.length; i++) {
-      ajustarSecuencia(nodo.sentencia[i]);
-    }
-    return [nodo.id];
-  }
+
+
 }
 
-function ajustarDot(){
+function ajustarDot(flujodot, secuencias){
   var flujito = [];
-  for (var i = 0; i < flujodot.length; i++) {
+  flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
+  flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
+  flujito.push("");
+  var str = flujodot[0];
+  var clave = str.substring(0, str.lastIndexOf("-"));
+  flujito.push("S -> " + clave + " ;");
+
+  // flujodot.forEach(function(elem) {
+  //   flujito.push(elem);
+  // });
+
+  console.info("Secuencia es " + pd.json(secuencias));
+  console.info("::" + secuencias["3"]);
+  console.info("::" + _.isUndefined(secuencias["3"]));
+  console.info("::" + _.isUndefined(secuencias["4"]));
+
+  for (var i = 1; i < flujodot.length; i++) {
     var str = flujodot[i];
-    var clave = str.substring(0, str.lastIndexOf("-"));
+
+    var clave = str.substring(str.lastIndexOf(">")+1, str.lastIndexOf(";")); //parte derecha
+    // var clave = str.substring(0, str.lastIndexOf("-")); //parte de izquierda
+
     clave = clave.replace(/\s/g, '');
-    if(flujito.length == 0){
-      flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
-      flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
-      flujito.push("");
-      flujito.push("S -> " + clave + " ;");
-    }
-    if(_.isUndefined(secuencias[clave])){
+    console.info("La clave es " + clave);
+
+    if(_.isUndefined(secuencias["" + clave])){
+      console.info("NO SEC");
       flujito.push(str);
     }else{
-      var mask = str.substring(0,str.lastIndexOf(">")+1);
-      for (var j = 0; j < secuencias[clave].length; j++) {
-        flujito.push(mask + secuencias[clave][j]);
-      }
+      console.info("SEC");
+      var mask = str.substring(0,str.lastIndexOf(">")+1); //parte derecha
+      // var mask = str.substring(0,str.lastIndexOf(">")+1); //parte izquierda
+      flujito.push(mask + secuencias[clave] + ";");
+      // for (var j = 0; j < secuencias[clave].length; j++) {
+      //   console.info("Pripitico " + mask + secuencias[clave][j]);
+      // }
     }
   }
   return flujito;
@@ -315,20 +339,29 @@ function ajustarDot(){
 
 var toDot = function(modelo){
   file = [];
-  console.log(flujodot + flujodot.length);
-  console.log("Convertir a DOT");
-  console.log(modelo);
+  taskdot={};
+  gwdot=[];
+  flujodot=[];
+  secuencias = {};
 
-  dotRec(modelo);
-  console.log("---> depurando" + flujodot.length);
-  console.log(taskdot);
-  console.log(gwdot);
-  ajustarSecuencia(modelo);
-  flujodot = ajustarDot();
-  console.log(flujodot);
+  // console.log(flujodot + flujodot.length);
+  // console.log("Convertir a DOT");
+  // console.log(modelo);
+
+  dotRec(modelo, flujodot);
+  // console.log("---> depurando" + flujodot.length);
+  // console.log(taskdot);
+  // console.log(gwdot);
+  secuencias = ajustarSecuencia(modelo);
+  console.error("---SECUENCIAS---");
+  console.error(secuencias);
+  console.error("------");
+
+  flujodot = ajustarDot(flujodot, secuencias);
+  // console.log(flujodot);
   console.log(" ************* Mostrando dot ************* ");
-  printFile();
-  console.log(file);
+  printFile(flujodot);
+  // console.log(file);
   return file.join("\n");
   // return file.join("\n");
 }

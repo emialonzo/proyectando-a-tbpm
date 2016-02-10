@@ -22,6 +22,7 @@ function conversion(){
   console.log("getAbstractModel");
   var text = $("#id-modelo-texto").val();
   var modelo = parser.parse(text);
+  $("#id-bpmn-model").html("<p>Cargando imagen</p>");
   $("#id-modelo-abstracto").text(jsonToString(modelo));
   // console.log(makeBpmn.getActors(modelo));
   // _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
@@ -30,9 +31,12 @@ function conversion(){
   var bpmn = makeBpmn.makeBpmn(modelo);
   var file = makeBpmn.toDot(bpmn);
   console.error(file);
+  $("#id-dot").html(file);
+
   // image = Viz(""+file, { format: "png-image-element" });
   image = Viz(file, { format: "png-image-element" });
-  console.error(image);
+
+  // console.error(image);
   $("#id-bpmn-model").html(image);
   // document.body.appendChild(image);
 
