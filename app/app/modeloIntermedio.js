@@ -2,6 +2,7 @@ var _ = require("underscore");
 var pd = require('pretty-data').pd;
 
 var globalId = 1;
+var dicccionarioId = {};
 
 var cierrogw = function (elem){
   return {
@@ -22,21 +23,25 @@ function isGateway(tipo){
   return tipo in gateway;
 }
 
-function findById(modelo, id){
-  if(modelo.id == id){
-    return modelo;
-  }
-  else {
-    if((nodo.tipo == "secuencia") || (isGateway(nodo.tipo))){
-      for (var i = 0; i < nodo.sentencia.length; i++) {
-        var encontrado = findById(nodo.sentencia[i], id);
-        if(!_.isUndefined(encontrado)){ //modelo.sig.push(.id);
-          return encontrado;
-        }
-      }
-    }
-  }
-  return;
+// function findById(modelo, id){
+//   if(modelo.id == id){
+//     return modelo;
+//   }
+//   else {
+//     if((nodo.tipo == "secuencia") || (isGateway(nodo.tipo))){
+//       for (var i = 0; i < nodo.sentencia.length; i++) {
+//         var encontrado = findById(nodo.sentencia[i], id);
+//         if(!_.isUndefined(encontrado)){ //modelo.sig.push(.id);
+//           return encontrado;
+//         }
+//       }
+//     }
+//   }
+//   return;
+// }
+
+function findById(id){
+  return dicccionarioId[id];
 }
 
 //recursivoFlujo
@@ -90,14 +95,16 @@ function recursivoFlujo(nodo, ant, sig){
 }
 
 //toma un modelo y a cada elemento le agrega un id
-function recursivoAgregarId(modelo){
+function asignarId(modelo){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
     elem.id = globalId++;
-    // console.log("--->" , globalId , " " , JSON.stringify(elem) );
+    dicccionarioId[elem.id] = elem;
     if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
+      elem.sentencia = asignarId(elem.sentencia);
+    } else if (elem.tipo == "condicion"){
+      elem.sentencia = asignarId(elem.sentencia);
     }
     ret.push(elem);
   }
@@ -142,10 +149,11 @@ console.log("Modulo modelo intermedio");
 
 module.exports = {
   isGateway : isGateway ,
-  asignarId : recursivoAgregarId,
+  asignarId : asignarId,
   balancearModelo : recursivoBalance,
   asignarFlujo : asignarFlujo,
   procesarModelo : procesarModelo,
+  findById : findById,
 
 
 };
