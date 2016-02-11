@@ -1,11 +1,13 @@
 var PEG = require("pegjs");
 var fs = require("fs");
 var _ = require("underscore");
-var prettyjson = require('prettyjson');
 var pd = require('pretty-data').pd;
+var toDot = require('./makeDot').toDot;
+var intermedio = require('./modeloIntermedio');
 
 var gramatica = null;
 var parser = null;
+
 var globalId = 1;
 var Task_globalID = 1;
 var SequenceFlow_GlobalID = 1;
@@ -24,369 +26,7 @@ var proceso = {
   sequenceFlow : []
 };
 var isPrimeraTarea = true;
-
-var filtroXOR = function (memo, elem){
-  console.log("*****************************");
-  console.log(elem);
-  var list = [];
-
-  if((!_.isUndefined(elem.tipo)) && (elem.tipo == "xor")){
-    console.error("ES xor");
-    var cierroXor = {
-      "tipo": "CierroXOR"
-    };
-    console.log("elem.sentencia:" + JSON.stringify(elem.sentencia));
-    // list = _.union([elem], filtroXOR([], elem.sentencia), [cierroXor]);
-
-  }
-  else if (!_.isUndefined(elem.condicion)) {
-    console.info("condicion");
-    list.push(filtroXOR(memo , elem.sentencia));
-  }
-  else {
-    console.info("NO es xor, es: " + elem.tipo);
-    list.push(elem);
-  }
-  return _.union(memo, list);
-}
-
-function agregarId(modelo){
-
-};
-
-var cierro = function (tag){
-  return {
-    "tipo": "cierro",
-    "sentencia" : "Nodo para balanceo de compuertas.",
-    "tag": tag,
-    "id": globalId++
-  }
-}
-var cierrogw = function (elem){
-  return {
-    "tipo": "cierro",
-    "sentencia" : elem.tipo,
-    "tag": elem.tipo,
-    "ref": elem.id,
-    "id": globalId++
-  }
-}
-
-function iterarModelo(modelo, funcionProcesarNodo){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    elem.id = globalId++;
-    console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
-    }else if (elem.tipo != "task") {
-      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
-    }
-    ret.push(elem);
-  }
-  return ret;
-}
-
-// var gateway = ['xor','and'];
-var gateway = {
-  'xor':true,
-  'and':true
-}
-function isGateway(tipo){
-  return tipo in gateway;
-}
-
-function findById(modelo, id){
-  if(modelo.id == id){
-    return modelo;
-  }
-  else {
-    if((nodo.tipo == "secuencia") || (isGateway(nodo.tipo))){
-      for (var i = 0; i < nodo.sentencia.length; i++) {
-        var encontrado = findById(nodo.sentencia[i], id);
-        if(!_.isUndefined(encontrado)){ //modelo.sig.push(.id);
-          return encontrado;
-        }
-      }
-    }
-  }
-  return;
-}
-
-//recursivoFlujo
-function recursivoFlujo(nodo, ant, sig){
-  if(_.isUndefined(nodo)){
-    return ;
-  }
-  // console.log(":: Buscando flujo en el nodo ");
-  // console.info(nodo);
-  // console.log("::: " + ant + "<---" + nodo.id + "--->" + sig );
-
-  nodo.sig = sig;
-  nodo.ant = ant;
-
-  if(nodo.tipo == "secuencia"){
-    var largo_secuencia = nodo.sentencia.length;
-    // console.log("largo:" + largo_secuencia);
-    if(largo_secuencia>1){
-      // console.log("::: antes:nodo.sentencia[0]");
-      // console.log(nodo.sentencia[0]);
-      nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
-      // console.log("::: despues:nodo.sentencia[0]");
-      // console.log(nodo.sentencia[0].tipo);
-      for (var i = 1; i < largo_secuencia - 1; i++) {
-        // console.log("::: antes:nodo.sentencia[i]");
-        // console.log( nodo.sentencia[i]);
-        nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.sentencia[i-1].sig, [nodo.sentencia[i+1].id]);
-        // console.log("::: despues:nodo.sentencia[i]");
-        // console.log(nodo.sentencia[i].tipo);
-      }
-      nodo.sentencia[largo_secuencia-1]
-        = recursivoFlujo(nodo.sentencia[largo_secuencia-1], nodo.sentencia[largo_secuencia-2].sig, sig);
-      // console.log(nodo.sentencia[largo_secuencia].tipo);
-    } else{
-      nodo.sentencia[0].ant = ant;
-      nodo.sentencia[0].sig = sig;
-    }
-  }
-  else if ( isGateway(nodo.tipo) ){
-    nodo.sig = [];
-    for (var i = 0; i < nodo.sentencia.length ; i++) {
-      nodo.sig.push(nodo.sentencia[i].id);
-      nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.id], sig);
-    }
-  }
-  return nodo;
-}
-
-function dotTask(nodo){
-  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\"];";
-}
-
-function dotGw(nodo){
-  if(nodo.tipo == "cierro"){
-    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia + "(" + nodo.ref + ")" + "\",  shape=diamond];";
-  }
-  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.tipo + "\",  shape=diamond];";
-}
-
-function dotFlow(nodo, lista){
-  var ret = [];
-  if(!_.isUndefined(nodo.sig)){
-    // console.log("tipo:" + nodo.tipo + "\tid:" + nodo.id + " siguientes:" + nodo.sig);
-    var aux;
-    // console.log(">>>>>>>> " + nodo.sig.length);
-    for (var i = 0; i < nodo.sig.length; i++) {
-      aux = nodo.id + " -> " + nodo.sig[i] + ";";
-      // console.log(">Agregando< " + aux);
-      ret.push(aux);
-      // lista.push(aux);
-    }
-  }
-  return ret;
-}
-
-var taskdot={};
-var gwdot=[];
-var  flujodot=[];
-
-
-function dotRec(nodo, flujodot){
-  console.log("Aplicacion recursiva " +flujodot.length);
-  // console.log(nodo);
-  //FIXME
-  //no cuento nodos indefinidos, no deberia haberlos
-  if(_.isUndefined(nodo)) {console.log("moco");return;}
-  // console.log(">>>>><>>" + pd.json(nodo));
-  if(nodo.tipo=="task") {
-    //agrego tarea al lane
-    if(_.isUndefined(taskdot[nodo.sentencia.actor])){
-      taskdot[nodo.sentencia.actor] = [];
-    }
-    taskdot[nodo.sentencia.actor].push(dotTask(nodo));
-
-    //agrego su flujo
-    // var getFlujo = dotFlow(nodo);
-    // console.log("-->" + getFlujo);
-    // flujo = _.union(flujo, getFlujo);
-    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
-  }
-  else if(nodo.tipo=="secuencia"){
-    //para cada elemento que tenga dentro le aplico la funcion
-    // for (var i = 0; i < nodo.sentencia.length; i++) {
-    //   dotRec(nodo.sentencia[i]);
-    // }
-    _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
-  }else if(nodo.tipo=="cierro"){
-    //agrego shape para la compuerta
-    gwdot.push(dotGw(nodo));
-
-    //agrego flujo
-    // flujo = _.union(flujo, dotFlow(nodo));
-    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
-  }
-  else if(isGateway(nodo.tipo)){
-    //agrego shape
-    gwdot.push(dotGw(nodo));
-
-    //agrego flujo
-    _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
-    // flujo = _.union(flujo,dotFlow(nodo));
-
-    //invoco la funcion para cada nodo siguiente
-    // for (var i = 0; i < nodo.sentencia.length; i++) {
-    //   dotRec(nodo.sentencia[i]);
-    // }
-    _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
-  }
-};
-
-var file = [];
-function printFile() {
-  file.push("digraph G01 {");
-  file.push("rankdir=LR; node [shape=box, style=rounded];");
-  for (var key in taskdot) {
-     var listaTareas = taskdot[key];
-      file.push("subgraph cluster" + key + " { rankdir=LR;")
-      file.push("labeljust=l;");
-      file.push("label=\"Lane:" + key  + "\";");
-     for (var prop in listaTareas) {
-       file.push(listaTareas[prop]);
-        // console.log(prop + " = " );
-     }
-     file.push("");
-     file.push("}");
-     file.push("");
-  }
-  _.map(gwdot, function(elem){file.push(elem);});
-  _.map(flujodot, function(elem){file.push(elem);});
-  file.push("}");
-}
-
-
-// var secuencias = {};
-//construyo un objeto que para cada nodo de tipo secuencia le asocia el nodo siguiente
-function ajustarSecuencia(nodo){
-
-  secuencias = {};
-  ajustarSecuenciaRecursivo(nodo);
-  return secuencias;
-
-  function ajustarSecuenciaRecursivo(nodo){
-      if(nodo.tipo=="secuencia"){
-        secuencias[nodo.id] = nodo.id +1;
-        for (var i = 0; i < nodo.sentencia.length; i++) {
-          ajustarSecuenciaRecursivo(nodo.sentencia[i]);
-        }
-      }
-      else if(isGateway(nodo.tipo)){
-        for (var i = 0; i < nodo.sentencia.length; i++) {
-          ajustarSecuenciaRecursivo(nodo.sentencia[i]);
-        }
-      }
-  }
-
-
-}
-
-//inserta dot con los flujos iniciales, y por cada flujo detectado, controla que la parte de la derecha del flujo no sea una secuenca
-function ajustarDot(flujodot, secuencias){
-  var flujito = [];
-  flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
-  flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
-  flujito.push("");
-  var str = flujodot[0];
-  var clave = str.substring(0, str.lastIndexOf("-"));
-  flujito.push("S -> " + clave + " ;");
-
-  for (var i = 0; i < flujodot.length; i++) {
-    var str = flujodot[i];
-
-    var clave = str.substring(str.lastIndexOf(">")+1, str.lastIndexOf(";")); //parte derecha
-    // var clave = str.substring(0, str.lastIndexOf("-")); //parte de izquierda
-
-    clave = clave.replace(/\s/g, '');
-    console.info("La clave es " + clave);
-
-    if(_.isUndefined(secuencias["" + clave])){
-      console.info("NO SEC");
-      flujito.push(str);
-    }else{
-      console.info("SEC");
-      var mask = str.substring(0,str.lastIndexOf(">")+1); //parte derecha
-      // var mask = str.substring(0,str.lastIndexOf(">")+1); //parte izquierda
-      flujito.push(mask + secuencias[clave] + ";");
-      // for (var j = 0; j < secuencias[clave].length; j++) {
-      //   console.info("Pripitico " + mask + secuencias[clave][j]);
-      // }
-    }
-  }
-  return flujito;
-}
-
-
-var toDot = function(modelo){
-  file = [];
-  taskdot={};
-  gwdot=[];
-  flujodot=[];
-  secuencias = {};
-
-  // console.log(flujodot + flujodot.length);
-  // console.log("Convertir a DOT");
-  // console.log(modelo);
-
-  dotRec(modelo, flujodot);
-  // console.log("---> depurando" + flujodot.length);
-  // console.log(taskdot);
-  // console.log(gwdot);
-  secuencias = ajustarSecuencia(modelo);
-  console.error("---SECUENCIAS---");
-  console.error(secuencias);
-  console.error("------");
-
-  flujodot = ajustarDot(flujodot, secuencias);
-  // console.log(flujodot);
-  console.log(" ************* Mostrando dot ************* ");
-  printFile(flujodot);
-  // console.log(file);
-  return file.join("\n");
-  // return file.join("\n");
-}
-
-
-
-function recursivoAgregarId(modelo){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    elem.id = globalId++;
-    console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
-    }
-    ret.push(elem);
-  }
-  return ret;
-}
-
-function recursivoBalance(modelo){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    if(isGateway(elem.tipo)){
-      modelo.unshift(cierrogw(elem));
-    }
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoBalance(elem.sentencia);
-    }
-    ret.push(elem);
-  }
-  return ret;
-}
-
-
+var globalId=9000;
 
 function procesar_nivel(lista){
   var ret = [];
@@ -418,29 +58,18 @@ function procesar_nivel(lista){
 }
 
 var makeBpmn = function(model){
-  model = recursivoAgregarId(model.sentencia);
-  model = recursivoBalance(model);
-  console.log(pd.json(model));
+  console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
+
+  model = intermedio.asignarId(model.sentencia);
+  model = intermedio.balancearModelo(model);
+  // console.log(pd.json(model));
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
-  aux.id = globalId++;
-  model = recursivoFlujo(aux, "S", "F");
+  aux.id = 9999;
+  // model = recursivoFlujo(aux, "S", "F");
+  model = intermedio.asignarFlujo(aux);
   return model;
-}
-
-var filtros = function (model){
-  var res = _.reduce(model, filtroXOR, []);
-  return res;
-}
-
-function mapJson(model, fun){
-  if(_.isArray(model)){
-    _.each(model, mapJson);
-  }
-  else{
-    procesarObject(model);
-  }
 }
 
 const task = "TASK";
@@ -712,13 +341,11 @@ var obtenerLanes = function(elem) {
             init : init,
             makeBpmn : makeBpmn,
             getActors : getActors,
-            filtros:filtros,
             procesar:procesar_nivel,
             start : start,
             obtenerLanes : obtenerLanes,
             obtenerTareas : obtenerTareas,
             proceso : proceso,
-            recursivoAgregarId:recursivoAgregarId,
             generarFlujo : generarFlujo,
             conectarEndEvent : conectarEndEvent,
             toDot : toDot,
