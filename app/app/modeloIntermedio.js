@@ -49,7 +49,21 @@ function findById(id){
 // PRE: las gw deben estar balanceadas
 // return: a cada nodo le agrega un flujo
 function asignarFlujo(modelo){
-  return recursivoFlujo(modelo, "S", "F");
+  var aux =  recursivoFlujo(modelo, "S", "F");
+
+}
+
+//chequea si alguno de los
+function ajustarSiguienteSecuencia(nodo){
+  for (var i = 0; i < nodo.sig.length; i++) {
+    sig = findById(nodo.sig[i]);
+    if (sig){
+      if(sig.tipo == "secuencia"){
+        nodo.sig[i] = sig.sig;
+      }
+    }
+
+  }
 }
 
 function recursivoFlujo(nodo, ant, sig){
@@ -62,23 +76,13 @@ function recursivoFlujo(nodo, ant, sig){
 
   if(nodo.tipo == "secuencia"){
     var largo_secuencia = nodo.sentencia.length;
-    // console.log("largo:" + largo_secuencia);
     if(largo_secuencia>1){
-      // console.log("::: antes:nodo.sentencia[0]");
-      // console.log(nodo.sentencia[0]);
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
-      // console.log("::: despues:nodo.sentencia[0]");
-      // console.log(nodo.sentencia[0].tipo);
       for (var i = 1; i < largo_secuencia - 1; i++) {
-        // console.log("::: antes:nodo.sentencia[i]");
-        // console.log( nodo.sentencia[i]);
         nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.sentencia[i-1].sig, [nodo.sentencia[i+1].id]);
-        // console.log("::: despues:nodo.sentencia[i]");
-        // console.log(nodo.sentencia[i].tipo);
       }
       nodo.sentencia[largo_secuencia-1]
         = recursivoFlujo(nodo.sentencia[largo_secuencia-1], nodo.sentencia[largo_secuencia-2].sig, sig);
-      // console.log(nodo.sentencia[largo_secuencia].tipo);
     } else{
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;

@@ -11,14 +11,8 @@ var toDot = function(modelo){
   flujodot=[];
   secuencias = {};
 
-  // console.log(flujodot + flujodot.length);
-  // console.log("Convertir a DOT");
-  // console.log(modelo);
-
   dotRec(modelo, flujodot);
-  // console.log("---> depurando" + flujodot.length);
-  // console.log(taskdot);
-  // console.log(gwdot);
+
   secuencias = ajustarSecuencia(modelo);
   console.error("---SECUENCIAS---");
   console.error(secuencias);
@@ -46,24 +40,13 @@ function ajustarDot(flujodot, secuencias){
 
   for (var i = 0; i < flujodot.length; i++) {
     var str = flujodot[i];
-
     var clave = str.substring(str.lastIndexOf(">")+1, str.lastIndexOf(";")); //parte derecha
-    // var clave = str.substring(0, str.lastIndexOf("-")); //parte de izquierda
-
     clave = clave.replace(/\s/g, '');
-    console.info("La clave es " + clave);
-
     if(_.isUndefined(secuencias["" + clave])){
-      console.info("NO SEC");
       flujito.push(str);
     }else{
-      console.info("SEC");
       var mask = str.substring(0,str.lastIndexOf(">")+1); //parte derecha
-      // var mask = str.substring(0,str.lastIndexOf(">")+1); //parte izquierda
       flujito.push(mask + secuencias[clave] + ";");
-      // for (var j = 0; j < secuencias[clave].length; j++) {
-      //   console.info("Pripitico " + mask + secuencias[clave][j]);
-      // }
     }
   }
   return flujito;
@@ -77,16 +60,14 @@ var  flujodot=[];
 
 function dotRec(nodo, flujodot){
   //FIXME
-  //no cuento nodos indefinidos, no deberia haberlos
   if(_.isUndefined(nodo)) {console.log("FIXME");return;}
-  // console.log(">>>>><>>" + pd.json(nodo));
+
   if(nodo.tipo=="task") {
     //agrego tarea al lane
     if(_.isUndefined(taskdot[nodo.sentencia.actor])){
       taskdot[nodo.sentencia.actor] = [];
     }
     taskdot[nodo.sentencia.actor].push(dotTask(nodo));
-
     _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
   }
   else if(nodo.tipo=="secuencia"){
@@ -94,9 +75,7 @@ function dotRec(nodo, flujodot){
   }else if(nodo.tipo=="cierro"){
     //agrego shape para la compuerta
     gwdot.push(dotGw(nodo));
-
     //agrego flujo
-    // flujo = _.union(flujo, dotFlow(nodo));
     _.map(dotFlow(nodo), function(elem){flujodot.push(elem);});
   }
   else if(isGateway(nodo.tipo)){
@@ -114,7 +93,7 @@ function printFile() {
   file.push("rankdir=LR; node [shape=box, style=rounded];");
   for (var key in taskdot) {
      var listaTareas = taskdot[key];
-      file.push("subgraph cluster" + key + " { rankdir=LR;")
+      file.push("subgraph lane" + key + " { rankdir=LR;")
       file.push("labeljust=l;");
       file.push("label=\"Lane:" + key  + "\";");
      for (var prop in listaTareas) {
