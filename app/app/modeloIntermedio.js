@@ -124,9 +124,9 @@ function asignarIdCondicion(modelo){
     elem.id = globalId++;
     dicccionarioId[elem.id] = elem;
     if(elem.sentencia instanceof Array){
-      elem.sentencia = asignarId(elem.sentencia);
+      elem.sentencia = asignarIdCondicion(elem.sentencia);
     } else if (elem.tipo == "condicion"){
-      elem.sentencia = asignarId(elem.sentencia);
+      elem.sentencia = asignarIdCondicion(elem.sentencia);
     }
     ret.push(elem);
   }
