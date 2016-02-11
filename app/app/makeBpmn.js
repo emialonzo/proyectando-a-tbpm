@@ -1,10 +1,13 @@
 var PEG = require("pegjs");
 var fs = require("fs");
 var _ = require("underscore");
-var prettyjson = require('prettyjson');
+var pd = require('pretty-data').pd;
+var toDot = require('./makeDot').toDot;
+var intermedio = require('./modeloIntermedio');
 
 var gramatica = null;
 var parser = null;
+
 var globalId = 1;
 var Task_globalID = 1;
 var SequenceFlow_GlobalID = 1;
@@ -23,138 +26,7 @@ var proceso = {
   sequenceFlow : []
 };
 
-var filtroXOR = function (memo, elem){
-  console.log("*****************************");
-  console.log(elem);
-  var list = [];
-
-  if((!_.isUndefined(elem.tipo)) && (elem.tipo == "xor")){
-    console.error("ES xor");
-    var cierroXor = {
-      "tipo": "CierroXOR"
-    };
-    console.log("elem.sentencia:" + JSON.stringify(elem.sentencia));
-    // list = _.union([elem], filtroXOR([], elem.sentencia), [cierroXor]);
-
-  }
-  else if (!_.isUndefined(elem.condicion)) {
-    console.info("condicion");
-    list.push(filtroXOR(memo , elem.sentencia));
-  }
-  else {
-    console.info("NO es xor, es: " + elem.tipo);
-    list.push(elem);
-  }
-  return _.union(memo, list);
-}
-
-function agregarId(modelo){
-
-};
-
-var cierro = function (tag){
-  return {
-    "tipo": "cierro",
-    "sentencia" : "Nodo para balanceo de compuertas.",
-    "tag": tag,
-    "id": globalId++
-  }
-}
-var cierrogw = function (elem){
-  return {
-    "tipo": "cierro",
-    "sentencia" : "Nodo para balanceo de compuertas.",
-    "tag": elem.tipo,
-    "ref": elem.id,
-    "id": globalId++
-  }
-}
-
-
-// noList();
-
-
-function iterarModelo(modelo, funcionProcesarNodo){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    elem.id = globalId++;
-    //console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
-    }else if (elem.tipo != "task") {
-      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
-    }
-    ret.push(elem);
-  }
-  return ret;
-}
-
-// var gateway = ['xor','and'];
-var gateway = {
-  'xor':true,
-  'and':true
-}
-function isGateway(tipo){
-  return tipo in gateway;
-}
-
-
-function recursivoBalance(modelo){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    //elem.id = globalId++;
-    // console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(isGateway(elem.tipo)){
-      modelo.unshift(cierrogw(elem));
-    }
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoBalance(elem.sentencia);
-    }else if (elem.tipo == "condicion") {
-      elem.sentencia = recursivoBalance([elem.sentencia]).pop();
-    }
-    ret.push(elem);
-  }
-  return ret;
-}
-
-// recursivoFlujo(modelo, 0)
-function recursivoFlujo(modelo, anterior){
-  var ret = [];
-  while(modelo.length >0){
-    var elem = modelo.shift();
-    elem.anterior = anterior;
-    //console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoFlujo(elem.sentencia, elem.id);
-    }else if (elem.tipo == "condicion") {
-      elem.sentencia = recursivoFlujo([elem.sentencia], elem.anterior).pop();
-    }
-    anterior = elem.id;
-    ret.push(elem);
-  }
-  return ret;
-}
-
-function recursivoAgregarId(modelo) {
-  var ret = [];
-  while(modelo.length >0) {
-    var elem = modelo.shift();
-
-    elem.id = globalId++;
-
-    //console.log("--->" , globalId , " " , JSON.stringify(elem) );
-    if(elem.sentencia instanceof Array){
-      elem.sentencia = recursivoAgregarId(elem.sentencia);
-    }else if (elem.tipo == "condicion") {
-      elem.sentencia = recursivoAgregarId([elem.sentencia]).pop();
-    }
-
-    ret.push(elem);
-  }
-  return ret;
-}
+var globalId=9000;
 
 function procesar_nivel(lista){
   var ret = [];
@@ -185,18 +57,19 @@ function procesar_nivel(lista){
   return ret;
 }
 
-var filtros = function (model){
-  var res = _.reduce(model, filtroXOR, []);
-  return res;
-}
+var makeBpmn = function(model){
+  console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
 
-function mapJson(model, fun){
-  if(_.isArray(model)){
-    _.each(model, mapJson);
-  }
-  else{
-    procesarObject(model);
-  }
+  model = intermedio.asignarId(model.sentencia);
+  model = intermedio.balancearModelo(model);
+  // console.log(pd.json(model));
+  aux = {};
+  aux.tipo = "secuencia";
+  aux.sentencia = model;
+  aux.id = 9999;
+  // model = recursivoFlujo(aux, "S", "F");
+  model = intermedio.asignarFlujo(aux);
+  return model;
 }
 
 const task = "TASK";
@@ -528,18 +401,17 @@ var makeBpmn = function(model){
 
 }
 
-module.exports = {
-  init : init,
-  makeBpmn : makeBpmn,
-  getActors : getActors,
-  filtros:filtros,
-  procesar:procesar_nivel,
-  start : start,
-  obtenerLanes : obtenerLanes,
-  obtenerTareas : obtenerTareas,
-  proceso : proceso,
-  recursivoAgregarId:recursivoAgregarId,
-  generarFlujo : generarFlujo,
-  conectarEndEvent : conectarEndEvent,
-  conectarStartEvent : conectarStartEvent
-}
+          module.exports = {
+            init : init,
+            makeBpmn : makeBpmn,
+            getActors : getActors,
+            procesar:procesar_nivel,
+            start : start,
+            obtenerLanes : obtenerLanes,
+            obtenerTareas : obtenerTareas,
+            proceso : proceso,
+            generarFlujo : generarFlujo,
+            conectarEndEvent : conectarEndEvent,
+            toDot : toDot,
+            conectarStartEvent : conectarStartEvent,
+          }

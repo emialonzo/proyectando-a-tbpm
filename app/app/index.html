@@ -80,7 +80,7 @@
           <div >
             <textarea id="id-modelo-texto" name="modelo-texto" rows="8" cols="40"></textarea>
           </div>
-          <button type="button" id="getBpmn" class="btn btn-default" onclick="getAbstractModel()">
+          <button type="button" id="getBpmn" class="btn btn-default" onclick="conversion()">
             Obtener BPMN
           </button>
         </div>
@@ -93,6 +93,9 @@
         <div id="id-xml-container">
           <pre><code id="id-xml-code"></code></pre>
         </div>
+
+        <pre id="id-dot">
+        </pre>
 
         <div id="id-bpmn-container">
           <div id="id-bpmn-model">

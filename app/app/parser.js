@@ -5,8 +5,8 @@ var gramatica = null;
 var parser = null;
 
 var init = function(path){
-  var path = path || __dirname + '/gramatica.pegjs';
-  // var path = path || __dirname + '/respGram';
+  // var path = path || __dirname + '/gramatica.pegjs';
+  var path = path || __dirname + '/respGram';
   gramatica = fs.readFileSync(path).toString();
   parser = PEG.buildParser(gramatica);
 }

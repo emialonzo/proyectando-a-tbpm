@@ -6,14 +6,60 @@ var xmljson = require('xmljson');
 var _ = require("underscore");
 // var bpmnImg = require("./xml2img.js");
 
-function getAbstractModel(){
+//deberian estar dentro del makeBpmn
+var x2js = require('x2js'); //new X2JS();
+var conv = new x2js();
+
+var Viz = require('viz.js');
+// conv.json2xml_str(json);
+
+var pd = require('pretty-data').pd;
+
+
+
+
+function conversion(){
   console.log("getAbstractModel");
   var text = $("#id-modelo-texto").val();
   var modelo = parser.parse(text);
+  $("#id-bpmn-model").html("<p>Cargando imagen</p>");
   $("#id-modelo-abstracto").text(jsonToString(modelo));
-  console.log(makeBpmn.getActors(modelo));
+  // console.log(makeBpmn.getActors(modelo));
+  // _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
+  //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
+  // _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
+  var bpmn = makeBpmn.makeBpmn(modelo);
+  var file = makeBpmn.toDot(bpmn);
+  console.error(file);
+  $("#id-dot").html(file);
+
+  // image = Viz(""+file, { format: "png-image-element" });
+  image = Viz(file, { format: "png-image-element" });
+
+  // console.error(image);
+  $("#id-bpmn-model").html(image);
+  // document.body.appendChild(image);
+
+  $("#id-xml-code").text((pd.xml(conv.json2xml_str(makeBpmn.proceso))));
+
+
   return modelo;
 }
+
+
+function parseSVG(s) {
+  var div= document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+  div.innerHTML= '<svg xmlns="http://www.w3.org/2000/svg">'+s+'</svg>';
+  var frag= document.createDocumentFragment();
+  while (div.firstChild.firstChild)
+  frag.appendChild(div.firstChild.firstChild);
+  return frag;
+}
+
+function crearSvg(id, svgContent){
+  document.innerHTML(id).appendChild(parseSVG(svgContent));
+}
+
 
 function safe_tags(str) {
   console.log("safe_tags");
