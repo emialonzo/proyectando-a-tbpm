@@ -22,7 +22,6 @@ var proceso = {
   endEvent : {},
   sequenceFlow : []
 };
-var isPrimeraTarea = true;
 
 var filtroXOR = function (memo, elem){
   console.log("*****************************");
@@ -267,12 +266,21 @@ var obtenerTareas = function(elem) {
     //lane.flowNodeRef.push(nodo);
     proceso.exclusiveGateway.push(abre);
     for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
       var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
       abre.outgoing.push(flujo);
-      proceso.sequenceFlow.push({
-          "_id":flujo.__text,"_sourceRef":abre._id,
-          "_targetRef":"","__prefix":"bpmn"});
-      obj = elem.sentencia[i];
+      var sequenceFlow;
+      if (obj.condicion == "defecto") {
+        sequenceFlow = {
+            "_id":flujo.__text,"_sourceRef":abre._id,
+            "_targetRef":"","__prefix":"bpmn"}
+      } else {
+        sequenceFlow = {
+            "_id":flujo.__text,"_name":obj.condicion,"_sourceRef":abre._id,
+            "_targetRef":"","__prefix":"bpmn"}
+      }
+      proceso.sequenceFlow.push(sequenceFlow);
+
       obtenerTareas(obj);
       if (obj.condicion == "defecto") {
         abre._default = flujo.__text;
@@ -315,31 +323,19 @@ var obtenerTareas = function(elem) {
 }
 
 var obtenerFlujo = function(elem) {
-  console.log("########## ELEM ANTERIOR ##########");
-  console.log(elem);
-  console.log("##########################");
   var flujo = null;
   if (elem.tipo == "task") {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
-    console.log("########## TASK anterior ##########");
-    console.log(task);
-    console.log("##########################");
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text});
     return flujo;
   } else if (elem.tipo == "and") {
     var id = elem.id + 1;
     var gwAND = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
-    console.log("########## GW AND cierra anterior ##########");
-    console.log(gwAND);
-    console.log("##########################");
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAND.outgoing.__text});
     return flujo;
   } else if (elem.tipo == "xor") {
     var id = elem.id + 1;
     var gwXOR = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
-    console.log("########## GW XOR cierra anterior ##########");
-    console.log(gwXOR);
-    console.log("##########################");
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwXOR.outgoing.__text});
     return flujo;
   }
@@ -348,45 +344,104 @@ var obtenerFlujo = function(elem) {
 // recorro el modelo nuevamente para construir el flujo del proceso
 var generarFlujo = function(anterior, elem) {
   var flujoAnterior = obtenerFlujo(anterior);
-  console.log("########## FLUJO ##########");
-  console.log(flujoAnterior);
-  console.log("############################");
   if (elem.tipo == "task") {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
     flujoAnterior._targetRef = task._id;
     task.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
   } else if (elem.tipo == "and") {
     var id = elem.id;
-    var abreGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+(id++)});
-    console.log("########## ABRE GW ##########");
-    console.log(abreGW);
-    console.log("############################");
+    var abreGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+    id = id + 1;
     var cierraGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
     flujoAnterior._targetRef = abreGW._id;
     abreGW.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
-    for (var i = 0; i<elem.sentencia.length ; i++) {
-      var obj = elem.sentencia[i];
-      //TODO arreglar la recursion para ver como conectar los elementos que estan adentro de las compuertas
-      //generarFlujo(abreGW, obj);
-      //generarFlujo(obj, cierraGW);
-    }
+    generarFlujoAND(abreGW, cierraGW, elem.sentencia);
   } else if (elem.tipo == "xor") {
     var id = elem.id;
-    var abreGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+(id++)});
+    var abreGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
+    id = id + 1;
     var cierraGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
     flujoAnterior._targetRef = abreGW._id;
     abreGW.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
-    for (var i = 0; i<elem.sentencia.length ; i++) {
-      var obj = elem.sentencia[i];
-      //TODO arreglar la recursion para ver como conectar los elementos que estan adentro de las compuertas
-      //generarFlujo(abreGW, obj);
-      //generarFlujo(obj, cierraGW);
-    }
+    generarFlujoXOR(abreGW, cierraGW, elem.sentencia, abreGW._default);
   } else if (elem.tipo == "loop") {
     // aca se manejaria parecido a la compuerta XOR
     // solo que cambian los flujos de entrada y salida de las compuertas
   }
 }
+
+var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
+  for (var i = 0; i< modelo.length; i++) {
+    var elem = modelo [i];
+    var flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAbre.outgoing[i].__text});
+    console.log("Elem --->\n" + prettyjson.render(elem));
+    if (elem.tipo == "task") {
+      var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
+      flujo._targetRef = task._id;
+      task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+      console.log("Flujo -->\n" + prettyjson.render(flujo));
+      console.log("Task --->\n" + prettyjson.render(task));
+      gwCierra.incoming.push(task.outgoing);
+      var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
+      flujoTask._targetRef = gwCierra._id
+    } else if(elem.tipo == "and") {
+      var id = elem.id;
+      var abreGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+      id = id + 1;
+      var cierraGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+      flujo._targetRef = abreGW._id;
+      abreGW.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+      gwCierra.incoming.push(cierraGW.outgoing);
+      generarFlujoAND(abreGW, cierraGW, elem.sentencia);
+    } else if(elem.tipo == "xor") {
+      var id = elem.id;
+      var abreGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
+      id = id + 1;
+      var cierraGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
+      flujo._targetRef = abreGW._id;
+      abreGW.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+      gwCierra.incoming.push(cierraGW.outgoing);
+      generarFlujoXOR(abreGW, cierraGW, elem.sentencia, abreGW._default);
+    } else if(elem.tipo == "loop") {
+      //TODO cuando agreguemos el loop hay que implementar esta parte
+    } else if(elem.tipo == "sentencia") {
+      //TODO arreglar cuando se modifique la gramatica
+    }
+  }
+
+}
+
+var generarFlujoXOR = function(gwAbre, gwCierra, modelo, flujoDefecto) {
+  console.log("GW Abre -->\n"+prettyjson.render(gwAbre));
+  console.log("GW Cierra -->\n"+prettyjson.render(gwCierra));
+  console.log("Modelo -->\n"+prettyjson.render(modelo));
+  console.log("Defecto -->\n"+prettyjson.render(flujoDefecto));
+  for (var i = 0; i< modelo.length; i++) {
+    var elem = modelo [i];
+    var flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAbre.outgoing[i].__text});
+    console.log("Elem --->\n" + prettyjson.render(elem));
+    if (elem.tipo == "condicion") {
+      var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.sentencia.id});
+      flujo._targetRef = task._id;
+      task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+      console.log("Flujo -->\n" + prettyjson.render(flujo));
+      console.log("Task --->\n" + prettyjson.render(task));
+      gwCierra.incoming.push(task.outgoing);
+      var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
+      flujoTask._targetRef = gwCierra._id
+    } else if(elem.tipo == "and") {
+
+    } else if(elem.tipo == "xor") {
+
+    } else if(elem.tipo == "loop") {
+
+    } else if(elem.tipo == "sentencia") {
+
+    }
+
+  }
+}
+
 
 var conectarStartEvent = function(modelo) {
   var primero = modelo[0];
@@ -419,7 +474,6 @@ var conectarStartEvent = function(modelo) {
 
 var conectarEndEvent = function(modelo) {
   var ultimo = modelo[modelo.length-1];
-  console.log(ultimo);
   var flujo = null;
   if (ultimo.tipo == "task") {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+ultimo.id});

@@ -20,12 +20,16 @@ var textosPruebas = [
   "el mozo cobra al cliente.  " +
   "el cliente paga."
 */
+"el administrador entrega tareas a ventas. " +
+"al mismo tiempo, " +
+"1 el administrador presenta informe de tareas a direccion. " +
+"2 el vendedor toma tareas. "
+/*
+
 "el cocinero cocina pedido. " +
-"al mismo tiempo, 1 el mozo sirve pedido. 2 la hermana es servida en la mesa. " +
 "si se cumple, " +
 "condicionA entonces el mozo trabaja. " +
-"si no el cocinero se rasca." +
-"la hermana baila la gracamiglia."
+"si no el cocinero se rasca."
 /*
 ,
 
