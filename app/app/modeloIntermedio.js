@@ -120,6 +120,23 @@ function recursivoBalance(modelo){
   return ret;
 }
 
+
+//aplica iterativamente transformaciones al modelo
+function procesarModelo(model){
+  console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
+
+  model = intermedio.asignarId(model.sentencia);
+  model = intermedio.balancearModelo(model);
+  // console.log(pd.json(model));
+  aux = {};
+  aux.tipo = "secuencia";
+  aux.sentencia = model;
+  aux.id = ++globalId;
+  // model = recursivoFlujo(aux, "S", "F");
+  model = intermedio.asignarFlujo(aux);
+  return model;
+}
+
 console.log("Modulo modelo intermedio");
 
 
@@ -128,5 +145,7 @@ module.exports = {
   asignarId : recursivoAgregarId,
   balancearModelo : recursivoBalance,
   asignarFlujo : asignarFlujo,
+  procesarModelo : procesarModelo,
+
 
 };

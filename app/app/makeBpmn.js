@@ -4,6 +4,7 @@ var _ = require("underscore");
 var pd = require('pretty-data').pd;
 var toDot = require('./makeDot').toDot;
 var intermedio = require('./modeloIntermedio');
+var prettyjson = require('prettyjson');
 
 var gramatica = null;
 var parser = null;

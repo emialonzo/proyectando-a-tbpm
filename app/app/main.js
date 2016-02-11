@@ -2,6 +2,8 @@
 var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var xmljson = require('xmljson');
+var intermedio = require('./modeloIntermedio');
+
 
 var _ = require("underscore");
 // var bpmnImg = require("./xml2img.js");
@@ -28,13 +30,13 @@ function conversion(){
   // _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
   //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
   // _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
-  var bpmn = makeBpmn.makeBpmn(modelo);
-  var file = makeBpmn.toDot(bpmn);
-  console.error(file);
-  $("#id-dot").html(file);
+  var modeloInt = intermedio.procesarModelo(modelo);
+  var dot = makeBpmn.toDot(modeloInt);
+
+  $("#id-dot").html(dot);
 
   // image = Viz(""+file, { format: "png-image-element" });
-  image = Viz(file, { format: "png-image-element" });
+  image = Viz(dot, { format: "png-image-element" });
 
   // console.error(image);
   $("#id-bpmn-model").html(image);
@@ -188,7 +190,7 @@ var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 </bpmn:definitions>`;
 var ejemploModeloAbstracto;
 $(function() {
-  parser.init();
+  parser.init(__dirname + '/respGram');
 
   ejemploModeloAbstracto = parser.parse(ejemploTexto);
 

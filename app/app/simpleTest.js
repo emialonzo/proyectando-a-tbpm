@@ -79,7 +79,7 @@ function makeAllNivel(lista){
 //_.map(makeAllBpmn(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
 //_.map(makeAllNivel(parseAllText(textosPruebas)), function(elem){ console.log(prettyjson.render(elem, options)); })
 
-parser.init();
+parser.init(__dirname + '/gramatica.pegjs');
 var modelo = parseAllText(textosPruebas)[0];
 //console.log(modelo);
 makeBpmn.start();
