@@ -86,25 +86,32 @@ var getActors = function(model){
 }
 
 // Obtengo los actores de cada tarea para ir armando los lanes
+var actor = "";
 var obtenerLanes = function(elem) {
   if (elem.tipo == "task") {
     if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
       proceso.laneSet.lane.push(
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
          "_name": elem.sentencia.actor,"__prefix":"bpmn"});
+         actor = elem.sentencia.actor;
     }
   } else if (elem.tipo == "condicion") {
     if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.sentencia.actor}) == null) {
       proceso.laneSet.lane.push(
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.sentencia.actor,
          "_name": elem.sentencia.sentencia.actor,"__prefix":"bpmn"});
+         actor = elem.sentencia.sentencia.actor;
     }
   } else if (elem.tipo == "xor") {
+    elem.lane = actor;
+    console.log(prettyjson.render(elem));
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
     }
   } else if (elem.tipo == "and") {
+    elem.lane = actor;
+    console.log(prettyjson.render(elem));
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
@@ -132,12 +139,12 @@ var obtenerTareas = function(elem) {
   } else if (elem.tipo == "condicion") {
     obtenerTareas(elem.sentencia);
   } else if (elem.tipo == "xor") {
-    //TODO ver de donde sacar el lane para meterlo
-    //var lane = _.find(proceso.laneSet.lane, function(val){return val._name == });
+
     var id = elem.id;
-    var abre = {"incoming":{},"outgoing":[],"_id":"ExclusiveGateway_"+id, "_default":"","__prefix":"bpmn"};
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.lane});
     var nodo = {"__prefix":"bpmn","__text":"ExclusiveGateway_"+id};
-    //lane.flowNodeRef.push(nodo);
+    lane.flowNodeRef.push(nodo);
+    var abre = {"incoming":{},"outgoing":[],"_id":"ExclusiveGateway_"+id, "_default":"","__prefix":"bpmn"};
     proceso.exclusiveGateway.push(abre);
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
@@ -161,6 +168,9 @@ var obtenerTareas = function(elem) {
       }
     }
     id = elem.id + 1;
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.lane});
+    var nodo = {"__prefix":"bpmn","__text":"ExclusiveGateway_"+id};
+    lane.flowNodeRef.push(nodo);
     var cierra = {"incoming":[],"outgoing":{},"_id":"ExclusiveGateway_"+id, "__prefix":"bpmn"};
     var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
     cierra.outgoing = flujo;
@@ -169,9 +179,10 @@ var obtenerTareas = function(elem) {
     //lane.flowNodeRef.push(nodo);
     proceso.exclusiveGateway.push(cierra);
   } else if (elem.tipo == "and") {
-    //TODO ver de donde sacar el lane para meterlo
-    //var lane = _.find(proceso.laneSet.lane, function(val){return val._name == });
     var id = elem.id;
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.lane});
+    var nodo = {"__prefix":"bpmn","__text":"ParallelGateway_"+id};
+    lane.flowNodeRef.push(nodo);
     var abre = {"incoming":{}, "outgoing":[],"_id":"ParallelGateway_"+id, "__prefix":"bpmn" };
     var nodo = {"__prefix":"bpmn","__text":"ParallelGateway_"+id};
     //lane.flowNodeRef.push(nodo);
@@ -186,6 +197,9 @@ var obtenerTareas = function(elem) {
       obtenerTareas(obj);
     }
     id = elem.id + 1;
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.lane});
+    var nodo = {"__prefix":"bpmn","__text":"ParallelGateway_"+id};
+    lane.flowNodeRef.push(nodo);
     var cierra = {"incoming":[], "outgoing":{},"_id":"ParallelGateway_"+id, "__prefix":"bpmn" };
     var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
     cierra.outgoing = flujo;
@@ -248,13 +262,13 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
   for (var i = 0; i< modelo.length; i++) {
     var elem = modelo [i];
     var flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAbre.outgoing[i].__text});
-    console.log("Elem --->\n" + prettyjson.render(elem));
+    //console.log("Elem --->\n" + prettyjson.render(elem));
     if (elem.tipo == "task") {
       var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
       flujo._targetRef = task._id;
       task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
-      console.log("Flujo -->\n" + prettyjson.render(flujo));
-      console.log("Task --->\n" + prettyjson.render(task));
+      //console.log("Flujo -->\n" + prettyjson.render(flujo));
+      //console.log("Task --->\n" + prettyjson.render(task));
       gwCierra.incoming.push(task.outgoing);
       var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
       flujoTask._targetRef = gwCierra._id
@@ -286,20 +300,20 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
 }
 
 var generarFlujoXOR = function(gwAbre, gwCierra, modelo, flujoDefecto) {
-  console.log("GW Abre -->\n"+prettyjson.render(gwAbre));
-  console.log("GW Cierra -->\n"+prettyjson.render(gwCierra));
-  console.log("Modelo -->\n"+prettyjson.render(modelo));
-  console.log("Defecto -->\n"+prettyjson.render(flujoDefecto));
+  //console.log("GW Abre -->\n"+prettyjson.render(gwAbre));
+  //console.log("GW Cierra -->\n"+prettyjson.render(gwCierra));
+  //console.log("Modelo -->\n"+prettyjson.render(modelo));
+  //console.log("Defecto -->\n"+prettyjson.render(flujoDefecto));
   for (var i = 0; i< modelo.length; i++) {
     var elem = modelo [i];
     var flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAbre.outgoing[i].__text});
-    console.log("Elem --->\n" + prettyjson.render(elem));
+    //console.log("Elem --->\n" + prettyjson.render(elem));
     if (elem.tipo == "condicion") {
       var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.sentencia.id});
       flujo._targetRef = task._id;
       task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
-      console.log("Flujo -->\n" + prettyjson.render(flujo));
-      console.log("Task --->\n" + prettyjson.render(task));
+      //console.log("Flujo -->\n" + prettyjson.render(flujo));
+      //console.log("Task --->\n" + prettyjson.render(task));
       gwCierra.incoming.push(task.outgoing);
       var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
       flujoTask._targetRef = gwCierra._id
@@ -319,31 +333,28 @@ var generarFlujoXOR = function(gwAbre, gwCierra, modelo, flujoDefecto) {
 
 var conectarStartEvent = function(modelo) {
   var primero = modelo[0];
-  var lane = null;
   var flujoStartEvent = _.find(proceso.sequenceFlow, function(val){return val._id == proceso.startEvent.outgoing.__text});
   if (primero.tipo == "task") {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+primero.id});
     task.incoming = {"__prefix":"bpmn", "__text":flujoStartEvent._id};
     flujoStartEvent._targetRef = task._id;
-    //TODO arreglar esto, falta ver bien el lane del primer elemento
-    //lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.sentencia.actor});
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
   } else if (primero.tipo == "and") {
     var andGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+primero.id});
     andGW.incoming = {"__prefix":"bpmn", "__text":flujoStartEvent._id};
     flujoStartEvent._targetRef = andGW._id;
-    //TODO
-    //lane = _.find(proceso.laneSet.lane, function(val){return val._name == });
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == primero.lane});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
   } else if (primero.tipo == "xor") {
     var xorGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+primero.id});
     xorGW.incoming = {"__prefix":"bpmn", "__text":flujoStartEvent._id};
     flujoStartEvent._targetRef = xorGW._id;
-    //TODO
-    //lane = _.find(proceso.laneSet.lane, function(val){return val._name == });
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == primero.lane});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
   } else if (primero.tipo == "loop") {
     //TODO falta agregar la conexion para el caso del loop
   }
-  //TODO falta encontrar el lane para el caso que sea una compuerta
-  //lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
 }
 
 var conectarEndEvent = function(modelo) {
@@ -353,14 +364,20 @@ var conectarEndEvent = function(modelo) {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+ultimo.id});
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text});
     proceso.endEvent.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"EndEvent_1"});
   } else if (ultimo.tipo == "and") {
     var id = ultimo.id + 1;
     var andGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == andGW.outgoing.__text});
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == ultimo.lane});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"EndEvent_1"});
   } else if (ultimo.tipo == "xor") {
     var id = ultimo.id + 1;
     var xorGW = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == xorGW.outgoing.__text});
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == ultimo.lane});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"EndEvent_1"});
   } else if (ultimo.tipo == "loop") {
     //TODO falta agregar la conexion para el caso del loop
   }

@@ -20,17 +20,18 @@ var textosPruebas = [
   "el cliente come la comida. " +
   "el mozo cobra al cliente.  " +
   "el cliente paga."
-*/
+
 "el administrador entrega tareas a ventas. " +
 "al mismo tiempo, " +
 "1 el administrador presenta informe de tareas a direccion. " +
 "2 el vendedor toma tareas. "
-/*
+*/
 
 "el cocinero cocina pedido. " +
 "si se cumple, " +
 "condicionA entonces el mozo trabaja. " +
 "si no el cocinero se rasca."
+
 /*
 ,
 
@@ -83,7 +84,8 @@ parser.init(__dirname + '/gramatica.pegjs');
 var modelo = parseAllText(textosPruebas)[0];
 //console.log(modelo);
 makeBpmn.start();
-modelo = intermedio.asignarId(modelo);
+modelo = intermedio.asignarIdCondicion(modelo);
+
 
 //console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
