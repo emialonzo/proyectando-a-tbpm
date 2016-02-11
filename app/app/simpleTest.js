@@ -2,6 +2,7 @@ var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var _ = require("underscore");
 var prettyjson = require('prettyjson');
+var intermedio = require('./modeloIntermedio');
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
@@ -82,7 +83,7 @@ parser.init();
 var modelo = parseAllText(textosPruebas)[0];
 //console.log(modelo);
 makeBpmn.start();
-modelo = makeBpmn.recursivoAgregarId(modelo);
+modelo = intermedio.asignarId(modelo);
 
 //console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
