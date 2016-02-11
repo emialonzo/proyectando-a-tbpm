@@ -103,6 +103,24 @@ function asignarId(modelo){
     dicccionarioId[elem.id] = elem;
     if(elem.sentencia instanceof Array){
       elem.sentencia = asignarId(elem.sentencia);
+    }
+    ret.push(elem);
+  }
+  return ret;
+}
+
+function asignarIdCondicion(modelo){
+  var ret = [];
+  if(!(modelo instanceof Array)){
+    modelo.id = globalId++;
+    return modelo;
+  }
+  while(modelo.length >0){
+    var elem = modelo.shift();
+    elem.id = globalId++;
+    dicccionarioId[elem.id] = elem;
+    if(elem.sentencia instanceof Array){
+      elem.sentencia = asignarId(elem.sentencia);
     } else if (elem.tipo == "condicion"){
       elem.sentencia = asignarId(elem.sentencia);
     }
@@ -154,6 +172,7 @@ module.exports = {
   asignarFlujo : asignarFlujo,
   procesarModelo : procesarModelo,
   findById : findById,
+  asignarIdCondicion: asignarIdCondicion,
 
 
 };
