@@ -10,10 +10,7 @@ var gramatica = null;
 var parser = null;
 
 var globalId = 1;
-var Task_globalID = 1;
 var SequenceFlow_GlobalID = 1;
-var ParallelGateway_GlobalID = 1;
-var ExclusiveGateway_GlobalID = 1;
 var bpmn = {};
 var proceso = {
   laneSet : {
@@ -27,62 +24,11 @@ var proceso = {
   sequenceFlow : []
 };
 
-var globalId=9000;
-
-function procesar_nivel(lista){
-  var ret = [];
-  while (lista.length > 0) {
-    var elem = lista.shift();
-    console.info("***************");
-    console.info("Elem:"+JSON.stringify(elem));
-    console.log("TIPO:"+elem.tipo );
-    if((!_.isUndefined(elem.tipo)) && (elem.tipo == "task")){
-      console.log("---->task");
-    } else if((!_.isUndefined(elem.tipo)) && (elem.tipo == "cierro")){
-      console.log("!!!compuerta de cerrar");
-    }
-    else {
-      console.log("----->no task:"+ elem.tipo);
-      var aux = elem.sentencia;
-      if(aux instanceof Array){
-        var aux_elem = cierro(elem.tipo);
-        aux.push(aux_elem);
-        Array.prototype.unshift.apply(lista, aux);
-      }else{
-        lista.unshift(aux);
-      }
-    }
-    ret.push(elem);
-    console.info("***************");
-  }
-  return ret;
-}
-
-var makeBpmn = function(model){
-  console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
-
-  model = intermedio.asignarId(model.sentencia);
-  model = intermedio.balancearModelo(model);
-  // console.log(pd.json(model));
-  aux = {};
-  aux.tipo = "secuencia";
-  aux.sentencia = model;
-  aux.id = 9999;
-  // model = recursivoFlujo(aux, "S", "F");
-  model = intermedio.asignarFlujo(aux);
-  return model;
-}
-
-const task = "TASK";
-
+//TODO revisar bien si meterlo en la funcion start o la funcion start meterla aca
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
   gramatica = fs.readFileSync(path).toString();
   parser = PEG.buildParser(gramatica);
-}
-
-var getActors = function(model){
-  return _.uniq(_.map(_.flatten(model), function(elem){ return elem.actor; }));
 }
 
 // Obtengo los actores de cada tarea para ir armando los lanes
@@ -256,8 +202,6 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
       var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
       flujo._targetRef = task._id;
       task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
-      //console.log("Flujo -->\n" + prettyjson.render(flujo));
-      //console.log("Task --->\n" + prettyjson.render(task));
       gwCierra.incoming.push(task.outgoing);
       var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
       flujoTask._targetRef = gwCierra._id
@@ -289,20 +233,13 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
 }
 
 var generarFlujoXOR = function(gwAbre, gwCierra, modelo, flujoDefecto) {
-  //console.log("GW Abre -->\n"+prettyjson.render(gwAbre));
-  //console.log("GW Cierra -->\n"+prettyjson.render(gwCierra));
-  //console.log("Modelo -->\n"+prettyjson.render(modelo));
-  //console.log("Defecto -->\n"+prettyjson.render(flujoDefecto));
   for (var i = 0; i< modelo.length; i++) {
     var elem = modelo [i];
     var flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwAbre.outgoing[i].__text});
-    //console.log("Elem --->\n" + prettyjson.render(elem));
     if (elem.tipo == "condicion") {
       var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.sentencia.id});
       flujo._targetRef = task._id;
       task.incoming = {"__prefix":"bpmn", "__text":flujo._id};
-      //console.log("Flujo -->\n" + prettyjson.render(flujo));
-      //console.log("Task --->\n" + prettyjson.render(task));
       gwCierra.incoming.push(task.outgoing);
       var flujoTask = _.find(proceso.sequenceFlow, function(val){return val._id == task.outgoing.__text})
       flujoTask._targetRef = gwCierra._id
@@ -398,27 +335,14 @@ var start = function(model) {
   }
 }
 
-var makeBpmn = function(model){
-  // bpmn.laneset = [];
-  // for(var i=0; i < model.length; i++){
-  //   var elem = model[i];
-  // }
-  // return bpmn;
-  return recursivoBalance(recursivoAgregarId(model));
-
+module.exports = {
+  init : init,
+  start : start,
+  obtenerLanes : obtenerLanes,
+  obtenerTareas : obtenerTareas,
+  proceso : proceso,
+  generarFlujo : generarFlujo,
+  toDot : toDot,
+  conectarEndEvent : conectarEndEvent,
+  conectarStartEvent : conectarStartEvent,
 }
-
-          module.exports = {
-            init : init,
-            makeBpmn : makeBpmn,
-            getActors : getActors,
-            procesar:procesar_nivel,
-            start : start,
-            obtenerLanes : obtenerLanes,
-            obtenerTareas : obtenerTareas,
-            proceso : proceso,
-            generarFlujo : generarFlujo,
-            conectarEndEvent : conectarEndEvent,
-            toDot : toDot,
-            conectarStartEvent : conectarStartEvent,
-          }
