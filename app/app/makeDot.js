@@ -2,7 +2,8 @@
 var fs = require("fs");
 var _ = require("underscore");
 var pd = require('pretty-data').pd;
-
+var intermedio = require('./modeloIntermedio');
+var isGateway = intermedio.isGateway;
 
 var toDot = function(modelo){
   file = [];
@@ -11,7 +12,10 @@ var toDot = function(modelo){
   flujodot=[];
   secuencias = {};
 
+
+  // console.info(pd.json(modelo));
   dotRec(modelo, flujodot);
+  // console.info(pd.json(modelo));
 
   secuencias = ajustarSecuencia(modelo);
   console.error("---SECUENCIAS---");
@@ -93,7 +97,7 @@ function printFile() {
   file.push("rankdir=LR; node [shape=box, style=rounded];");
   for (var key in taskdot) {
      var listaTareas = taskdot[key];
-      file.push("subgraph lane" + key + " { rankdir=LR;")
+      file.push("subgraph cluster" + key + " { rankdir=LR;")
       file.push("labeljust=l;");
       file.push("label=\"Lane:" + key  + "\";");
      for (var prop in listaTareas) {
@@ -160,13 +164,7 @@ function dotFlow(nodo, lista){
   return ret;
 }
 
-var gateway = {
-  'xor':true,
-  'and':true
-}
-function isGateway(tipo){
-  return tipo in gateway;
-}
+
 
 module.exports = {
   toDot: toDot

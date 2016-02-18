@@ -17,7 +17,8 @@ var cierrogw = function (elem){
 // var gateway = ['xor','and'];
 var gateway = {
   'xor':true,
-  'and':true
+  'and':true,
+  'loop' : true
 }
 function isGateway(tipo){
   return tipo in gateway;
@@ -49,22 +50,21 @@ function findById(id){
 // PRE: las gw deben estar balanceadas
 // return: a cada nodo le agrega un flujo
 function asignarFlujo(modelo){
-  var aux =  recursivoFlujo(modelo, "S", "F");
-
+  var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
+return aux;
 }
 
 //chequea si alguno de los
-function ajustarSiguienteSecuencia(nodo){
-  for (var i = 0; i < nodo.sig.length; i++) {
-    sig = findById(nodo.sig[i]);
-    if (sig){
-      if(sig.tipo == "secuencia"){
-        nodo.sig[i] = sig.sig;
-      }
-    }
-
-  }
-}
+// function ajustarSiguienteSecuencia(nodo){
+//   for (var i = 0; i < nodo.sig.length; i++) {
+//     sig = findById(nodo.sig[i]);
+//     if (sig){
+//       if(sig.tipo == "secuencia"){
+//         nodo.sig[i] = sig.sig;
+//       }
+//     }
+//   }
+// }
 
 function recursivoFlujo(nodo, ant, sig){
   if(_.isUndefined(nodo)){
@@ -87,6 +87,9 @@ function recursivoFlujo(nodo, ant, sig){
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
     }
+  } if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
+    console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
+    nodo.sig.push(nodo.ref);
   }
   else if ( isGateway(nodo.tipo) ){
     nodo.sig = [];
@@ -133,6 +136,7 @@ function asignarIdCondicion(modelo){
   return ret;
 }
 
+
 //itera sobre el modelo, en caso de encontrar un gw dentro de una secuencia agrega una gw de cierre inmediatamente despues
 function recursivoBalance(modelo){
   var ret = [];
@@ -148,21 +152,29 @@ function recursivoBalance(modelo){
   }
   return ret;
 }
+var balancearModelo = function(modelo){
+  return recursivoBalance(modelo);
+}
+
 
 
 //aplica iterativamente transformaciones al modelo
-function procesarModelo(model){
+var procesarModelo = function(model){
   console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
-
+  // console.info("***" + pd.json(model));
   model = intermedio.asignarId(model.sentencia);
+  // console.info("***" + pd.json(model));
   model = intermedio.balancearModelo(model);
+  // console.info("***" + pd.json(model));
   // console.log(pd.json(model));
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
   aux.id = ++globalId;
   // model = recursivoFlujo(aux, "S", "F");
+  console.info("***" + pd.json(model));
   model = intermedio.asignarFlujo(aux);
+  console.info("***" + pd.json(model));
   return model;
 }
 
@@ -172,7 +184,7 @@ console.log("Modulo modelo intermedio");
 module.exports = {
   isGateway : isGateway ,
   asignarId : asignarId,
-  balancearModelo : recursivoBalance,
+  balancearModelo : balancearModelo,
   asignarFlujo : asignarFlujo,
   procesarModelo : procesarModelo,
   findById : findById,

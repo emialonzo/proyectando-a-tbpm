@@ -44,4 +44,4 @@ sent_o = ws id_o separador
          {return [primero].concat(resto.concat(final));}
 
 id_mientras = "mientras"
-sent_mientras = ws id_mientras ws condicion separador sent:sentencia {return sent}
+sent_mientras = ws id_mientras ws condicion separador sent:secuencia {return [sent]}
