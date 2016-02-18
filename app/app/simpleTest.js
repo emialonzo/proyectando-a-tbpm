@@ -3,15 +3,11 @@ var makeBpmn = require("./makeBpmn");
 var _ = require("underscore");
 var prettyjson = require('prettyjson');
 var intermedio = require('./modeloIntermedio');
+var pd = require('pretty-data').pd;
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 // conv.json2xml_str(json);
-
-
-
-
-
 
 var textosPruebas = [
 /*
@@ -108,3 +104,4 @@ makeBpmn.conectarStartEvent(modelo);
 makeBpmn.conectarEndEvent(modelo);
 
 _.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
+console.info(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
