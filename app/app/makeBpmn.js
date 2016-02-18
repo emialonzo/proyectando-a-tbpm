@@ -89,29 +89,22 @@ var getActors = function(model){
 var actor = "";
 var obtenerLanes = function(elem) {
   if (elem.tipo == "task") {
+    actor = elem.sentencia.actor;
     if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
       proceso.laneSet.lane.push(
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
          "_name": elem.sentencia.actor,"__prefix":"bpmn"});
-         actor = elem.sentencia.actor;
     }
   } else if (elem.tipo == "condicion") {
-    if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.sentencia.actor}) == null) {
-      proceso.laneSet.lane.push(
-        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.sentencia.actor,
-         "_name": elem.sentencia.sentencia.actor,"__prefix":"bpmn"});
-         actor = elem.sentencia.sentencia.actor;
-    }
+    obtenerLanes(elem.sentencia);
   } else if (elem.tipo == "xor") {
     elem.lane = actor;
-    console.log(prettyjson.render(elem));
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
     }
   } else if (elem.tipo == "and") {
     elem.lane = actor;
-    console.log(prettyjson.render(elem));
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
@@ -139,7 +132,6 @@ var obtenerTareas = function(elem) {
   } else if (elem.tipo == "condicion") {
     obtenerTareas(elem.sentencia);
   } else if (elem.tipo == "xor") {
-
     var id = elem.id;
     var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.lane});
     var nodo = {"__prefix":"bpmn","__text":"ExclusiveGateway_"+id};
@@ -176,7 +168,6 @@ var obtenerTareas = function(elem) {
     cierra.outgoing = flujo;
     proceso.sequenceFlow.push({"_id":flujo.__text,"_sourceRef":cierra._id, "_targetRef":"","__prefix":"bpmn"});
     var nodo = {"__prefix":"bpmn","__text":"ExclusiveGateway_"+id};
-    //lane.flowNodeRef.push(nodo);
     proceso.exclusiveGateway.push(cierra);
   } else if (elem.tipo == "and") {
     var id = elem.id;
@@ -185,7 +176,6 @@ var obtenerTareas = function(elem) {
     lane.flowNodeRef.push(nodo);
     var abre = {"incoming":{}, "outgoing":[],"_id":"ParallelGateway_"+id, "__prefix":"bpmn" };
     var nodo = {"__prefix":"bpmn","__text":"ParallelGateway_"+id};
-    //lane.flowNodeRef.push(nodo);
     proceso.parallelGateway.push(abre);
     for (var i=0; i < elem.sentencia.length; i++) {
       var flujo = {"__prefix":"bpmn","__text":"SequenceFlow_"+SequenceFlow_GlobalID++};
@@ -205,7 +195,6 @@ var obtenerTareas = function(elem) {
     cierra.outgoing = flujo;
     proceso.sequenceFlow.push({"_id":flujo.__text,"_sourceRef":cierra._id, "_targetRef":"","__prefix":"bpmn"});
     var nodo = {"__prefix":"bpmn","__text":"ParallelGateway_"+id};
-    //lane.flowNodeRef.push(nodo);
     proceso.parallelGateway.push(cierra);
   }
 }

@@ -2,57 +2,29 @@ var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var _ = require("underscore");
 var prettyjson = require('prettyjson');
+var pd = require('pretty-data').pd;
 var intermedio = require('./modeloIntermedio');
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
-// conv.json2xml_str(json);
-
-
-
-
-
 
 var textosPruebas = [
-/*
-  "el cocinero cocina pedido. " +
-  "el mozo entraga el pedido. " +
-  "el cliente come la comida. " +
-  "el mozo cobra al cliente.  " +
-  "el cliente paga."
-
-"el administrador entrega tareas a ventas. " +
-"al mismo tiempo, " +
-"1 el administrador presenta informe de tareas a direccion. " +
-"2 el vendedor toma tareas. "
-*/
-
-"el cocinero cocina pedido. " +
+"el cliente entra al restoran. " +
 "si se cumple, " +
-"condicionA entonces el mozo trabaja. " +
-"si no el cocinero se rasca."
-
-/*
-,
-
-"el administrador lista tareas pendientes. " +
-"el administrador entrega tareas a ventas. " +
-"al mismo tiempo, " +
-"1 el administrador presenta informe de tareas a direccion. " +
-"2 el vendedor toma tareas. " +
-"3 la direccion toma notas. " +
+"realizoReserva entonces el mozo lleva el cliente a su mesa. " +
+"si no el cliente espera que haya lugar. " +
+"el mozo toma el pedido. " +
+"a la vez, " +
+"1 el cocinero cocina pedido. " +
+"2 el mozo lleva la bebida. " +
+"el cliente come la comida. " +
+"el cliente pide la cuenta. " +
+"el mozo trae la cuenta. " +
 "si se cumple, " +
-"condicionA entonces el juan trabaja. " +
-"condicionB entonces el pepe baila la cumparcita. " +
-"condicionC entonces el vendedor baila la cumparcita. " +
-"si no el tio canta." +
-"el tronco baila algo nuevo."
-*/
+"buenaAtencion entonces el cliente paga y deja propina." +
+"si no el cliente paga."
 ]
 
-// var options = {
-//   noColor: true
-// };
 var options = {
   keysColor: 'blue',
   dashColor: 'white',
@@ -107,4 +79,5 @@ for (var i=0 ; i<modelo.length-1 ; i++) {
 makeBpmn.conectarStartEvent(modelo);
 makeBpmn.conectarEndEvent(modelo);
 
-_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
+//_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
+console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
