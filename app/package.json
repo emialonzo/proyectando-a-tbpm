@@ -4,9 +4,9 @@
   "description": "Procesar un lenguaje descripto por una gramática libre de contexto y obtener un modelo BPMN",
   "main": "index.js",
   "scripts": {
-    "start": "electron app.js",
     "test": "jasmine",
-    "build":  "electron-packager . proyecto --out=dist --ignore='^/dist$'  --asar --arch=x64 --overwrite --platform=linux --version=0.36.1"
+    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'  --asar --arch=x64 --overwrite --platform=linux --version=0.36.1",
+    "start": "electron index.js"
   },
   "author": "",
   "license": "ISC",
