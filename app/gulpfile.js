@@ -8,8 +8,6 @@ gulp.task('default', function(){
 });
 
 gulp.task('build', function(){
-  // "electron-packager . proyecto --out=dist --ignore='^/dist$'
-  //  --asar --arch=x64 --overwrite --platform=linux --version=0.36.1",
   var opts = {
     "arch": "x64",
     "dir": ".",

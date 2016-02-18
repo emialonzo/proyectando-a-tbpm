@@ -1,24 +1,14 @@
 // var $ = require("jquery");
 var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
-var xmljson = require('xmljson');
 var intermedio = require('./modeloIntermedio');
 
-
+var xmljson = require('xmljson');
 var _ = require("underscore");
-// var bpmnImg = require("./xml2img.js");
-
-//deberian estar dentro del makeBpmn
 var x2js = require('x2js'); //new X2JS();
-var conv = new x2js();
-
+var conv = new x2js(); // conv.json2xml_str(json);
 var Viz = require('viz.js');
-// conv.json2xml_str(json);
-
 var pd = require('pretty-data').pd;
-
-
-
 
 function conversion(){
   console.log("getAbstractModel");
@@ -32,22 +22,16 @@ function conversion(){
   // _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
   var modeloInt = intermedio.procesarModelo(modelo);
   var dot = makeBpmn.toDot(modeloInt);
-
   $("#id-dot").html(dot);
-
   // image = Viz(""+file, { format: "png-image-element" });
   image = Viz(dot, { format: "png-image-element" });
 
   // console.error(image);
   $("#id-bpmn-model").html(image);
   // document.body.appendChild(image);
-
   $("#id-xml-code").text((pd.xml(conv.json2xml_str(makeBpmn.proceso))));
-
-
   return modelo;
 }
-
 
 function parseSVG(s) {
   var div= document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
@@ -61,7 +45,6 @@ function parseSVG(s) {
 function crearSvg(id, svgContent){
   document.innerHTML(id).appendChild(parseSVG(svgContent));
 }
-
 
 function safe_tags(str) {
   console.log("safe_tags");
@@ -190,7 +173,7 @@ var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 </bpmn:definitions>`;
 var ejemploModeloAbstracto;
 $(function() {
-  parser.init(__dirname + '/respGram');
+  parser.init(__dirname + '/respGram.pegjs');
 
   ejemploModeloAbstracto = parser.parse(ejemploTexto);
 

@@ -18,7 +18,9 @@ sentencia = task:sent_accion {return {"tipo":"task", "sentencia":task};} /
             sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
             sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM};}
 
-actor = articulo ws nombre:[a-z]i+ { return nombre.join("")}
+actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return nombre}/
+        articulo ws nombre:[a-z]i+ { return nombre.join("")}
+        
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion = ws actor:actor
               ws accion:accion

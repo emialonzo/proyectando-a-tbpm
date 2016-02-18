@@ -136,7 +136,6 @@ function asignarIdCondicion(modelo){
   return ret;
 }
 
-
 //itera sobre el modelo, en caso de encontrar un gw dentro de una secuencia agrega una gw de cierre inmediatamente despues
 function recursivoBalance(modelo){
   var ret = [];
