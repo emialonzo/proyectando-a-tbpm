@@ -2,6 +2,7 @@
 var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var intermedio = require('./modeloIntermedio');
+var toDot = require('./makeDot').toDot;
 
 var xmljson = require('xmljson');
 var _ = require("underscore");
@@ -16,19 +17,18 @@ function conversion(){
   var modelo = parser.parse(text);
   $("#id-bpmn-model").html("<p>Cargando imagen</p>");
   $("#id-modelo-abstracto").text(jsonToString(modelo));
-  // console.log(makeBpmn.getActors(modelo));
-  // _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
-  //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
-  // _.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
+  // console.log(makunction(elem){ makeBpmn.obtenerTareas(elem); })
   var modeloInt = intermedio.procesarModelo(modelo);
-  var dot = makeBpmn.toDot(modeloInt);
+  var dot = toDot(modeloInt);
   $("#id-dot").html(dot);
+
   // image = Viz(""+file, { format: "png-image-element" });
   image = Viz(dot, { format: "png-image-element" });
 
   // console.error(image);
   $("#id-bpmn-model").html(image);
   // document.body.appendChild(image);
+
   $("#id-xml-code").text((pd.xml(conv.json2xml_str(makeBpmn.proceso))));
   return modelo;
 }
@@ -173,7 +173,7 @@ var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 </bpmn:definitions>`;
 var ejemploModeloAbstracto;
 $(function() {
-  parser.init(__dirname + '/respGram.pegjs');
+  parser.init(__dirname + '/gramatica2.pegjs');
 
   ejemploModeloAbstracto = parser.parse(ejemploTexto);
 

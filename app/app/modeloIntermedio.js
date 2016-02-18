@@ -14,7 +14,6 @@ var cierrogw = function (elem){
   }
 }
 
-// var gateway = ['xor','and'];
 var gateway = {
   'xor':true,
   'and':true,
@@ -23,23 +22,6 @@ var gateway = {
 function isGateway(tipo){
   return tipo in gateway;
 }
-
-// function findById(modelo, id){
-//   if(modelo.id == id){
-//     return modelo;
-//   }
-//   else {
-//     if((nodo.tipo == "secuencia") || (isGateway(nodo.tipo))){
-//       for (var i = 0; i < nodo.sentencia.length; i++) {
-//         var encontrado = findById(nodo.sentencia[i], id);
-//         if(!_.isUndefined(encontrado)){ //modelo.sig.push(.id);
-//           return encontrado;
-//         }
-//       }
-//     }
-//   }
-//   return;
-// }
 
 function findById(id){
   return dicccionarioId[id];
@@ -53,19 +35,6 @@ function asignarFlujo(modelo){
   var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
 return aux;
 }
-
-//chequea si alguno de los
-// function ajustarSiguienteSecuencia(nodo){
-//   for (var i = 0; i < nodo.sig.length; i++) {
-//     sig = findById(nodo.sig[i]);
-//     if (sig){
-//       if(sig.tipo == "secuencia"){
-//         nodo.sig[i] = sig.sig;
-//       }
-//     }
-//   }
-// }
-
 function recursivoFlujo(nodo, ant, sig){
   if(_.isUndefined(nodo)){
     return ;
@@ -100,6 +69,18 @@ function recursivoFlujo(nodo, ant, sig){
   }
   return nodo;
 }
+
+//chequea si alguno de los
+// function ajustarSiguienteSecuencia(nodo){
+//   for (var i = 0; i < nodo.sig.length; i++) {
+//     sig = findById(nodo.sig[i]);
+//     if (sig){
+//       if(sig.tipo == "secuencia"){
+//         nodo.sig[i] = sig.sig;
+//       }
+//     }
+//   }
+// }
 
 //toma un modelo y a cada elemento le agrega un id
 function asignarId(modelo){
@@ -137,6 +118,10 @@ function asignarIdCondicion(modelo){
 }
 
 //itera sobre el modelo, en caso de encontrar un gw dentro de una secuencia agrega una gw de cierre inmediatamente despues
+var balancearModelo = function(modelo){
+  return recursivoBalance(modelo);
+}
+
 function recursivoBalance(modelo){
   var ret = [];
   while(modelo.length >0){
@@ -151,34 +136,19 @@ function recursivoBalance(modelo){
   }
   return ret;
 }
-var balancearModelo = function(modelo){
-  return recursivoBalance(modelo);
-}
 
-
-
-//aplica iterativamente transformaciones al modelo
+//aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
   console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
-  // console.info("***" + pd.json(model));
   model = intermedio.asignarId(model.sentencia);
-  // console.info("***" + pd.json(model));
   model = intermedio.balancearModelo(model);
-  // console.info("***" + pd.json(model));
-  // console.log(pd.json(model));
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
   aux.id = ++globalId;
-  // model = recursivoFlujo(aux, "S", "F");
-  console.info("***" + pd.json(model));
   model = intermedio.asignarFlujo(aux);
-  console.info("***" + pd.json(model));
   return model;
 }
-
-console.log("Modulo modelo intermedio");
-
 
 module.exports = {
   isGateway : isGateway ,
@@ -188,6 +158,4 @@ module.exports = {
   procesarModelo : procesarModelo,
   findById : findById,
   asignarIdCondicion: asignarIdCondicion,
-
-
 };

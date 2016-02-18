@@ -4,9 +4,10 @@ var fs = require("fs");
 var gramatica = null;
 var parser = null;
 
+//path es la ruta relativa donde se encuentra la gramatica,
 var init = function(path){
   // var path = path || __dirname + '/gramatica.pegjs';
-  var path = path || __dirname + '/respGram';
+  var path = path || __dirname + '/gramatica.pegjs'; //gramatica por defecto
   gramatica = fs.readFileSync(path).toString();
   parser = PEG.buildParser(gramatica);
 }
