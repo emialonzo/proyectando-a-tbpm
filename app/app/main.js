@@ -60,11 +60,9 @@ var abc;
 
 
 var ejemploTexto =
-`el cocinero cocina pedido.
-al mismo tiempo, 1 el mozo sirve pedido. 3 la hermana es servida en la mesa.
-si se cumple, hayTrabajo entonces el juan trabaja. si no el tio carlos canta.
-si se cumple, hayTrabajo entonces el juan trabaja. otraCondicion entonces el pepe baila la cumparcita. si no el tio carlos canta.
-el administrador baila la gracamiglia.`;
+`el mozo anota pedido.
+el cocinero cocina.
+el mozo servir mesa.`;
 
 var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
