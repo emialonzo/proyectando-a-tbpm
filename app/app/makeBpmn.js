@@ -6,6 +6,9 @@ var toDot = require('./makeDot').toDot;
 var intermedio = require('./modeloIntermedio');
 var prettyjson = require('prettyjson');
 
+var x2js = require('x2js'); //new X2JS();
+var conv = new x2js();
+
 var gramatica = null;
 var parser = null;
 
@@ -453,6 +456,18 @@ var start = function(model) {
   }
 }
 
+var generarXML = function (modelo) {
+  _.map(modelo, function(elem){ obtenerLanes(elem); });
+  _.map(modelo, function(elem){ obtenerTareas(elem); });
+  var j=0;
+  for (var i=0 ; i<modelo.length-1 ; i++) {
+    generarFlujo(modelo[j], modelo[++j]);
+  }
+  conectarStartEvent(modelo);
+  conectarEndEvent(modelo);
+  console.log(pd.xml(conv.json2xml_str(proceso)));
+}
+
 module.exports = {
   init : init,
   start : start,
@@ -463,4 +478,5 @@ module.exports = {
   toDot : toDot,
   conectarEndEvent : conectarEndEvent,
   conectarStartEvent : conectarStartEvent,
+  generarXML : generarXML
 }

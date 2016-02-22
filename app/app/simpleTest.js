@@ -62,16 +62,17 @@ var modelo = parseAllText(textosPruebas)[0];
 //console.log(modelo);
 makeBpmn.start();
 modelo = intermedio.asignarIdCondicion(modelo);
+makeBpmn.generarXML(modelo);
 
-
+/*
 //console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
 //console.log(modelo);
 //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); })
 //console.log("######################### PROCESO ##################################");
-_.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
+//_.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
-_.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
+//_.map(modelo, function(elem){ makeBpmn.obtenerTareas(elem); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 //_.map(makeBpmn.proceso, function(elem){ console.log(elem); })
 
@@ -87,3 +88,4 @@ makeBpmn.conectarEndEvent(modelo);
 
 //_.map(makeBpmn.proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
 console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
+*/
