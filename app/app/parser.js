@@ -30,7 +30,7 @@ var guardarGramatica = function(){
   });
 }
 
-var parseText = function(text){
+function control(){
   if(parser == null){
     console.error("No se ha inicializado el parser correctamente.");
     throw "No se ha inicializado el parser correctamente.";
@@ -39,6 +39,16 @@ var parseText = function(text){
     console.error("No se ha inicializado la gramatica correctamente.");
     throw "No se ha inicializado la gramatica correctamente.";
   }
+}
+
+var parseText = function(text){
+  try {
+    control();
+  } catch (e) {
+    console.console.log("Tratando de inicializar.");
+    init();
+    control();
+  } 
   var modeloAbstracto = parser.parse(text);
   return modeloAbstracto;
 }

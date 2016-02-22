@@ -12,6 +12,7 @@ var Viz = require('viz.js');
 var pd = require('pretty-data').pd;
 
 function conversion(){
+    parser.init(__dirname + '/gramatica2.pegjs');
   console.log("getAbstractModel");
   var text = $("#id-modelo-texto").val();
   var modelo = parser.parse(text);
@@ -29,7 +30,24 @@ function conversion(){
   $("#id-bpmn-model").html(image);
   // document.body.appendChild(image);
 
+  parser.init(__dirname + '/gramatica.pegjs');
+  var modelo2 = parser.parse(text);
+  modelo2 = intermedio.asignarIdCondicion(modelo2);
+  makeBpmn.start();
+  _.map(modelo2, function(elem){ makeBpmn.obtenerLanes(elem); })
+  _.map(modelo2, function(elem){ makeBpmn.obtenerTareas(elem); })
+  var j=0;
+  for (var i=0 ; i<modelo.length-1 ; i++) {
+    makeBpmn.generarFlujo(modelo2[j], modelo2[++j]);
+  }
+  makeBpmn.conectarStartEvent(modelo2);
+  makeBpmn.conectarEndEvent(modelo2);
+  // pd.xml(conv.json2xml_str(makeBpmn.proceso));
+  $("#id-modelo-abstracto-transformado").html(pd.json(modelo2));
+
   $("#id-xml-code").text((pd.xml(conv.json2xml_str(makeBpmn.proceso))));
+
+  $('#id-modelo-abstracto-container').tab('show');
   return modelo;
 }
 
@@ -181,6 +199,9 @@ $(function() {
 
   abc = ejemploModeloAbstracto;
 
+  // $('#pestanias li').click(function (e) {
+  //   $(this).addClass("disabled");
+  // })
 
   // xmljson.to_json(ejemploBpmn, function(error, data){
   //   // console.log(JSON.stringify(data, 1));

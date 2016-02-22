@@ -75,32 +75,50 @@
 
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-        <div id="id-texto-container" class="col-sm-6">
+        <div id="id-texto-container" class="ploc">
+        <!-- <div id="id-texto-container" class="col-sm-6"> -->
           <h3> Modelo textual <small>que sera convertido a bpmn</small></h3>
-          <div >
-            <textarea id="id-modelo-texto" name="modelo-texto" rows="8" cols="40"></textarea>
+          <div class="form-group">
+            <form class="">
+              <textarea id="id-modelo-texto" name="modelo-texto" class="form-control" rows="8"></textarea>
+              <button type="button" id="getBpmn" class="btn btn-default" onclick="conversion()">
+                Obtener BPMN
+              </button>
+            </form>
           </div>
-          <button type="button" id="getBpmn" class="btn btn-default" onclick="conversion()">
-            Obtener BPMN
-          </button>
         </div>
 
-        <div id="id-modelo-abstracto-container" class="col-sm-6">
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills nav-justified" role="tablist" id="pestanias">
+          <li role="presentation"><a href="#id-modelo-abstracto-container" aria-controls="abstracto" role="tab" data-toggle="tab">Modelo Abstracto</a></li>
+          <li role="presentation"><a href="#id-modelo-abstracto-transformado" aria-controls="dot" role="tab" data-toggle="tab">Modelo transformado</a></li>
+          <li role="presentation"><a href="#id-xml-container" aria-controls="xml" role="tab" data-toggle="tab">XML</a></li>
+          <li role="presentation"><a href="#id-dot" aria-controls="dot" role="tab" data-toggle="tab">DEBUG(dot)</a></li>
+          <li role="presentation"><a href="#id-bpmn-container" aria-controls="imagen" role="tab" data-toggle="tab">DEBUG(Imagen)</a></li>
+        </ul>
+          <div class="tab-content">
+
+        <div id="id-modelo-abstracto-container" role="tabpanel" class="tab-pane  fade " >
+        <!-- <div id="id-modelo-abstracto-container" class="col-sm-6"> -->
           <pre><code id="id-modelo-abstracto">
           </code></pre>
         </div>
 
-        <div id="id-xml-container">
+        <pre id="id-modelo-abstracto-transformado" role="tabpanel" class="tab-pane fade " >
+        </pre>
+
+        <div id="id-xml-container" role="tabpanel" class="tab-pane fade " >
           <pre><code id="id-xml-code"></code></pre>
         </div>
 
-        <pre id="id-dot">
+        <pre id="id-dot" role="tabpanel" class="tab-pane fade " >
         </pre>
 
-        <div id="id-bpmn-container">
+        <div id="id-bpmn-container" role="tabpanel" class="tab-pane fade ">
           <div id="id-bpmn-model">
             <img src="recursos/mozoCocinero.svg" alt="" />
           </div>
+        </div>
         </div>
 
 
