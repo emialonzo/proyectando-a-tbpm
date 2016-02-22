@@ -111,6 +111,9 @@ function asignarIdCondicion(modelo){
       elem.sentencia = asignarIdCondicion(elem.sentencia);
     } else if (elem.tipo == "condicion"){
       elem.sentencia = asignarIdCondicion(elem.sentencia);
+    } else if (elem.tipo == "loop") {
+      console.log(elem);
+      elem.sentencia = asignarIdCondicion(elem.sentencia);
     }
     ret.push(elem);
   }

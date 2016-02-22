@@ -11,7 +11,7 @@ secuencia = (ws sec:sentencia {return sec;})+
 sentencia = task:sent_accion {return {"tipo":"task", "sentencia":task};} /
             sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
             sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
-            sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM};}
+            sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM.sentencia, "condicion":sentM.condicion};}
 
 actor = articulo ws nombre:[a-z]i+ { return nombre.join("")}
 accion = ([a-z]i+ ws)* { return text()}
@@ -36,4 +36,4 @@ sent_o = ws id_o separador
          {return [primero].concat(resto.concat(final));}
 
 id_mientras = "mientras"
-sent_mientras = ws id_mientras ws condicion separador sent:sentencia {return sent}
+sent_mientras = ws id_mientras ws cond:condicion separador sent:sentencia {return {sentencia:sent,condicion:cond}}

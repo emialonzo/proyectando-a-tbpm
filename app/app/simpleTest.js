@@ -9,6 +9,10 @@ var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
 var textosPruebas = [
+/*
+"el cliente entra al restoran. " +
+"mientras noHayaLugar, el cliente baila."
+*/
 "el cliente entra al restoran. " +
 "si se cumple, " +
 "realizoReserva entonces el mozo lleva el cliente a su mesa. " +
@@ -23,6 +27,7 @@ var textosPruebas = [
 "si se cumple, " +
 "buenaAtencion entonces el cliente paga y deja propina." +
 "si no el cliente paga."
+
 ]
 
 var options = {
@@ -61,6 +66,7 @@ modelo = intermedio.asignarIdCondicion(modelo);
 
 //console.log("######################### MODELO ##################################");
 //console.log(makeBpmn.proceso);
+//console.log(modelo);
 //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); })
 //console.log("######################### PROCESO ##################################");
 _.map(modelo, function(elem){ makeBpmn.obtenerLanes(elem); })
