@@ -3,7 +3,8 @@ start = s:secuencia ws {return s;}
 separador = ","
 ws "whitespace" = [ \t\n\r]*
 articulo = "el" / "la" / "los" / "las"
-fin = "."
+punto = "."
+fin = "fin"
 Integer "integer" = [0-9]+ { return parseInt(text(), 10); }
 
 secuencia = (ws sec:sentencia {return sec;})+
@@ -17,13 +18,14 @@ actor = articulo ws nombre:[a-z]i+ { return nombre.join("")}
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion = ws actor:actor
               ws accion:accion
-              ws fin
+              ws punto
               { return {"actor": actor , "accion" : accion };}
 
 id_y = "al mismo tiempo" / "a la vez" / "en paralelo"
 sent_y = ws id_y separador
          ws Integer primero:sentencia
             resto:(ws Integer sen:sentencia {return sen;})+
+            ws fin
             { return [primero].concat(resto);}
 
 id_o = "si se cumple"
@@ -33,7 +35,11 @@ sent_o = ws id_o separador
          ws primero:(con:condicion "entonces" ws sen:sentencia {return {"tipo":"condicion","condicion":con, "sentencia":sen}})
          resto:(ws con:condicion "entonces" ws sen:sentencia {return {"tipo":"condicion","condicion":con, "sentencia":sen}})*
          final:(ws defecto ws sen:sentencia {return {"tipo":"condicion", "condicion":"defecto", "sentencia":sen}})
+         ws fin
          {return [primero].concat(resto.concat(final));}
 
 id_mientras = "mientras"
-sent_mientras = ws id_mientras ws cond:condicion separador sent:sentencia {return {sentencia:sent,condicion:cond}}
+sent_mientras = ws id_mientras
+                ws cond:condicion separador sent:sentencia
+                ws fin
+                {return {sentencia:sent,condicion:cond}}

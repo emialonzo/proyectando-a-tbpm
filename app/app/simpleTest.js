@@ -17,16 +17,19 @@ var textosPruebas = [
 "si se cumple, " +
 "realizoReserva entonces el mozo lleva el cliente a su mesa. " +
 "si no el cliente espera que haya lugar. " +
+"fin " +
 "el mozo toma el pedido. " +
 "a la vez, " +
 "1 el cocinero cocina pedido. " +
 "2 el mozo lleva la bebida. " +
+"fin " +
 "el cliente come la comida. " +
 "el cliente pide la cuenta. " +
 "el mozo trae la cuenta. " +
 "si se cumple, " +
 "buenaAtencion entonces el cliente paga y deja propina." +
-"si no el cliente paga."
+"si no el cliente paga. " +
+"fin "
 
 ]
 
