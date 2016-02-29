@@ -1,4 +1,8 @@
-{function collect(obj1, obj2) {
+{
+function makeInteger(o) {
+    return parseInt(o.join(""), 10);
+  }
+function collect(obj1, obj2) {
   for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
   return obj1;
 }}
@@ -13,14 +17,24 @@ Integer "integer" = [0-9]+ { return parseInt(text(), 10); }
 secuencia = sec:(ws sent:sentencia {return sent;})+ {return {"tipo":"secuencia", "sentencia":sec};}
 
 
-sentencia = task:sent_accion {return {"tipo":"task", "sentencia":task};} /
+sentencia = sentEv:sent_ev {return {"tipo":"evento", "sentencia":sentEv};} /
+			task:sent_accion {return {"tipo":"task", "sentencia":task};} /
             sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
             sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
-            sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM};}
+            sentAdj:sent_adj {return {"tipo":"adjunto", "sentencia":sentAdj};} /
+            sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM};
+          }
 
 actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return nombre}/
         articulo ws nombre:[a-z]i+ { return nombre.join("")}
-        
+
+sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws fin {return {evento, actor}}
+tipo_evento = d:digito ws unidad:tiempo "s"? {return "tiempo", {"tiempo" : d, "unidad":unidad};}
+		/ mensaje ws p:palabras {return {"evento":"mensaje", "mensaje":p};}
+
+mensaje = "mensaje" / "mail"
+tiempo = "segundo" / "minuto" / "hora" / "dia" / "semana" / "mese" / "año"
+
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion = ws actor:actor
               ws accion:accion
@@ -45,5 +59,15 @@ sent_o = ws id_o separador
          //final:(ws defecto ws sen:secuencia {return {"condcion":"defecto", sentencia:sen};})
          {return [primero].concat(resto.concat(final));}
 
+
+sent_adj = ws "alternativa de" ws p:palabras ws "," ws "si" ws c:condicion ws sec:secuencia {return {"adjunto_a":p, "condicion":c, "sentencia":sec}}
+
 id_mientras = "mientras"
 sent_mientras = ws id_mientras ws condicion separador sent:secuencia {return [sent]}
+
+
+digito "digito"
+  = digits:[0-9]+ { return makeInteger(digits); }
+
+palabra "palabra" = [a-z]i+ { return text()}
+palabras "palabras" = ([a-z]i+ ws?)+ { return text()}
