@@ -20,6 +20,10 @@ function conversion(){
   $("#id-modelo-abstracto").text(jsonToString(modelo));
   // console.log(makunction(elem){ makeBpmn.obtenerTareas(elem); })
   var modeloInt = intermedio.procesarModelo(modelo);
+  // console.debug(modeloInt);
+  $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
+  // $("#id-modelo-abstracto-transformado").append(pd.json(intermedio.dicccionarioId));
+  console.info("++"+pd.json(intermedio.dicccionarioId));
   var dot = toDot(modeloInt);
   $("#id-dot").html(dot);
 
@@ -43,7 +47,6 @@ function conversion(){
   makeBpmn.conectarStartEvent(modelo2);
   makeBpmn.conectarEndEvent(modelo2);
   // pd.xml(conv.json2xml_str(makeBpmn.proceso));
-  $("#id-modelo-abstracto-transformado").html(pd.json(modelo2));
 
   $("#id-xml-code").text((pd.xml(conv.json2xml_str(makeBpmn.proceso))));
 
@@ -78,9 +81,10 @@ var abc;
 
 
 var ejemploTexto =
-`el mozo anota pedido.
-el cocinero cocina.
-el mozo servir mesa.`;
+`el cocinero baila la gracamiglia.
+el cocinero ejecuta el servicio baila la gracamiglia.
+el cocinero espera por 30 segundos.
+alternativa de baila la gracamiglia, si transcurre 20 segundos el cocinero loco. el cocinero espera por mensaje hoy canto.`;
 
 var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">

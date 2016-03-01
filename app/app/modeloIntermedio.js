@@ -5,19 +5,21 @@ var globalId = 1;
 var dicccionarioId = {};
 
 var cierrogw = function (elem){
-  return {
+  var nodo = {
     "tipo": "cierro",
     "sentencia" : elem.tipo,
     "tag": elem.tipo,
     "ref": elem.id,
     "id": globalId++
   }
+  dicccionarioId[nodo.id] = nodo;
+  return nodo;
 }
 
 var gateway = {
   'xor':true,
   'and':true,
-  'loop' : true
+  'loop' : true,
 }
 function isGateway(tipo){
   return tipo in gateway;
@@ -39,6 +41,7 @@ function recursivoFlujo(nodo, ant, sig){
   if(_.isUndefined(nodo)){
     return ;
   }
+  findById(nodo.id);
 
   nodo.sig = sig;
   nodo.ant = ant;
@@ -56,8 +59,14 @@ function recursivoFlujo(nodo, ant, sig){
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
     }
-  } if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
+  } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
     console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
+    nodo.sig.push(nodo.ref);
+  // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
+  } else if(nodo.tipo == "adjunto"){
+    // console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
+    var aux = recursivoFlujo({"tipo":"secuencia", "sentencia":nodo.sentencia}, nodo.id, sig);
+    nodo.sentencia = aux.sentencia;
     nodo.sig.push(nodo.ref);
   }
   else if ( isGateway(nodo.tipo) ){
@@ -91,6 +100,8 @@ function asignarId(modelo){
     dicccionarioId[elem.id] = elem;
     if(elem.sentencia instanceof Array){
       elem.sentencia = asignarId(elem.sentencia);
+    }if(elem.tipo == "adjunto"){
+      elem.sentencia = asignarId(elem.sentencia.sentencia);
     }
     ret.push(elem);
   }
@@ -131,6 +142,8 @@ function recursivoBalance(modelo){
     var elem = modelo.shift();
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
+    } else if(elem.tipo == "adjunto"){
+      modelo.unshift(cierrogw(elem));
     }
     if(elem.sentencia instanceof Array){
       elem.sentencia = recursivoBalance(elem.sentencia);
@@ -140,16 +153,42 @@ function recursivoBalance(modelo){
   return ret;
 }
 
+function crearEvento(tipo){
+  return {
+     "tipo": "evento",
+     "sentencia": {
+       "evento": {
+         "tipo" : tipo
+       }
+     }
+   }
+}
+
+function inicializar(){
+  if(!dicccionarioId){
+    dicccionarioId = {};
+  }
+  dicccionarioId["S"] = crearEvento("Inicio");
+  dicccionarioId["F"] = crearEvento("Fin");
+}
+
 //aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
+  inicializar();
   console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
   model = intermedio.asignarId(model.sentencia);
+  console.debug("Con id asignado");
+  console.log(pd.json(model));
   model = intermedio.balancearModelo(model);
+  console.debug("MODELO BALANCEADO");
+  console.log(pd.json(model));
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
   aux.id = ++globalId;
   model = intermedio.asignarFlujo(aux);
+  console.debug("FLUJO");
+  console.log(pd.json(model));
   return model;
 }
 
@@ -161,4 +200,5 @@ module.exports = {
   procesarModelo : procesarModelo,
   findById : findById,
   asignarIdCondicion: asignarIdCondicion,
+  dicccionarioId:dicccionarioId,
 };
