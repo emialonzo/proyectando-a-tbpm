@@ -34,9 +34,29 @@ function dotRec(nodo, flujodot){
     taskdot[nodo.sentencia.actor].push(templateDotTask(nodo));
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
   }
+  else if(nodo.tipo=="evento") {
+    //agrego tarea al lane
+    if(_.isUndefined(taskdot[nodo.sentencia.actor])){
+      taskdot[nodo.sentencia.actor] = [];
+    }
+    taskdot[nodo.sentencia.actor].push(templateEventTask(nodo));
+    _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
+  }
+  else if(nodo.tipo=="adjunto") {
+    //{"tipo":"evento","sentencia":{"evento":{"tiempo":30,"unidad":"segundo"},"actor":"cocinero"},"id":3,"sig":[4],"ant":[3]}
+    //agrego tarea al lane
+    if(_.isUndefined(taskdot[nodo.lane])){
+      taskdot[nodo.lane] = [];
+    }
+    taskdot[nodo.lane].push(templateAdjuntoEventTask(nodo));
+    _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
+    flujodot.push(nodo.ant+"->"+nodo.id);
+    dotRec(nodo.sentencia[0], flujodot);
+  }
   else if(nodo.tipo=="secuencia"){
     _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
-  }else if(nodo.tipo=="cierro"){
+  }
+  else if(nodo.tipo=="cierro"){
     //agrego shape para la compuerta
     gwdot.push(templateDotGw(nodo)); //agrega el nodo compuerto
     //agrego flujo
@@ -76,8 +96,8 @@ function obtenerSecuencias(nodo){
 //inserta dot con los flujos iniciales, y por cada flujo detectado, controla que la parte de la derecha del flujo no sea una secuenca
 function ajustarSecuencias(flujodot, secuencias){
   var flujito = [];
-  flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
-  flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
+  flujito.push("S [label=\"S\", shape=circle, width=\"0.3\"];");
+  flujito.push("F [label=\"F\", shape=circle, width=\"0.3\" , style=bold];");
   flujito.push("");
   var str = flujodot[0];
   var clave = str.substring(0, str.lastIndexOf("-"));
@@ -100,7 +120,7 @@ function ajustarSecuencias(flujodot, secuencias){
 var file = [];
 function printFile() {
   file.push("digraph G01 {");
-  file.push("rankdir=LR; node [shape=box, style=rounded];");
+  file.push("rankdir=LR; node [shape=box, style=\"rounded, filled\"];");
   for (var key in taskdot) {
      var listaTareas = taskdot[key];
       file.push("subgraph cluster" + key + " { rankdir=LR;")
@@ -120,7 +140,33 @@ function printFile() {
 }
 
 function templateDotTask(nodo){
-  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\"];";
+  if(nodo.sentencia.task == "human")
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"red\" ];";
+  else
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"green\" ];";
+}
+
+function templateEventTask(nodo){
+  // console.info(JSON.stringify(nodo));
+  if(nodo.sentencia.evento.tiempo){
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.evento.tiempo + " " + nodo.sentencia.evento.unidad + "\" shape=circle fillcolor=\"aquamarine\" ];";
+  } else if(nodo.sentencia.evento.mensaje){
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.evento.mensaje + "\" shape=circle fillcolor=\"cadetblue1\" ];";
+  } else{
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" shape=circle fillcolor=\"white\" ];";
+  }
+}
+
+function templateAdjuntoEventTask(nodo){
+  console.info(JSON.stringify(nodo));
+  if(nodo.evento.tiempo){
+    return nodo.id + " [label=\"id:" + nodo.id +" adjunto a " + nodo.adjunto_a + "\\n Evento:" + nodo.evento.tiempo + " " + nodo.evento.unidad + "\" shape=circle fillcolor=\"aquamarine\" ];";
+  } else if(nodo.evento.mensaje){
+    return nodo.id + " [label=\"id:" + nodo.id +" adjunto a " + nodo.adjunto_a + "\\n Evento: mensaje"+nodo.evento.mensaje + "\" shape=circle fillcolor=\"cadetblue1\" ];";
+  }
+  // else{
+  //   return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" shape=circle fillcolor=\"white\" ];";
+  // }
 }
 
 function templateDotGw(nodo){
