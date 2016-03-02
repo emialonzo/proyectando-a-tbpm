@@ -214,22 +214,27 @@ function asignarLanes(modelo){
     } catch (e) {
       console.error(pd.json(dicccionarioId));
     }
-    console.log(nodo);
+    // console.log(pd.json(nodo,0));
     if((nodo.tipo == "task") || (nodo.tipo == "evento")){
       laneActual = nodo.sentencia.actor;
       if(!primerLane){
+        console.log("");
         primerLane = laneActual;
       }
       nodo.lane = laneActual;
     } else{
-      if(!laneActual){
-        sinLane.push(nodo.id);
-      } else{
-        nodo.lane = laneActual;
-      }
-      if(nodo.sentencia instanceof Array){
-        for (var i = 0; i < nodo.sentencia.length; i++) {
-          stack.push(nodo.sentencia[i].id);
+      if(!nodo.lane){
+        if(!laneActual){
+          console.log("sin lane! " + nodo.id);
+          sinLane.push(nodo.id);
+        } else{
+          nodo.lane = laneActual;
+        }
+        if(nodo.sentencia instanceof Array){
+          for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+            console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
+            stack.push(nodo.sentencia[i].id);
+          }
         }
       }
     }
@@ -238,10 +243,12 @@ function asignarLanes(modelo){
   //ahora proceso los que no tienen lane
   sinLane.push("S");
   sinLane.push("F");
+  console.log("¡¡¡¡SIN LANES!!!!!");
+  console.log(sinLane);
   for (var i = 0; i < sinLane.length; i++) {
-    sinLane[i];
-    nodo = findById(idActual);
+    nodo = findById(sinLane[i]);
     nodo.lane = primerLane;
+    console.log("El nodo " + nodo.id + " de tipo:" + nodo.tipo + " en lane:" + primerLane);
     updateNodo(nodo);
   }
 }
@@ -271,10 +278,10 @@ function inicializar(){
 var procesarModelo = function(model){
   inicializar();
   console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
-  model = intermedio.asignarId(model.sentencia);
+  model = asignarId(model.sentencia);
   // console.debug("Con id asignado");
   // console.log(pd.json(model));
-  model = intermedio.balancearModelo(model);
+  model = balancearModelo(model);
   // console.debug("MODELO BALANCEADO");
   // console.log(pd.json(model));
   aux = {};
@@ -282,7 +289,7 @@ var procesarModelo = function(model){
   aux.sentencia = model;
   aux.id = ++globalId;
   updateNodo(aux);
-    model = intermedio.asignarFlujo(aux);
+    model = asignarFlujo(aux);
   console.log("LANES");
   asignarLanes(model);
   console.log("LANES FIN");

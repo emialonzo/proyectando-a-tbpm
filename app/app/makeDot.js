@@ -36,10 +36,10 @@ function dotRec(nodo, flujodot){
   }
   else if(nodo.tipo=="evento") {
     //agrego tarea al lane
-    if(_.isUndefined(taskdot[nodo.sentencia.actor])){
-      taskdot[nodo.sentencia.actor] = [];
+    if(_.isUndefined(taskdot[nodo.lane])){
+      taskdot[nodo.lane] = [];
     }
-    taskdot[nodo.sentencia.actor].push(templateEventTask(nodo));
+    taskdot[nodo.lane].push(templateEventTask(nodo));
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
   }
   else if(nodo.tipo=="adjunto") {
@@ -58,13 +58,18 @@ function dotRec(nodo, flujodot){
   }
   else if(nodo.tipo=="cierro"){
     //agrego shape para la compuerta
-    gwdot.push(templateDotGw(nodo)); //agrega el nodo compuerto
+    // gwdot.push(templateDotGw(nodo)); //agrega el nodo compuerto
+    taskdot[nodo.lane].push(templateDotGw(nodo)); //agrega el nodo compuerto
     //agrego flujo
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
   }
   else if(isGateway(nodo.tipo)){
     //agrego shape
-    gwdot.push(templateDotGw(nodo));
+    // gwdot.push(templateDotGw(nodo));
+    if(_.isUndefined(taskdot[nodo.lane])){
+      taskdot[nodo.lane] = [];
+    }
+    taskdot[nodo.lane].push(templateDotGw(nodo));
     //agrego flujo
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
     _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
