@@ -45,10 +45,10 @@ function dotRec(nodo, flujodot){
   else if(nodo.tipo=="adjunto") {
     //{"tipo":"evento","sentencia":{"evento":{"tiempo":30,"unidad":"segundo"},"actor":"cocinero"},"id":3,"sig":[4],"ant":[3]}
     //agrego tarea al lane
-    if(_.isUndefined(taskdot[nodo.sentencia.actor])){
-      taskdot[nodo.sentencia.actor] = [];
+    if(_.isUndefined(taskdot[nodo.lane])){
+      taskdot[nodo.lane] = [];
     }
-    taskdot[nodo.sentencia.actor].push(templateAdjuntoEventTask(nodo));
+    taskdot[nodo.lane].push(templateAdjuntoEventTask(nodo));
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
     flujodot.push(nodo.ant+"->"+nodo.id);
     dotRec(nodo.sentencia[0], flujodot);
@@ -160,12 +160,13 @@ function templateEventTask(nodo){
 function templateAdjuntoEventTask(nodo){
   console.info(JSON.stringify(nodo));
   if(nodo.evento.tiempo){
-    return nodo.id + " [label=\"id:" + nodo.id +" adjunto:" + nodo.evento.tiempo + " " + nodo.evento.unidad + "\" shape=circle fillcolor=\"aquamarine\" ];";
+    return nodo.id + " [label=\"id:" + nodo.id +" adjunto a " + nodo.adjunto_a + "\\n Evento:" + nodo.evento.tiempo + " " + nodo.evento.unidad + "\" shape=circle fillcolor=\"aquamarine\" ];";
   } else if(nodo.evento.mensaje){
-    return nodo.id + " [label=\"id:" + nodo.id +" adjunto:"+nodo.evento.mensaje + "\" shape=circle fillcolor=\"cadetblue1\" ];";
-  } else{
-    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" shape=circle fillcolor=\"white\" ];";
+    return nodo.id + " [label=\"id:" + nodo.id +" adjunto a " + nodo.adjunto_a + "\\n Evento: mensaje"+nodo.evento.mensaje + "\" shape=circle fillcolor=\"cadetblue1\" ];";
   }
+  // else{
+  //   return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" shape=circle fillcolor=\"white\" ];";
+  // }
 }
 
 function templateDotGw(nodo){

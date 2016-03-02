@@ -84,9 +84,26 @@ var ejemploTexto =
 // el cocinero ejecuta el servicio baila la gracamiglia.
 // el cocinero espera por 30 segundos.
 // al mismo tiempo, 1 el A XX. 2 el A XY. el A XZ. fin
+
+// `el A X.
+// el A Y.
+// alternativa de X, si transcurre 20 segundos el A Z. el A espera por mensaje MMMM.`
+
 `el A X.
-el A Y.
-alternativa de X, si transcurre 20 segundos el A Z. el A espera por mensaje MMMM.`
+la A Y.
+la A Z.
+alternativa de X, si transcurre 20 segundos la A L. la A M. la A N. fin
+al mismo tiempo,
+            1 la A I. la A II. la A III.
+            2 la A J. si se cumple,
+                                     condi  entonces la A K. la A KK.
+                                     condii entonces el A L.
+                                    condiii entonces la A T.
+                                      si no la A U. la A UU.
+                   fin
+             la A JJ.
+       fin`
+
 //
 // `el cocinero baila la gracamiglia.
 // alternativa de baila la gracamiglia, si transcurre 20 segundos el cocinero loco. el cocinero espera por mensaje hoy canto.`;

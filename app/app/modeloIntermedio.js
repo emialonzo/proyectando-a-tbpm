@@ -107,6 +107,10 @@ function recursivoFlujo(nodox, ant, sig){
     //la anterior no tiene, pero le pongo la de la tarea a ser adjuntada
     nodo.ant = [aux_tarea.id];
 
+    //seteo lane
+    nodo.lane = aux_tarea.sentencia.actor;
+
+    //seteo la tarea anterior para el fin de la adjunta
     var aux_tarea_ant = findById(ant);
     aux_tarea_ant.sig = sig;
     // nodo.adjunto_a_id = aux_tarea
