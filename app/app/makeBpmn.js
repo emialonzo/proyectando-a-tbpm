@@ -23,6 +23,7 @@ var proceso = {
   task : [],
   exclusiveGateway : [],
   parallelGateway : [],
+  intermediateCatchEvent : [],
   endEvent : {},
   sequenceFlow : []
 };
@@ -60,6 +61,18 @@ var obtenerLanes = function(elem) {
     }
   } else if (elem.tipo == "loop") {
     elem.lane = actor;
+    for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
+      obtenerLanes(obj);
+    }
+  } else if (elem.tipo == "evento") {
+    actor = elem.sentencia.actor;
+    if (_.find(proceso.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
+      proceso.laneSet.lane.push(
+        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
+         "_name": elem.sentencia.actor,"__prefix":"bpmn"});
+    }
+  } else if (elem.tipo == "secuencia") {
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
@@ -176,6 +189,30 @@ var obtenerTareas = function(elem) {
     proceso.sequenceFlow.push({"_id":flujo.__text,"_name":elem.condicion,"_sourceRef":cierra._id,"_targetRef":abre._id,"__prefix":"bpmn"});
     proceso.sequenceFlow.push({"_id":flujoDefecto.__text,"_sourceRef":cierra._id, "_targetRef":"","__prefix":"bpmn"});
     proceso.exclusiveGateway.push(cierra);
+  } else if (elem.tipo == "evento") {
+    //console.log("#################################")
+    //console.log("EVENTO\n"+ prettyjson.render(elem,options));
+    //console.log("#################################")
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == elem.sentencia.actor});
+    var nodo = {"__prefix":"bpmn","__text":"IntermediateCatchEvent_"+elem.id};
+    lane.flowNodeRef.push(nodo);
+    var intermediateCatchEvent =
+      {
+        "incoming":{},
+        "outgoing":{"__prefix":"bpmn", "__text":"SequenceFlow_"+SequenceFlow_GlobalID++},
+        "_id":"IntermediateCatchEvent_"+elem.id, "__prefix":"bpmn"
+      };
+    var sequenceFlow = {"_id":intermediateCatchEvent.outgoing.__text,"_sourceRef":nodo.__text, "_targetRef":"","__prefix":"bpmn"};
+    proceso.sequenceFlow.push(sequenceFlow);
+    proceso.intermediateCatchEvent.push(intermediateCatchEvent);
+  } else if (elem.tipo == "secuencia") {
+    //console.log("#################################")
+    //console.log("SECUENCIA\n"+ prettyjson.render(elem,options));
+    //console.log("#################################")
+    for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
+      obtenerTareas(obj);
+    }
   }
 }
 
@@ -200,28 +237,54 @@ var obtenerFlujo = function(elem) {
     var gwLOOP = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == gwLOOP._default});
     return flujo;
+  } else if (elem.tipo = "evento") {
+    var evento = _.find(proceso.intermediateCatchEvent, function(val){ return val._id == "IntermediateCatchEvent_"+elem.id});
+    flujo = _.find(proceso.sequenceFlow, function(val){return val._id == evento.outgoing.__text});
+    return flujo;
   }
 }
 
 // recorro el modelo nuevamente para construir el flujo del proceso
 var generarFlujo = function(anterior, elem) {
   //Obtengo el flujo del elemento anterior para conectarlo con el elemento que estoy procesando
+  console.log("##################### FLUJO ANTERIOR ##########################");
   var flujoAnterior = obtenerFlujo(anterior);
+  console.log(prettyjson.render(flujoAnterior, options));
+  console.log("##################### ELEM ##########################");
+  console.log(prettyjson.render(elem, options));
   if (elem.tipo == "task") {
+    console.log("##################### TASK ##########################");
     //obtengo la tarea que se esta procesando
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
+    console.log(prettyjson.render(task, options));
     //conecto los elementos
     flujoAnterior._targetRef = task._id;
     task.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
+    console.log("##################### POST PROCESAMIENTO ##########################");
+    console.log("##################### FLUJO ANTERIOR ##########################");
+    console.log(prettyjson.render(flujoAnterior, options));
+    console.log("##################### TASK ##########################");
+    console.log(prettyjson.render(task, options));
+    console.log("#####################################################");
   } else if (elem.tipo == "and") {
+    console.log("##################### AND ##########################");
     //obtengo las compuertas que abren y cierran el AND
     var id = elem.id;
+    console.log("##################### GW ABRE ##########################");
     var abreGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+    console.log(prettyjson.render(abreGW, options));
     id = id + 1;
+    console.log("##################### GW CIERRA ##########################");
     var cierraGW = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+    console.log(prettyjson.render(cierraGW, options));
     //conecto la compuerta que abre con el elemento anterior
     flujoAnterior._targetRef = abreGW._id;
     abreGW.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
+    console.log("##################### POST PROCESAMIENTO ##########################");
+    console.log("##################### FLUJO ANTERIOR ##########################");
+    console.log(prettyjson.render(flujoAnterior, options));
+    console.log("##################### GW ABRE ##########################");
+    console.log(prettyjson.render(abreGW, options));
     //construyo el flujo entre la compuerta que abre y la compuerta que cierra
     //utilizo como modelo la sentencia del elemento AND
     generarFlujoAND(abreGW, cierraGW, elem.sentencia);
@@ -249,6 +312,12 @@ var generarFlujo = function(anterior, elem) {
     //construyo el flujo entre la compuerta que abre y la compuerta que cierra
     //utilizo como modelo la sentencia del elemento XOR
     generarFlujoLOOP(abreGW, cierraGW, elem.sentencia);
+  } else if (elem.tipo == "evento") {
+    //obtengo el evento que se esta procesando
+    var evento = _.find(proceso.intermediateCatchEvent, function(val){ return val._id == "IntermediateCatchEvent_"+elem.id});
+    //conecto los elementos
+    flujoAnterior._targetRef = evento._id;
+    evento.incoming = {"__prefix":"bpmn", "__text":flujoAnterior._id};
   }
 }
 
@@ -283,7 +352,8 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
       generarFlujoXOR(abreGW, cierraGW, elem.sentencia, abreGW._default);
     } else if(elem.tipo == "loop") {
       //TODO cuando agreguemos el loop hay que implementar esta parte
-    } else if(elem.tipo == "sentencia") {
+    } else if(elem.tipo == "secuencia") {
+      
       //TODO arreglar cuando se modifique la gramatica
     }
   }
@@ -365,11 +435,10 @@ var generarFlujoLOOP = function(gwAbre, gwCierra, modelo) {
     abreGW.incoming = {"__prefix":"bpmn", "__text":flujo._id};
     gwCierra.incoming = cierraGW._default;
     generarFlujoLOOP(abreGW, cierraGW, elem.sentencia);
-  } else if(elem.tipo == "sentencia") {
+  } else if(elem.tipo == "secuencia") {
     //TODO arreglar cuando se modifique la gramatica
   }
 }
-
 
 var conectarStartEvent = function(modelo) {
   var primero = modelo[0];
@@ -397,6 +466,12 @@ var conectarStartEvent = function(modelo) {
     loopGW.incoming = {"__prefix":"bpmn", "__text":flujoStartEvent._id};
     flujoStartEvent._targetRef = loopGW._id;
     var lane = _.find(proceso.laneSet.lane, function(val){return val._name == primero.lane});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
+  } else if (ultimo.tipo == "evento") {
+    var evento = _.find(proceso.intermediateCatchEvent, function(val){ return val._id == "IntermediateCatchEvent_"+ultimo.id});
+    evento.incoming = {"__prefix":"bpmn", "__text":flujoStartEvent._id};
+    flujoStartEvent._targetRef = evento._id;
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
     lane.flowNodeRef.push({"__prefix":"bpmn","__text":"StartEvent_1"});
   }
 }
@@ -428,6 +503,12 @@ var conectarEndEvent = function(modelo) {
     flujo = _.find(proceso.sequenceFlow, function(val){return val._id == loopGW._default});
     var lane = _.find(proceso.laneSet.lane, function(val){return val._name == ultimo.lane});
     lane.flowNodeRef.push({"__prefix":"bpmn","__text":"EndEvent_1"});
+  } else if (ultimo.tipo == "evento") {
+    var evento = _.find(proceso.intermediateCatchEvent, function(val){ return val._id == "IntermediateCatchEvent_"+ultimo.id});
+    flujo = _.find(proceso.sequenceFlow, function(val){return val._id == evento.outgoing.__text});
+    proceso.endEvent.incoming = {"__prefix":"bpmn", "__text":flujo._id};
+    var lane = _.find(proceso.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
+    lane.flowNodeRef.push({"__prefix":"bpmn","__text":"EndEvent_1"});
   }
   proceso.endEvent.incoming = {"__prefix":"bpmn", "__text":flujo._id};
   flujo._targetRef = proceso.endEvent._id;
@@ -456,15 +537,25 @@ var start = function(model) {
   }
 }
 
+var options = {
+  keysColor: 'blue',
+  dashColor: 'white',
+  stringColor: 'green'
+};
+
 var generarXML = function (modelo) {
+  start();
+  //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); });
   _.map(modelo, function(elem){ obtenerLanes(elem); });
   _.map(modelo, function(elem){ obtenerTareas(elem); });
+
   var j=0;
   for (var i=0 ; i<modelo.length-1 ; i++) {
     generarFlujo(modelo[j], modelo[++j]);
   }
   conectarStartEvent(modelo);
   conectarEndEvent(modelo);
+  //_.map(proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
   console.log(pd.xml(conv.json2xml_str(proceso)));
 }
 
