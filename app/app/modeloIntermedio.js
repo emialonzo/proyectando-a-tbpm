@@ -72,12 +72,6 @@ function recursivoFlujo(nodox, ant, sig){
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
       console.debug("Largo de secuencia:" + largo_secuencia);
-      // str = "[";
-      // for (var i = 0; i < nodo.sentencia.length; i++) {
-      //   str += nodo.sentencia[i].id + ", ";
-      // }
-      // str += "]";
-      // console.log(str);
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
       // console.log("se atiende primero ", nodo.sentencia[0], " ant:", ant,);
       for (var i = 1; i < largo_secuencia - 1; i++) {
@@ -204,6 +198,54 @@ function recursivoBalance(modelo){
   return ret;
 }
 
+function asignarLanes(modelo){
+  var primerLane;
+  var sinLane = [];
+  var stack =[];
+  var idActual, laneActual;
+  var nodo;
+  stack.push( modelo.id);
+  while(stack.length>0){
+    idActual = stack.pop();
+    console.debug("@@@@>" + idActual);
+    try {
+      nodo = findById(idActual);
+      var boolea = nodo.tipo == "task";
+    } catch (e) {
+      console.error(pd.json(dicccionarioId));
+    }
+    console.log(nodo);
+    if((nodo.tipo == "task") || (nodo.tipo == "evento")){
+      laneActual = nodo.sentencia.actor;
+      if(!primerLane){
+        primerLane = laneActual;
+      }
+      nodo.lane = laneActual;
+    } else{
+      if(!laneActual){
+        sinLane.push(nodo.id);
+      } else{
+        nodo.lane = laneActual;
+      }
+      if(nodo.sentencia instanceof Array){
+        for (var i = 0; i < nodo.sentencia.length; i++) {
+          stack.push(nodo.sentencia[i].id);
+        }
+      }
+    }
+    updateNodo(nodo);
+  } //fin while
+  //ahora proceso los que no tienen lane
+  sinLane.push("S");
+  sinLane.push("F");
+  for (var i = 0; i < sinLane.length; i++) {
+    sinLane[i];
+    nodo = findById(idActual);
+    nodo.lane = primerLane;
+    updateNodo(nodo);
+  }
+}
+
 function crearEvento(tipo){
   return {
      "tipo": "evento",
@@ -230,19 +272,23 @@ var procesarModelo = function(model){
   inicializar();
   console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
   model = intermedio.asignarId(model.sentencia);
-  console.debug("Con id asignado");
-  console.log(pd.json(model));
+  // console.debug("Con id asignado");
+  // console.log(pd.json(model));
   model = intermedio.balancearModelo(model);
-  console.debug("MODELO BALANCEADO");
-  console.log(pd.json(model));
+  // console.debug("MODELO BALANCEADO");
+  // console.log(pd.json(model));
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
   aux.id = ++globalId;
   updateNodo(aux);
     model = intermedio.asignarFlujo(aux);
-  console.debug("FLUJO");
-  console.log(pd.json(model));
+  console.log("LANES");
+  asignarLanes(model);
+  console.log("LANES FIN");
+  model = dicccionarioId[aux.id];
+  // console.debug("FLUJO");
+  // console.log(pd.json(model));
   return model;
 }
 
