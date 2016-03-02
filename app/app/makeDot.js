@@ -43,13 +43,15 @@ function dotRec(nodo, flujodot){
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
   }
   else if(nodo.tipo=="adjunto") {
+    //{"tipo":"evento","sentencia":{"evento":{"tiempo":30,"unidad":"segundo"},"actor":"cocinero"},"id":3,"sig":[4],"ant":[3]}
     //agrego tarea al lane
     if(_.isUndefined(taskdot[nodo.sentencia.actor])){
       taskdot[nodo.sentencia.actor] = [];
     }
-    //{"tipo":"evento","sentencia":{"evento":{"tiempo":30,"unidad":"segundo"},"actor":"cocinero"},"id":3,"sig":[4],"ant":[3]}
     taskdot[nodo.sentencia.actor].push(templateAdjuntoEventTask(nodo));
     _.map(templateDotFlow(nodo), function(elem){flujodot.push(elem);});
+    flujodot.push(nodo.ant+"->"+nodo.id);
+    dotRec(nodo.sentencia[0], flujodot);
   }
   else if(nodo.tipo=="secuencia"){
     _.map(_.compact(nodo.sentencia), function(elem){ dotRec(elem, flujodot);});
@@ -94,8 +96,8 @@ function obtenerSecuencias(nodo){
 //inserta dot con los flujos iniciales, y por cada flujo detectado, controla que la parte de la derecha del flujo no sea una secuenca
 function ajustarSecuencias(flujodot, secuencias){
   var flujito = [];
-  flujito.push("S [label=\"\", shape=circle, width=\"0.3\"];");
-  flujito.push("F [label=\"\", shape=circle, width=\"0.3\" , style=bold];");
+  flujito.push("S [label=\"S\", shape=circle, width=\"0.3\"];");
+  flujito.push("F [label=\"F\", shape=circle, width=\"0.3\" , style=bold];");
   flujito.push("");
   var str = flujodot[0];
   var clave = str.substring(0, str.lastIndexOf("-"));

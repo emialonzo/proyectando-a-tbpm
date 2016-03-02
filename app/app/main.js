@@ -81,10 +81,15 @@ var abc;
 
 
 var ejemploTexto =
-`el cocinero baila la gracamiglia.
-el cocinero ejecuta el servicio baila la gracamiglia.
-el cocinero espera por 30 segundos.
-alternativa de baila la gracamiglia, si transcurre 20 segundos el cocinero loco. el cocinero espera por mensaje hoy canto.`;
+// el cocinero ejecuta el servicio baila la gracamiglia.
+// el cocinero espera por 30 segundos.
+// al mismo tiempo, 1 el A XX. 2 el A XY. el A XZ. fin
+`el A X.
+el A Y.
+alternativa de X, si transcurre 20 segundos el A Z. el A espera por mensaje MMMM.`
+//
+// `el cocinero baila la gracamiglia.
+// alternativa de baila la gracamiglia, si transcurre 20 segundos el cocinero loco. el cocinero espera por mensaje hoy canto.`;
 
 var ejemploBpmn = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">

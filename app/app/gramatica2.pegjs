@@ -69,7 +69,7 @@ sent_o = ws id_o separador
 
 
 adj_cond = "transcurre" / "llega" ws mensaje
-sent_adj = ws "alternativa de" ws p:palabras ws "," ws "si" ws adj_cond ws evento:tipo_evento ws sec:secuencia {return {"adjunto_a":p, "evento":evento, "sentencia":sec}}
+sent_adj = ws "alternativa de" ws p:palabras ws "," ws "si" ws adj_cond ws evento:tipo_evento ws sec:secuencia {return {"adjunto_a":p, "evento":evento, "sentencia":[sec]}}
 
 id_mientras = "mientras"
 sent_mientras = ws id_mientras
