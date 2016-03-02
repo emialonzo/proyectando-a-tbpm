@@ -55,8 +55,8 @@ function recursivoFlujo(nodox, ant, sig){
   if(_.isUndefined(nodox)){
     return ;
   }
-  console.log("Recursivo Flujo " + pd.json(nodox, 1));
-  console.log("id:" + nodox.id + " sig:" + sig + " ant:" + ant + "" )
+  //console.log("Recursivo Flujo " + pd.json(nodox, 1));
+  //console.log("id:" + nodox.id + " sig:" + sig + " ant:" + ant + "" )
   var nodo = findById(nodox.id);
 
   try {
@@ -71,7 +71,7 @@ function recursivoFlujo(nodox, ant, sig){
   if(nodo.tipo == "secuencia"){
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
-      console.debug("Largo de secuencia:" + largo_secuencia);
+      //console.debug("Largo de secuencia:" + largo_secuencia);
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
       // console.log("se atiende primero ", nodo.sentencia[0], " ant:", ant,);
       for (var i = 1; i < largo_secuencia - 1; i++) {
@@ -84,7 +84,7 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[0].sig = sig;
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
-    console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
+    //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
     nodo.sig.push(nodo.ref);
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
   } else if(nodo.tipo == "adjunto"){
@@ -168,7 +168,7 @@ function asignarIdCondicion(modelo){
     } else if (elem.tipo == "condicion"){
       elem.sentencia = asignarIdCondicion(elem.sentencia);
     } else if (elem.tipo == "loop") {
-      console.log(elem);
+      //console.log(elem);
       elem.sentencia = asignarIdCondicion(elem.sentencia);
     }
     ret.push(elem);
@@ -207,7 +207,7 @@ function asignarLanes(modelo){
   stack.push( modelo.id);
   while(stack.length>0){
     idActual = stack.pop();
-    console.debug("@@@@>" + idActual);
+    //console.debug("@@@@>" + idActual);
     try {
       nodo = findById(idActual);
       var boolea = nodo.tipo == "task";
@@ -218,21 +218,21 @@ function asignarLanes(modelo){
     if((nodo.tipo == "task") || (nodo.tipo == "evento")){
       laneActual = nodo.sentencia.actor;
       if(!primerLane){
-        console.log("");
+        //console.log("");
         primerLane = laneActual;
       }
       nodo.lane = laneActual;
     } else{
       if(!nodo.lane){
         if(!laneActual){
-          console.log("sin lane! " + nodo.id);
+          //console.log("sin lane! " + nodo.id);
           sinLane.push(nodo.id);
         } else{
           nodo.lane = laneActual;
         }
         if(nodo.sentencia instanceof Array){
           for (var i = nodo.sentencia.length-1; i >= 0; i--) {
-            console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
+            //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
             stack.push(nodo.sentencia[i].id);
           }
         }
@@ -243,12 +243,12 @@ function asignarLanes(modelo){
   //ahora proceso los que no tienen lane
   sinLane.push("S");
   sinLane.push("F");
-  console.log("¡¡¡¡SIN LANES!!!!!");
-  console.log(sinLane);
+  //console.log("¡¡¡¡SIN LANES!!!!!");
+  //console.log(sinLane);
   for (var i = 0; i < sinLane.length; i++) {
     nodo = findById(sinLane[i]);
     nodo.lane = primerLane;
-    console.log("El nodo " + nodo.id + " de tipo:" + nodo.tipo + " en lane:" + primerLane);
+    //console.log("El nodo " + nodo.id + " de tipo:" + nodo.tipo + " en lane:" + primerLane);
     updateNodo(nodo);
   }
 }
@@ -277,7 +277,7 @@ function inicializar(){
 //aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
   inicializar();
-  console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
+  //console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
   model = asignarId(model.sentencia);
   // console.debug("Con id asignado");
   // console.log(pd.json(model));
@@ -289,10 +289,10 @@ var procesarModelo = function(model){
   aux.sentencia = model;
   aux.id = ++globalId;
   updateNodo(aux);
-    model = asignarFlujo(aux);
-  console.log("LANES");
+  model = asignarFlujo(aux);
+  //console.log("LANES");
   asignarLanes(model);
-  console.log("LANES FIN");
+  //console.log("LANES FIN");
   model = dicccionarioId[aux.id];
   // console.debug("FLUJO");
   // console.log(pd.json(model));

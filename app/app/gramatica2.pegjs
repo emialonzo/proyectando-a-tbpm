@@ -33,7 +33,7 @@ sentencia = sentEv:sent_ev {return {"tipo":"evento", "sentencia":sentEv};} /
 actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return nombre}/
         articulo ws nombre:[a-z]i+ { return nombre.join("")}
 
-sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {evento, actor}}
+sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {"evento":evento, "actor":actor}}
 tipo_evento = d:digito ws unidad:tiempo "s"? {return "tiempo", {"tiempo" : d, "unidad":unidad};}
 		/ mensaje ws p:palabras {return {"evento":"mensaje", "mensaje":p};}
 
