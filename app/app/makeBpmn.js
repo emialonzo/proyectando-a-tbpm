@@ -16,16 +16,18 @@ var globalId = 1;
 var SequenceFlow_GlobalID = 1;
 var bpmn = {};
 var proceso = {
-  laneSet : {
-    lane : []
-  },
-  startEvent : {},
-  task : [],
-  exclusiveGateway : [],
-  parallelGateway : [],
-  intermediateCatchEvent : [],
-  endEvent : {},
-  sequenceFlow : []
+  process : {
+    laneSet : {
+      lane : []
+    },
+    startEvent : {},
+    task : [],
+    exclusiveGateway : [],
+    parallelGateway : [],
+    intermediateCatchEvent : [],
+    endEvent : {},
+    sequenceFlow : []
+  }
 };
 
 function esSerializable(nodo){
@@ -88,7 +90,7 @@ function templateEvento(evento){
       _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
     }
     if(nodo.tipo =="cierro"){
-      aux = "cierro"
+      aux = {"cierro":[]}
     }
     return aux;
   }
@@ -100,7 +102,8 @@ function templateEvento(evento){
 
   var laneSetX = {};
   function laneNodo(nodo){
-    return {"flowNodeRef": [],"_id" : "Lane_" + nodo.lane, "_name": nodo.lane}
+    // return {"flowNodeRef": nodo.id}
+    return nodo.id;
   }
 
   function asignarALane(nodo){
@@ -108,6 +111,7 @@ function templateEvento(evento){
       laneSetX[nodo.lane] = [];
     }
     laneSetX[nodo.lane].push(laneNodo(nodo));
+
   }
 
 
@@ -143,14 +147,43 @@ function templateEvento(evento){
     var bpmn = {};
     bpmn.definitions = [];
     bpmn.definitions.push({"collaboration":[]});
-    bpmn.definitions.push({"process":[]});
-    bpmn.definitions[1].process.push({"laneSet":laneSetX});
+    // bpmn.definitions.push({"process":{ }});
+    // bpmn.definitions[1].process.push({"laneSet":laneSetX});
+    process = {}
     for (var i = 0; i < losNodos.length; i++) {
-      bpmn.definitions[1].process.push(losNodos[i]);
+      var keys = _.keys(losNodos[i]);
+      for (var j = 0; j < keys.length; j++) {
+        console.log("key:" + keys[j] + " process" + process[keys[j]]);
+        if(!process[keys[j]]){
+          process[keys[j]] = [];
+        }
+        process[keys[j]].push(losNodos[i][keys[j]]);
+      }
+      // bpmn.definitions[1].process.push(losNodos[i]);
     }
+    process["sequenceFlow"] = [];
     for (var i = 0; i < losFlujos.length; i++) {
-      bpmn.definitions[1].process.push(losFlujos[i]);
+      // bpmn.definitions[1].process.push(losFlujos[i]);
+      process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
+
+    bpmn.process = process;
+    process.laneSet = {};
+    process.laneSet.lane = [];
+    var keys = _.keys(laneSetX);
+    for (var i = 0; i < keys.length; i++) {
+      lane = keys[i];
+      var aux = {}
+      aux.flowNodeRef = []
+      aux["_id"] = lane;
+      for (var i = 0; i < laneSetX[lane].length; i++) {
+        aux.flowNodeRef.push(laneSetX[lane][i]);
+      }
+      process.laneSet.lane.push(aux);
+
+    }
+
+    bpmn.process = process;
     console.log("*******************");
     console.log(pd.json(losNodos));
     console.log("*******************");
