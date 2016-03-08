@@ -36,7 +36,7 @@ function conversion(){
   // document.body.appendChild(image);
 
 
-  var bpmn = procesar.makeBpmn(modeloInt);
+  var bpmn = makeBpmn.makeBpmn(modeloInt);
   $("#id-xml-code").text(pd.xml(bpmn));
 
   $('#id-modelo-abstracto-container').tab('show');

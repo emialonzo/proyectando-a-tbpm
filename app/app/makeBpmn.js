@@ -28,6 +28,152 @@ var proceso = {
   sequenceFlow : []
 };
 
+function esSerializable(nodo){
+  return nodo.tipo in {
+    "task" : true,
+    "evento" : true,
+    "and" : true,
+    "xor" : true,
+    "loop" : true,
+    "adjunto" : true,
+    "cierro" : true,
+  }
+}
+
+var losFlujos = [];
+function asignarElFlujo(nodo){
+  for (var i = 0; i < nodo.sig.length; i++) {
+    losFlujos.push(
+      {"sequenceFlow": {"_id":nodo.id+":"+nodo.sig[i], "_sourceRef":nodo.id, "_targetRef": nodo.sig[i]}}
+    );
+  }
+}
+
+function templateEvento(evento){
+  if(evento.tiempo){
+    // <timerEventDefinition><timeDuration>P10D</timeDuration></timerEventDefinition>
+    return {"timerEventDefinition":{"timeDuration":{ "_name":evento.tiempo+evento.unidad}}}
+  }else{
+    // <intermediateCatchEvent id="paymentEvt" > <messageEventDefinition messageRef="payment" /> </intermediateCatchEvent>
+    return {"messageEventDefinition":{ "_messageRef":evento.mensaje}}
+  }
+}
+
+  function templateNodo(nodo){
+    var aux;
+    if(nodo.tipo =="task"){
+      if(nodo.sentencia.task == "human"){
+        aux = {"userTask":{"_id":nodo.id , "_name":nodo.sentencia.accion}}
+      }
+      if(nodo.sentencia.task == "service"){
+        aux = {"serviceTask":{ "_id":nodo.id , "_name":nodo.sentencia.accion}}
+      }
+    }
+    if(nodo.tipo =="and"){
+      aux = {"parallelGateway":{ "_id":nodo.id} }
+    }
+    if(nodo.tipo =="xor"){
+      aux = {"parallelGateway": {"_id":nodo.id} }
+    }
+    // if(nodo.tipo =="secuencia"){
+    //    aux = "secuencia"
+    //  }
+    if(nodo.tipo =="adjunto"){
+      aux = {"boundaryEvent":{"_id":nodo.id, "_attachedToRef": nodo.adjunto_a_id } }
+      // aux.boundaryEvent["_text"] = [];
+      _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
+    }
+    if(nodo.tipo =="evento"){
+      aux = {"intermediateCatchEvent":{ "_id":nodo.id} }
+      _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
+    }
+    if(nodo.tipo =="cierro"){
+      aux = "cierro"
+    }
+    return aux;
+  }
+
+  var losNodos = [];
+  function ponerNodo(nodo){
+    losNodos.push(templateNodo(nodo));
+  }
+
+  var laneSetX = {};
+  function laneNodo(nodo){
+    return {"flowNodeRef": [],"_id" : "Lane_" + nodo.lane, "_name": nodo.lane}
+  }
+
+  function asignarALane(nodo){
+    if(!laneSetX[nodo.lane]){
+      laneSetX[nodo.lane] = [];
+    }
+    laneSetX[nodo.lane].push(laneNodo(nodo));
+  }
+
+
+  function makeJsonBpmn(modelo){
+    //inicializo variables globales
+    laneSetX = {};
+    losNodos = [];
+    losFlujos = [];
+    //inicializo variables locales
+    var stack =[];
+    var laneActual;
+    var nodo;
+    stack.push(modelo);
+    while(stack.length>0){
+      nodo = stack.pop();
+      // console.log(pd.json(nodo,0));
+      if(esSerializable(nodo)){
+        // console.log("---------------------->>>>>>>>");
+        asignarALane(nodo);
+        asignarElFlujo(nodo);
+        ponerNodo(nodo);
+      }
+      if(nodo.sentencia instanceof Array){
+        for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+          stack.push(nodo.sentencia[i]);
+        }
+      }
+    } //fin while
+    return armarJson();
+  }
+
+  function armarJson(modelo){
+    var bpmn = {};
+    bpmn.definitions = [];
+    bpmn.definitions.push({"collaboration":[]});
+    bpmn.definitions.push({"process":[]});
+    bpmn.definitions[1].process.push({"laneSet":laneSetX});
+    for (var i = 0; i < losNodos.length; i++) {
+      bpmn.definitions[1].process.push(losNodos[i]);
+    }
+    for (var i = 0; i < losFlujos.length; i++) {
+      bpmn.definitions[1].process.push(losFlujos[i]);
+    }
+    console.log("*******************");
+    console.log(pd.json(losNodos));
+    console.log("*******************");
+    console.log(pd.json(laneSetX));
+    console.log("*******************");
+    console.log(pd.json(losFlujos));
+    console.log("*******************");
+    console.log(pd.json(bpmn));
+    console.log("*******************");
+    return bpmn;
+  }
+
+  function makeBpmnFromJson(json){
+    return pd.xml(conv.json2xml_str(json));
+  }
+
+  function makeBpmn(modelo){
+    return pd.xml(conv.json2xml_str(makeJsonBpmn((modelo))))
+  }
+
+
+
+
 //TODO revisar bien si meterlo en la funcion start o la funcion start meterla aca
 var init = function(path){
   path = path || __dirname + '/gramatica.pegjs';
@@ -353,7 +499,7 @@ var generarFlujoAND = function(gwAbre, gwCierra, modelo) {
     } else if(elem.tipo == "loop") {
       //TODO cuando agreguemos el loop hay que implementar esta parte
     } else if(elem.tipo == "secuencia") {
-      
+
       //TODO arreglar cuando se modifique la gramatica
     }
   }
@@ -569,5 +715,6 @@ module.exports = {
   toDot : toDot,
   conectarEndEvent : conectarEndEvent,
   conectarStartEvent : conectarStartEvent,
-  generarXML : generarXML
+  generarXML : generarXML,
+  makeBpmn: makeBpmn
 }
