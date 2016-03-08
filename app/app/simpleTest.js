@@ -12,16 +12,12 @@ var conv = new x2js();
 var textosPruebas = [
 
   "el A X. " +
-  "la A Y. " +
-  "la B Z. " +
-  "alternativa de X, si transcurre 20 segundos la A L. la A M. la A N. fin " +
+  "la A Z. " +
   "al mismo tiempo, " +
-  "1 la A I. la A II. la A III. " +
+  "1 la A I. la A II. " +
   "2 la A J.  " +
   "si se cumple, " +
-  "condi  entonces la A K. la A KK. " +
-  "condii entonces el A L. " +
-  "condiii entonces la A T. " +
+  "condi entonces la A K. " +
   "si no la A U. la A UU. " +
   "fin " +
   "la A JJ. " +

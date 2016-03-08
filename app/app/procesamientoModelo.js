@@ -27,8 +27,7 @@ var options = {
   stringColor: 'green'
 };
 
-//inicializo algunos valores necesarios
-// evento de inicio, evento de fin ....
+//Inicializo estructuras
 var start = function(model) {
   proceso.process.startEvent = {
     "_id":"StartEvent_1"
@@ -175,8 +174,13 @@ var asociarElementosLanes = function(elem) {
 
 //Cuarta iteracion de procesamiento del modelo
 //Genero los elementos XML necesarios para los flujos
-var obtenerFlujos = function(modelo) {
-
+var obtenerFlujos = function(elem) {
+  for (var i = 0; i < elem.sig.length; i++) {
+    proceso.process.sequenceFlow.push(
+      {
+        "_id":"SequenceFlow_"+SequenceFlow_GlobalID++, "_sourceRef":elem.id, "_targetRef": elem.sig[i]}
+    );
+  }
 }
 
 var conectarStartEvent = function(modelo) {
@@ -260,6 +264,7 @@ var textToModel = function(texto) {
 }
 
 var modelToXML = function (modelo) {
+  console.log(pd.json(modelo));
   //Inicializo estructuras
   start();
   //console.log("######### obtenerLanes ####################");
@@ -282,7 +287,7 @@ var modelToXML = function (modelo) {
   //conectarStartEvent(modelo);
   //console.log("######### conectarEndEvent ####################");
   //conectarEndEvent(modelo);
-  console.log(pd.xml(conv.json2xml_str(proceso)));
+  //console.log(pd.xml(conv.json2xml_str(proceso)));
   //console.log(pd.json(proceso))
 }
 
