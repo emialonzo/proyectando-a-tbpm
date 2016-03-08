@@ -133,22 +133,41 @@ var asociarElementosLanes = function(elem) {
     var task = _.find(proceso.task, function(val){ return val._id == "Task_"+elem.id});
     lane.flowNodeRef.push(task._id);
   } else if (elem.tipo == "evento") {
-
+    var evento = _.find(proceso.intermediateCatchEvent, function(val){ return val._id == "IntermediateCatchEvent_"+elem.id});
     lane.flowNodeRef.push(evento._id);
   } else if (elem.tipo == "condicion") {
-
+    asociarElementosLanes(elem.sentencia);
   } else if (elem.tipo == "xor") {
-
+    var id = elem.id;
+    var gwAbre = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
+    var gwCierra = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+(id+1)});
     lane.flowNodeRef.push(gwAbre._id);
     lane.flowNodeRef.push(gwCierra._id);
+    for (var i=0; i < elem.sentencia.length; i++) {
+      asociarElementosLanes(elem.sentencia[i]);
+    }
   } else if (elem.tipo == "and") {
+    var id = elem.id;
+    var gwAbre = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+id});
+    var gwCierra = _.find(proceso.parallelGateway, function(val) {return val._id == "ParallelGateway_"+(id+1)});
     lane.flowNodeRef.push(gwAbre._id);
     lane.flowNodeRef.push(gwCierra._id);
+    for (var i=0; i < elem.sentencia.length; i++) {
+      asociarElementosLanes(elem.sentencia[i]);
+    }
   } else if (elem.tipo == "loop") {
+    var id = elem.id;
+    var gwAbre = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+id});
+    var gwCierra = _.find(proceso.exclusiveGateway, function(val) {return val._id == "ExclusiveGateway_"+(id+1)});
     lane.flowNodeRef.push(gwAbre._id);
     lane.flowNodeRef.push(gwCierra._id);
+    for (var i=0; i < elem.sentencia.length; i++) {
+      asociarElementosLanes(elem.sentencia[i]);
+    }
   } else if (elem.tipo == "secuencia") {
-    
+    for (var i=0; i < elem.sentencia.length; i++) {
+      asociarElementosLanes(elem.sentencia[i]);
+    }
   }
 }
 
@@ -241,28 +260,28 @@ var textToModel = function(texto) {
 var modelToXML = function (modelo) {
   //Inicializo estructuras
   start();
-  console.log("######### obtenerLanes ####################");
+  //console.log("######### obtenerLanes ####################");
   for (var i=0; i<modelo.length; i++) {
     obtenerLanes(modelo[i]);
   }
-  console.log("######### obtenerTareas ####################");
+  //console.log("######### obtenerTareas ####################");
   for (var i=0; i<modelo.length; i++) {
     obtenerTareas(modelo[i]);
   }
-  console.log("######### asociarElementosLanes ####################");
+  //console.log("######### asociarElementosLanes ####################");
   for (var i=0; i<modelo.length; i++) {
     asociarElementosLanes(modelo[i]);
   }
-  console.log("######### obtenerFlujos ####################");
+  //console.log("######### obtenerFlujos ####################");
   for (var i=0; i<modelo.length; i++) {
     obtenerFlujos(modelo[i]);
   }
-  console.log("######### conectarStartEvent ####################");
+  //console.log("######### conectarStartEvent ####################");
   //conectarStartEvent(modelo);
-  console.log("######### conectarEndEvent ####################");
+  //console.log("######### conectarEndEvent ####################");
   //conectarEndEvent(modelo);
-  console.log(pd.xml(conv.json2xml_str(proceso)));
-  //console.log(pd.json(proceso))
+  //console.log(pd.xml(conv.json2xml_str(proceso)));
+  console.log(pd.json(proceso))
 }
 
 
