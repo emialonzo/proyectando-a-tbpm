@@ -75,10 +75,10 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
       // console.log("se atiende primero ", nodo.sentencia[0], " ant:", ant,);
       for (var i = 1; i < largo_secuencia - 1; i++) {
-        nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], nodo.sentencia[i-1].id, [nodo.sentencia[i+1].id]);
+        nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.sentencia[i-1].id], [nodo.sentencia[i+1].id]);
       }
       nodo.sentencia[largo_secuencia-1]
-        = recursivoFlujo(nodo.sentencia[largo_secuencia-1], nodo.sentencia[largo_secuencia-2].id, sig);
+        = recursivoFlujo(nodo.sentencia[largo_secuencia-1], [nodo.sentencia[largo_secuencia-2].id], sig);
     } else{
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
@@ -95,6 +95,7 @@ function recursivoFlujo(nodox, ant, sig){
 
     //obtengo la tarea a la que debo adjuntar
     var aux_id = tareas[nodo.adjunto_a];
+    nodo.adjunto_a_id = aux_id;
     var aux_tarea = findById(aux_id);
     //la siguiente tarea del evento adjunto es la primera de la secuencia
     nodo.sig = [nodo.sentencia[0].sentencia[0].id];
@@ -107,7 +108,7 @@ function recursivoFlujo(nodox, ant, sig){
     //seteo la tarea anterior para el fin de la adjunta
     var aux_tarea_ant = findById(ant);
     aux_tarea_ant.sig = sig;
-    // nodo.adjunto_a_id = aux_tarea
+
 
     // nodo.sig.push(aux_tarea.id);
   }
