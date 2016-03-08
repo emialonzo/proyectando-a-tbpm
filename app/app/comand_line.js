@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 var fs = require('fs');
 var program = require('commander');
+var pd = require('pretty-data').pd;
+
 
 program
 .arguments('<file>')
-.option('-d, --dot <dot>', 'Generar Dot')
-.option('-i, --img', 'Generar Imagen')
+// .option('-d, --dot <dot>', 'Generar Dot')
+// .option('-i, --img', 'Generar Imagen')
 .action(function(file) {
-  console.log('user: %s pass: %s file: %s',
-      program.dot, program.password, file);
+  // console.log('user: %s pass: %s file: %s',
+      // program.dot, program.password, file);
+      pd.json(file);
 })
 .parse(process.argv);
 

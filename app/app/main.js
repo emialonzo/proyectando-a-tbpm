@@ -2,6 +2,7 @@
 var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var intermedio = require('./modeloIntermedio');
+var procesar = require('./procesamientoModelo');
 var toDot = require('./makeDot').toDot;
 
 var xmljson = require('xmljson');
@@ -35,7 +36,8 @@ function conversion(){
   // document.body.appendChild(image);
 
 
-  $("#id-xml-code").text(pd.json(intermedio.dicccionarioId));
+  var bpmn = procesar.makeBpmn(modeloInt);
+  $("#id-xml-code").text(pd.xml(bpmn));
 
   $('#id-modelo-abstracto-container').tab('show');
   return modelo;
