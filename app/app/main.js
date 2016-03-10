@@ -209,10 +209,10 @@ $(function() {
   ejemploModeloAbstracto = parser.parse(ejemploTexto);
 
   $("#id-modelo-texto").val(ejemploTexto);
-  $("#id-xml-code").text(ejemploBpmn);
-  $("#id-modelo-abstracto").text(jsonToString(ejemploModeloAbstracto));
+  // $("#id-xml-code").text(ejemploBpmn);
+  // $("#id-modelo-abstracto").text(jsonToString(ejemploModeloAbstracto));
 
-  abc = ejemploModeloAbstracto;
+  conversion();
 
   // $('#pestanias li').click(function (e) {
   //   $(this).addClass("disabled");

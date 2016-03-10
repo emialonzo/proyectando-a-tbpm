@@ -32,7 +32,7 @@ function isGateway(tipo){
 
 function findById(id){
   var elem = dicccionarioId[id];
-  // console.log("dicccionarioId["+ id + "]=" + pd.json(elem, 1));
+  console.info("dicccionarioId["+ id + "]=" + pd.json(elem, 0));
   return elem;
 }
 function updateNodoById(id, nodo){
@@ -49,6 +49,7 @@ function updateNodo(nodo){
 function asignarFlujo(modelo){
   // var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
   var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
+  // aux = corregirFlujoSecuencia(aux);
 return aux;
 }
 function recursivoFlujo(nodox, ant, sig){
@@ -293,11 +294,53 @@ var procesarModelo = function(model){
   model = asignarFlujo(aux);
   //console.log("LANES");
   asignarLanes(model);
+  corregirFlujoSecuencia(model);
   //console.log("LANES FIN");
   model = dicccionarioId[aux.id];
   // console.debug("FLUJO");
   // console.log(pd.json(model));
   return model;
+}
+
+function corregirFlujoSecuencia(modelo) {
+  var stack =[];
+  var nodo;
+  stack.push(modelo);
+  console.log(pd.json(dicccionarioId));
+  console.log("_______________________");
+  console.log(pd.json(modelo));
+  while(stack.length>0){
+    nodo = stack.pop();
+
+    corregirSiguiente(nodo);
+
+    if(nodo.sentencia instanceof Array){
+      for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+        stack.push(nodo.sentencia[i]);
+      }
+    }
+  } //fin while
+  return findById(modelo.id)
+}
+function corregirSiguiente(nodo) {
+  var ret = [];
+  for (var i = 0; i < nodo.sig.length; i++) {
+    console.log("analizando el nodo con id " + nodo.id );
+    console.log("siguientes:" + nodo.sig );
+    var id_sig = nodo.sig[i];
+    if((id_sig == "S")||(id_sig == "F")){
+      ret.push(id_sig);
+    }else{
+      var nodo_siguiente = findById(id_sig);
+      if(nodo_siguiente.tipo == "secuencia"){
+        ret.push(nodo_siguiente.sentencia[0].id);
+      }else{
+        ret.push(id_sig);
+      }
+    }
+  }
+  nodo.sig = ret;
+  updateNodo(nodo);
 }
 
 module.exports = {

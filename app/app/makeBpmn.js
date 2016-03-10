@@ -145,11 +145,12 @@ function templateEvento(evento){
 
   function armarJson(modelo){
     var bpmn = {};
-    bpmn.definitions = [];
-    bpmn.definitions.push({"collaboration":[]});
+    bpmn.definitions = {};
+    bpmn.definitions["collaboration"] = []
     // bpmn.definitions.push({"process":{ }});
     // bpmn.definitions[1].process.push({"laneSet":laneSetX});
     process = {}
+    process["_id"] = "id_proceso"
     for (var i = 0; i < losNodos.length; i++) {
       var keys = _.keys(losNodos[i]);
       for (var j = 0; j < keys.length; j++) {
@@ -167,7 +168,7 @@ function templateEvento(evento){
       process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
 
-    bpmn.process = process;
+    // bpmn.process = process;
     process.laneSet = {};
     process.laneSet.lane = [];
     var keys = _.keys(laneSetX);
@@ -183,16 +184,16 @@ function templateEvento(evento){
 
     }
 
-    bpmn.process = process;
-    console.log("*******************");
-    console.log(pd.json(losNodos));
-    console.log("*******************");
-    console.log(pd.json(laneSetX));
-    console.log("*******************");
-    console.log(pd.json(losFlujos));
-    console.log("*******************");
-    console.log(pd.json(bpmn));
-    console.log("*******************");
+    bpmn.definitions.process = process;
+    // console.log("*******************");
+    // console.log(pd.json(losNodos));
+    // console.log("*******************");
+    // console.log(pd.json(laneSetX));
+    // console.log("*******************");
+    // console.log(pd.json(losFlujos));
+    // console.log("*******************");
+    // console.log(pd.json(bpmn));
+    // console.log("*******************");
     return bpmn;
   }
 
