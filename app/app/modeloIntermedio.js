@@ -267,6 +267,8 @@ function crearEvento(tipo){
 }
 
 function inicializar(){
+  globalId = 1;
+  dicccionarioId = {};
   if(!dicccionarioId){
     dicccionarioId = {};
   }

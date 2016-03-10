@@ -74,8 +74,8 @@ function templateEvento(evento){
     if(nodo.tipo =="and"){
       aux = {"parallelGateway":{ "_id":nodo.id} }
     }
-    if(nodo.tipo =="xor"){
-      aux = {"parallelGateway": {"_id":nodo.id} }
+    if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
+      aux = {"exclusiveGateway": {"_id":nodo.id} }
     }
     // if(nodo.tipo =="secuencia"){
     //    aux = "secuencia"
@@ -90,7 +90,10 @@ function templateEvento(evento){
       _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
     }
     if(nodo.tipo =="cierro"){
-      aux = {"cierro":[]}
+      aux = {"exclusiveGateway": {"_id":nodo.id} }
+      if(nodo.tag == "and"){
+        aux = {"parallelGateway": {"_id":nodo.id} }
+      }
     }
     return aux;
   }
@@ -151,6 +154,7 @@ function templateEvento(evento){
     // bpmn.definitions[1].process.push({"laneSet":laneSetX});
     process = {}
     process["_id"] = "id_proceso"
+    process["_isExecutable"] = true
     for (var i = 0; i < losNodos.length; i++) {
       var keys = _.keys(losNodos[i]);
       for (var j = 0; j < keys.length; j++) {
@@ -171,14 +175,17 @@ function templateEvento(evento){
     // bpmn.process = process;
     process.laneSet = {};
     process.laneSet.lane = [];
+    // console.error("laneSetX:"+pd.json(laneSetX));
     var keys = _.keys(laneSetX);
+    // console.error("claves:" + pd.json(keys));
     for (var i = 0; i < keys.length; i++) {
       lane = keys[i];
+      // console.error("el lane " + lane + " tiene: " + laneSetX[lane]);
       var aux = {}
       aux.flowNodeRef = []
       aux["_id"] = lane;
-      for (var i = 0; i < laneSetX[lane].length; i++) {
-        aux.flowNodeRef.push(laneSetX[lane][i]);
+      for (var j = 0; j < laneSetX[lane].length; j++) {
+        aux.flowNodeRef.push(laneSetX[lane][j]);
       }
       process.laneSet.lane.push(aux);
 
