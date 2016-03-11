@@ -231,6 +231,11 @@ var obtenerFlujos = function(modelo) {
       }
     }
   }
+  for (var i = 0; i < proceso.process.sequenceFlow.length; i++) {
+    if (proceso.process.sequenceFlow[i]._targetRef == 'F') {
+      proceso.process.sequenceFlow[i]._targetRef = "EndEvent_1";
+    }
+  }
 }
 
 var conectarStartEvent = function(modelo) {
