@@ -62,9 +62,6 @@ sent_o = ws id_o separador
          resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condcion":con}, sen)})*
          final:(ws defecto ws sen:secuencia {return collect({"condcion":"defecto"}, sen)})
          ws fin
-         //ws primero:(con:condicion "entonces" ws sen:secuencia {return {"condcion":con, sentencia:sen};})
-         //resto:(ws con:condicion "entonces" ws sen:secuencia {return {"condcion":con, sentencia:sen};})*
-         //final:(ws defecto ws sen:secuencia {return {"condcion":"defecto", sentencia:sen};})
          {return [primero].concat(resto.concat(final));}
 
 

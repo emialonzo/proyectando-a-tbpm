@@ -163,7 +163,7 @@ function templateEventTask(nodo){
 }
 
 function templateAdjuntoEventTask(nodo){
-  console.info(JSON.stringify(nodo));
+  // console.info(JSON.stringify(nodo));
   if(nodo.evento.tiempo){
     return nodo.id + " [label=\"id:" + nodo.id +" adjunto a " + nodo.adjunto_a + "\\n Evento:" + nodo.evento.tiempo + " " + nodo.evento.unidad + "\" shape=circle fillcolor=\"aquamarine\" ];";
   } else if(nodo.evento.mensaje){

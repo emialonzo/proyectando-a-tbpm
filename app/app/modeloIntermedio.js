@@ -32,7 +32,7 @@ function isGateway(tipo){
 
 function findById(id){
   var elem = dicccionarioId[id];
-  console.info("dicccionarioId["+ id + "]=" + pd.json(elem, 1));
+  // console.info("dicccionarioId["+ id + "]=" + pd.json(elem, 1));
   return elem;
 }
 function updateNodoById(id, nodo){
@@ -219,7 +219,7 @@ function asignarLanes(modelo){
         }
       }
       if(nodo.sentencia instanceof Array){
-        console.log("Revisando los hijos de " + nodo.tipo);
+        // console.log("Revisando los hijos de " + nodo.tipo);
         for (var i = nodo.sentencia.length-1; i >= 0; i--) {
           //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
           stack.push(nodo.sentencia[i].id);
@@ -294,9 +294,9 @@ function corregirFlujoSecuencia(modelo) {
   var stack =[];
   var nodo;
   stack.push(modelo);
-  console.log(pd.json(dicccionarioId));
-  console.log("_______________________");
-  console.log(pd.json(modelo));
+  // console.log(pd.json(dicccionarioId));
+  // console.log("_______________________");
+  // console.log(pd.json(modelo));
   while(stack.length>0){
     nodo = stack.pop();
 
@@ -313,8 +313,8 @@ function corregirFlujoSecuencia(modelo) {
 function corregirSiguiente(nodo) {
   var ret = [];
   for (var i = 0; i < nodo.sig.length; i++) {
-    console.log("analizando el nodo con id " + nodo.id );
-    console.log("siguientes:" + nodo.sig );
+    // console.log("analizando el nodo con id " + nodo.id );
+    // console.log("siguientes:" + nodo.sig );
     var id_sig = nodo.sig[i];
     if((id_sig == "S")||(id_sig == "F")){
       ret.push(id_sig);

@@ -19,19 +19,24 @@ function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   //parsea texto
-  var modelo = parser.parse(text);
-  //se pone el modelo generado
-  $("#id-modelo-abstracto").text(jsonToString(modelo));
-  var modeloInt = intermedio.procesarModelo(modelo);
-  $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
-  var dot = toDot(modeloInt);
-  $("#id-dot").html(dot);
-  image = Viz(dot, { format: "png-image-element" });
-  // console.error(image);
-  $("#id-bpmn-model").html(image);
+  try {
+    var modelo = parser.parse(text);
+    //se pone el modelo generado
+    $("#id-modelo-abstracto").text(jsonToString(modelo));
+    var modeloInt = intermedio.procesarModelo(modelo);
+    $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
+    var dot = toDot(modeloInt);
+    $("#id-dot").html(dot);
+    image = Viz(dot, { format: "png-image-element" });
+    // console.error(image);
+    $("#id-bpmn-model").html(image);
 
-  var bpmn = makeBpmn.makeBpmn(modeloInt);
-  $("#id-xml-code").text(pd.xml(bpmn));
+    var bpmn = makeBpmn.makeBpmn(modeloInt);
+    $("#id-xml-code").text(pd.xml(bpmn));
+  } catch (e) {
+    console.error(pd.json(e));
+    // console.log(e.message);
+  }
 
   $('#id-modelo-abstracto-container').tab('show');
   return modelo;

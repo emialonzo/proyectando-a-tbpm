@@ -1,0 +1,11 @@
+el departamento de ventas, recibe una orden.
+si se cumple,
+  seAceptaLaOrden entonces el departamento de ventas, avisa al deposito y al departamento de ingenieria.
+    al mismo tiempo,
+      1 el deposito chequea la cantidad de partes.
+      2 el departamento de ingenieria, se perpara para ensamblar.
+    fin
+    el departamento de ingenieria, ensambla la bici.
+    el deptartamento de ventas, envia la bicicleta al comprador.
+  si no el X hace nada.
+  fin
