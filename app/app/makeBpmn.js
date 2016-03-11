@@ -151,7 +151,6 @@ function templateEvento(evento){
     for (var i = 0; i < losNodos.length; i++) {
       var keys = _.keys(losNodos[i]);
       for (var j = 0; j < keys.length; j++) {
-        console.log("key:" + keys[j] + " process" + process[keys[j]]);
         if(!process[keys[j]]){
           process[keys[j]] = [];
         }
