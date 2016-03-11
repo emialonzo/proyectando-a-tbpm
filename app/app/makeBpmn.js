@@ -53,10 +53,8 @@ function asignarElFlujo(nodo){
 
 function templateEvento(evento){
   if(evento.tiempo){
-    // <timerEventDefinition><timeDuration>P10D</timeDuration></timerEventDefinition>
     return {"timerEventDefinition":{"timeDuration":{ "_name":evento.tiempo+evento.unidad}}}
   }else{
-    // <intermediateCatchEvent id="paymentEvt" > <messageEventDefinition messageRef="payment" /> </intermediateCatchEvent>
     return {"messageEventDefinition":{ "_messageRef":evento.mensaje}}
   }
 }
@@ -77,12 +75,8 @@ function templateEvento(evento){
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
       aux = {"exclusiveGateway": {"_id":nodo.id} }
     }
-    // if(nodo.tipo =="secuencia"){
-    //    aux = "secuencia"
-    //  }
     if(nodo.tipo =="adjunto"){
       aux = {"boundaryEvent":{"_id":nodo.id, "_attachedToRef": nodo.adjunto_a_id } }
-      // aux.boundaryEvent["_text"] = [];
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
@@ -105,7 +99,6 @@ function templateEvento(evento){
 
   var laneSetX = {};
   function laneNodo(nodo){
-    // return {"flowNodeRef": nodo.id}
     return nodo.id;
   }
 
@@ -130,9 +123,7 @@ function templateEvento(evento){
     stack.push(modelo);
     while(stack.length>0){
       nodo = stack.pop();
-      // console.log(pd.json(nodo,0));
       if(esSerializable(nodo)){
-        // console.log("---------------------->>>>>>>>");
         asignarALane(nodo);
         asignarElFlujo(nodo);
         ponerNodo(nodo);
@@ -148,13 +139,15 @@ function templateEvento(evento){
 
   function armarJson(modelo){
     var bpmn = {};
+    idProceso = "id_proceso"
     bpmn.definitions = {};
     bpmn.definitions["collaboration"] = []
-    // bpmn.definitions.push({"process":{ }});
-    // bpmn.definitions[1].process.push({"laneSet":laneSetX});
+    bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
     process = {}
-    process["_id"] = "id_proceso"
+    process["_id"] = idProceso;
     process["_isExecutable"] = true
+
+    //agrego tareas, eventos y compuertas
     for (var i = 0; i < losNodos.length; i++) {
       var keys = _.keys(losNodos[i]);
       for (var j = 0; j < keys.length; j++) {
@@ -164,23 +157,19 @@ function templateEvento(evento){
         }
         process[keys[j]].push(losNodos[i][keys[j]]);
       }
-      // bpmn.definitions[1].process.push(losNodos[i]);
     }
+    //agrego el flujo
     process["sequenceFlow"] = [];
     for (var i = 0; i < losFlujos.length; i++) {
-      // bpmn.definitions[1].process.push(losFlujos[i]);
       process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
 
-    // bpmn.process = process;
+    //agrego info del LANES
     process.laneSet = {};
     process.laneSet.lane = [];
-    // console.error("laneSetX:"+pd.json(laneSetX));
     var keys = _.keys(laneSetX);
-    // console.error("claves:" + pd.json(keys));
     for (var i = 0; i < keys.length; i++) {
       lane = keys[i];
-      // console.error("el lane " + lane + " tiene: " + laneSetX[lane]);
       var aux = {}
       aux.flowNodeRef = []
       aux["_id"] = lane;
@@ -188,7 +177,6 @@ function templateEvento(evento){
         aux.flowNodeRef.push(laneSetX[lane][j]);
       }
       process.laneSet.lane.push(aux);
-
     }
 
     bpmn.definitions.process = process;

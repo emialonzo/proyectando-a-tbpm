@@ -32,7 +32,7 @@ function isGateway(tipo){
 
 function findById(id){
   var elem = dicccionarioId[id];
-  console.info("dicccionarioId["+ id + "]=" + pd.json(elem, 0));
+  console.info("dicccionarioId["+ id + "]=" + pd.json(elem, 1));
   return elem;
 }
 function updateNodoById(id, nodo){
@@ -56,8 +56,6 @@ function recursivoFlujo(nodox, ant, sig){
   if(_.isUndefined(nodox)){
     return ;
   }
-  //console.log("Recursivo Flujo " + pd.json(nodox, 1));
-  //console.log("id:" + nodox.id + " sig:" + sig + " ant:" + ant + "" )
   var nodo = findById(nodox.id);
 
   try {
@@ -72,7 +70,6 @@ function recursivoFlujo(nodox, ant, sig){
   if(nodo.tipo == "secuencia"){
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
-      //console.debug("Largo de secuencia:" + largo_secuencia);
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
       // console.log("se atiende primero ", nodo.sentencia[0], " ant:", ant,);
       for (var i = 1; i < largo_secuencia - 1; i++) {
@@ -85,8 +82,8 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[0].sig = sig;
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
-    //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
     nodo.sig.push(nodo.ref);
+    console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
   } else if(nodo.tipo == "adjunto"){
     // var aux = recursivoFlujo({"tipo":"secuencia", "sentencia":nodo.sentencia}, nodo.id, sig);
@@ -102,16 +99,17 @@ function recursivoFlujo(nodox, ant, sig){
     nodo.sig = [nodo.sentencia[0].sentencia[0].id];
     //la anterior no tiene, pero le pongo la de la tarea a ser adjuntada
     nodo.ant = [aux_tarea.id];
-
     //seteo lane
     nodo.lane = aux_tarea.sentencia.actor;
-
     //seteo la tarea anterior para el fin de la adjunta
     var aux_tarea_ant = findById(ant);
-    aux_tarea_ant.sig = sig;
-
-
-    // nodo.sig.push(aux_tarea.id);
+    var pos_max = 0;
+    for (var i = 1; i < aux_tarea_ant.sig.length; i++) {
+      if(aux_tarea_ant.sig[pos_max] < aux_tarea_ant.sig[i]){
+        pos_max = i;
+      }
+    }
+    aux_tarea_ant.sig[pos_max] = sig[0];
   }
   else if ( isGateway(nodo.tipo) ){
     nodo.sig = [];
@@ -123,18 +121,6 @@ function recursivoFlujo(nodox, ant, sig){
   updateNodo(nodo);
   return nodo;
 }
-
-//chequea si alguno de los
-// function ajustarSiguienteSecuencia(nodo){
-//   for (var i = 0; i < nodo.sig.length; i++) {
-//     sig = findById(nodo.sig[i]);
-//     if (sig){
-//       if(sig.tipo == "secuencia"){
-//         nodo.sig[i] = sig.sig;
-//       }
-//     }
-//   }
-// }
 
 //toma un modelo y a cada elemento le agrega un id
 function asignarId(modelo){
@@ -227,16 +213,16 @@ function asignarLanes(modelo){
     } else{
       if(!nodo.lane){
         if(!laneActual){
-          //console.log("sin lane! " + nodo.id);
           sinLane.push(nodo.id);
         } else{
           nodo.lane = laneActual;
         }
-        if(nodo.sentencia instanceof Array){
-          for (var i = nodo.sentencia.length-1; i >= 0; i--) {
-            //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
-            stack.push(nodo.sentencia[i].id);
-          }
+      }
+      if(nodo.sentencia instanceof Array){
+        console.log("Revisando los hijos de " + nodo.tipo);
+        for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+          //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
+          stack.push(nodo.sentencia[i].id);
         }
       }
     }
