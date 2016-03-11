@@ -14,8 +14,7 @@ var Viz = require('viz.js');
 var pd = require('pretty-data').pd;
 
 function conversion(){
-  //FIXME se deberia hacer una sola vez, para probar lo hacemos cada vez que llamamos a la función
-  parser.init(__dirname + '/gramatica2.pegjs');
+
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   //parsea texto
@@ -123,7 +122,8 @@ $(function() {
   // $("#id-xml-code").text(ejemploBpmn);
   // $("#id-modelo-abstracto").text(jsonToString(ejemploModeloAbstracto));
 
-  conversion();
+  parser.init(__dirname + '/gramatica2.pegjs');
+  // conversion();
 
   // $('#pestanias li').click(function (e) {
   //   $(this).addClass("disabled");
