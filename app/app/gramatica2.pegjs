@@ -58,9 +58,9 @@ id_o = "si se cumple"
 defecto = "si no"
 condicion = cond:[a-z]i+ ws { return cond.join("");}
 sent_o = ws id_o separador
-         ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condcion":con}, sen)})
-         resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condcion":con}, sen)})*
-         final:(ws defecto ws sen:secuencia {return collect({"condcion":"defecto"}, sen)})
+         ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})
+         resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})*
+         final:(ws defecto ws sen:secuencia {return collect({"condicion":"defecto"}, sen)})
          ws fin
          {return [primero].concat(resto.concat(final));}
 

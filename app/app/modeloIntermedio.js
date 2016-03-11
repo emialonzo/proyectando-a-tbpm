@@ -83,7 +83,7 @@ function recursivoFlujo(nodox, ant, sig){
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
     nodo.sig.push(nodo.ref);
-    console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
+    //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
   } else if(nodo.tipo == "adjunto"){
     // var aux = recursivoFlujo({"tipo":"secuencia", "sentencia":nodo.sentencia}, nodo.id, sig);

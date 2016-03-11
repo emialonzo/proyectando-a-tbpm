@@ -12,16 +12,10 @@ var conv = new x2js();
 var textosPruebas = [
 
   "el A X. " +
-  "la A Z. " +
-  "al mismo tiempo, " +
-  "1 la A I. la A II. " +
-  "2 la A J.  " +
-  "si se cumple, " +
-  "condi entonces la A K. " +
-  "si no la A U. la A UU. " +
-  "fin " +
-  "la A JJ. " +
-  "fin "
+  "la B Y. " +
+  "mientras condA, " +
+  "el A I. el A II. " +
+  "fin"
 
 /*
 "a la vez, " +
@@ -125,4 +119,4 @@ function makeAllNivel(lista){
 //console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
 var modelo = procesamientoModelo.textToModel(textosPruebas[0]);
 modelo = intermedio.procesarModelo(modelo);
-procesamientoModelo.modelToXML(modelo.sentencia);
+procesamientoModelo.modelToXML(modelo);
