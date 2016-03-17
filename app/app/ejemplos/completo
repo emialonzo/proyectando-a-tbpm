@@ -1,14 +1,14 @@
-el A X.
-la A Y.
-la A Z.
-alternativa de X, si transcurre 20 segundos la A L. la A M. la A N. fin
+el Usuario realiza tarea X.
+la Usuario realiza tarea Y.
+la Usuario realiza tarea Z.
+alternativa de X, si transcurre 20 segundos la Usuario realiza tarea L. la Usuario realiza tarea M. la Usuario realiza tarea N. fin
 al mismo tiempo,
-            1 la A I. la A II. la A III.
-            2 la A J. si se cumple,
-                                     condi  entonces la A K. la A KK.
-                                     condii entonces el A L.
-                                    condiii entonces la A T.
-                                      si no la A U. la A UU.
+            1 la Usuario realiza tarea I. la Usuario realiza tarea II. la Usuario realiza tarea III.
+            2 la Usuario realiza tarea J. si se cumple,
+                                     condi  entonces la Usuario realiza tarea K. la Usuario realiza tarea KK.
+                                     condii entonces el Usuario realiza tarea L.
+                                    condiii entonces la Usuario realiza tarea T.
+                                      si no la Usuario realiza tarea U. la Usuario realiza tarea UU.
                    fin
-             la A JJ.
+             la Usuario realiza tarea JJ.
        fin

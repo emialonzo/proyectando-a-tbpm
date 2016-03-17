@@ -6,11 +6,10 @@ var procesar = require('./procesamientoModelo');
 var toDot = require('./makeDot').toDot;
 var ejemplos = require('./cargarEjemplos');
 
-var xmljson = require('xmljson');
-var _ = require("underscore");
-var x2js = require('x2js'); //new X2JS();
-var conv = new x2js(); // conv.json2xml_str(json);
+// var x2js = require('x2js'); //new X2JS();
+// var conv = new x2js(); // conv.json2xml_str(json);
 var Viz = require('viz.js');
+
 var pd = require('pretty-data').pd;
 
 function conversion(){
@@ -30,10 +29,18 @@ function conversion(){
     // console.error(image);
     $("#id-bpmn-model").html(image);
 
-    var bpmn = makeBpmn.makeBpmn(modeloInt);
-    $("#id-xml-code").text(pd.xml(bpmn));
+    // var bpmn = makeBpmn.makeBpmn(modeloInt);
+
+    // $("#id-xml-code").text(pd.xml(bpmn));
+    try {
+      $("#id-xml-code").text(procesar.modelToXML(modeloInt));
+    } catch (e) {
+      console.error("eeror al pasar a xml");
+    }
   } catch (e) {
     console.error(pd.json(e));
+    console.error(e);
+
     // console.log(e.message);
   }
 

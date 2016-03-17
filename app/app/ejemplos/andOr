@@ -1,0 +1,9 @@
+al mismo tiempo,
+            1 el administrador asigna tareas.
+            2 el encargadoDeServicios ofrece servicios. si se cumple,
+                            servicioEsX entonces el asistenteDeServicios ofrece serivicio X.
+                            servicioEsY entonces el asistenteDeServicios ofrece serivicio Y.
+                            servicioEsZ entonces el asistenteDeServicios ofrece serivicio Z.
+                            si no el asistenteDeServicios ofrece servicio generico.
+                   fin
+       fin
