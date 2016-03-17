@@ -12,10 +12,9 @@ var conv = new x2js();
 var textosPruebas = [
 
   "el A X. " +
-  "la B Y. " +
-  "mientras condA, " +
-  "el A I. el A II. " +
-  "fin"
+  "el A espera por 20 meses. " +
+  "el A espera por mensaje respuesta. " +
+  "alternativa de X, si transcurre 20 segundos la A L. fin"
 
 /*
 "a la vez, " +

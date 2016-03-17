@@ -14,6 +14,8 @@ var proceso = {
     exclusiveGateway : [],
     parallelGateway : [],
     intermediateCatchEvent : [],
+    intermediateThrowEvent : [],
+    boundaryEvent : [],
     endEvent : {},
     sequenceFlow : []
   }
@@ -76,7 +78,22 @@ var obtenerLanes = function(elem) {
       obj = elem.sentencia[i];
       obtenerLanes(obj);
     }
+  } else if (elem.tipo == "adjunto") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
+      obtenerLanes(obj);
+    }
   }
+}
+
+var extensionEvento = function(elem, evento) {
+  var extensionEvento;
+  if (evento.tipo == "timer") {
+    extensionEvento = {"timerEventDefinition":""}
+  } else if (evento.tipo == "mensaje") {
+    extensionEvento = {"messageEventDefinition":""}
+  }
+  _.extend(elem, extensionEvento);
 }
 
 //Segunda iteracion de procesamiento del modelo
@@ -93,6 +110,7 @@ var obtenerTareas = function(elem) {
     }
   } else if (elem.tipo == "evento") {
     var intermediateCatchEvent = {"_id":elem.id};
+    extensionEvento(intermediateCatchEvent, elem.sentencia.evento);
     proceso.process.intermediateCatchEvent.push(intermediateCatchEvent);
   } else if (elem.tipo == "xor") {
     var id = elem.id;
@@ -130,6 +148,14 @@ var obtenerTareas = function(elem) {
     } else if (elem.sentencia == "loop") {
       var cierra = {"_id":elem.id, "_default":""};
       proceso.process.exclusiveGateway.push(cierra);
+    }
+  } else if (elem.tipo == "adjunto") {
+    var adjunto = {"_id":elem.id, "_attachedToRef":elem.adjunto_a_id};
+    extensionEvento(adjunto, elem.evento);
+    proceso.process.boundaryEvent.push(adjunto);
+    for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
+      obtenerTareas(obj);
     }
   }
 }
@@ -185,6 +211,11 @@ var asociarElementosLanes = function(elem) {
     } else if (elem.sentencia == "loop") {
       cierra = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
       lane.flowNodeRef.push(cierra._id);
+    }
+  } else if (elem.tipo == "adjunto") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      obj = elem.sentencia[i];
+      asociarElementosLanes(obj);
     }
   }
 }
@@ -336,7 +367,7 @@ var modelToXML = function (modelo) {
   }
   //console.log("######### obtenerFlujos ####################");
   //console.log(modelo.length);
-  //console.log(pd.json(modelo));
+  console.log(pd.json(modelo));
   //for (var i=0; i<modelo.length; i++) {
   //  obtenerFlujos(modelo[i]);
   //}

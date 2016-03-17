@@ -34,11 +34,12 @@ actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return 
         articulo ws nombre:[a-z]i+ { return nombre.join("")}
 
 sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {"evento":evento, "actor":actor}}
-tipo_evento = d:digito ws unidad:tiempo "s"? {return "tiempo", {"tiempo" : d, "unidad":unidad};}
-		/ mensaje ws p:palabras {return {"evento":"mensaje", "mensaje":p};}
+tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiempo" : d, "unidad":unidad};}
+		/ mensaje ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p};}
 
 mensaje = "mensaje" / "mail"
-tiempo = "segundo" / "minuto" / "hora" / "dia" / "semana" / "mese" / "año"
+tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
+          "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
