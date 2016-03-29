@@ -1,6 +1,23 @@
 # Proyecto de generador
 
-## Desarrollado por
+## Instrucciones
+
+### Dependencias
+ - nodej https://nodejs.org/
+ 
+### Instalación
+```
+git clone git@gitlab.fing.edu.uy:emiliano.alonzo/proyectando-a-tbpm.git
+cd proyectando-a-tbpm/app
+npm install
+```
+
+### Utilización
+```
+npm start
+```
+
+## Autores
     Nombre: 	Emiliano Alonzo Fulchi
     E-mail: 	emialonzo@gmail.com
     Teléfono: 	098 225 975
