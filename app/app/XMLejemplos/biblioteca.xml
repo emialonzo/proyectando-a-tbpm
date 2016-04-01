@@ -1,0 +1,49 @@
+<XML version="1.0">
+<process>
+  <laneSet>
+    <lane id='Lane_usuario' name='usuario'>
+      <flowNodeRef>1</flowNodeRef>
+      <flowNodeRef>3</flowNodeRef>
+      <flowNodeRef>8</flowNodeRef>
+      <flowNodeRef>10</flowNodeRef>
+      <flowNodeRef>12</flowNodeRef>
+      <flowNodeRef>11</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+    <lane id='Lane_bibliotecario' name='bibliotecario'>
+      <flowNodeRef>4</flowNodeRef>
+      <flowNodeRef>5</flowNodeRef>
+      <flowNodeRef>7</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='3' name='pide libro'></userTask>
+  <userTask id='4' name='chequea disponibilidad'></userTask>
+  <userTask id='7' name='entrega el libro'></userTask>
+  <userTask id='8' name='se retira'></userTask>
+  <serviceTask/>
+  <exclusiveGateway id='1'></exclusiveGateway>
+  <exclusiveGateway id='5' default='5'></exclusiveGateway>
+  <exclusiveGateway id='12'></exclusiveGateway>
+  <exclusiveGateway id='11' default='10'></exclusiveGateway>
+  <parallelGateway/>
+  <intermediateCatchEvent id='10'>
+    <timerEventDefinition></timerEventDefinition>
+  </intermediateCatchEvent>
+  <intermediateThrowEvent/>
+  <boundaryEvent/>
+  <endEvent id='EndEvent_1'/>
+  <sequenceFlow id='1' sourceRef='1' targetRef='3'></sequenceFlow>
+  <sequenceFlow id='2' sourceRef='3' targetRef='4'></sequenceFlow>
+  <sequenceFlow id='3' sourceRef='4' targetRef='5'></sequenceFlow>
+  <sequenceFlow id='4' sourceRef='5' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='5' sourceRef='5' targetRef='10'></sequenceFlow>
+  <sequenceFlow id='6' sourceRef='7' targetRef='8'></sequenceFlow>
+  <sequenceFlow id='7' sourceRef='8' targetRef='12'></sequenceFlow>
+  <sequenceFlow id='8' sourceRef='10' targetRef='12'></sequenceFlow>
+  <sequenceFlow id='9' sourceRef='12' targetRef='11'></sequenceFlow>
+  <sequenceFlow id='10' sourceRef='11' targetRef='EndEvent_1'></sequenceFlow>
+  <sequenceFlow id='11' sourceRef='11' targetRef='1'></sequenceFlow>
+  <sequenceFlow id='12' sourceRef='StartEvent_1' targetRef='1'></sequenceFlow>
+</process>
