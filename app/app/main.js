@@ -22,9 +22,10 @@ function conversion(){
   try {
 
     var modelo = parser.parse(text);
-    console.log(pd.json(modelo));
+    // console.log(pd.json(modelo));
+
     var campos = modelo.campos;
-    $("#id-forms").html(":"+pd.json(campos));
+    $("#id-forms").html(pd.json(campos));
     modelo = modelo.proceso;
     //se pone el modelo generado
     $("#id-modelo-abstracto").text(jsonToString(modelo));

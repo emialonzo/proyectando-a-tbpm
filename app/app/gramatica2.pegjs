@@ -81,4 +81,5 @@ sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":
 / articulo ws tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 campos = campo+
-campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws "obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo}}
+tipo = "texto" / "numero" / "fecha" / "pregunta"
+campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
