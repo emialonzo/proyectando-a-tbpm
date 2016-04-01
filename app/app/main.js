@@ -12,6 +12,8 @@ var Viz = require('viz.js');
 
 var pd = require('pretty-data').pd;
 
+var ejemploActivo;
+
 function conversion(){
 
   //obtengo texto
@@ -119,6 +121,9 @@ function menu(){
     }
   }
 
+  ejemploActivo = $("#barraEjemplos li:first");
+
+
   // for (var i = 0; i < ejemplos.length; i++) {
   //   ejemplo = ejemplos[i]
   //   $("#barraEjemplos").append('<li><a href="#" class="ejemplo">'+ejemplo.titulo+'</a></li>');
@@ -126,7 +131,16 @@ function menu(){
 
   $(".ejemplo").click(function(){
     var titulo = $(this).html();
+    console.log("click en " + titulo);
+    //cargo texto
     $("#id-modelo-texto").val(ejemplos[titulo]);
+
+    //desactivo "active" del resto de las
+    // $("#barraEjemplos li").removeClass("active");
+    ejemploActivo.removeClass("text-success");
+    //agrego a la que hizo click
+    $(this).addClass("text-success");
+    ejemploActivo = $(this);
   });
 }
 
