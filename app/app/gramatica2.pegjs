@@ -7,7 +7,7 @@ function collect(obj1, obj2) {
   return obj1;
 }
 }
-start = s:secuencia ws sentC:(sent_campos*) {return {"proceso":s, "campos":sentC};}
+start = s:secuencia ws sentC:(sent_campos*) ws sentExpr:(sent_expresiones*) {return {"proceso":s, "campos":sentC, "expresiones":sentExpr};}
 
 
 separador = ","
@@ -83,3 +83,13 @@ sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":
 campos = campo+
 tipo = "texto" / "numero" / "fecha" / "pregunta"
 campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
+
+opLog = "&&" / "||"
+op = "!=" / "==" / ">=" / "<=" / ">" / "<"
+term = [a-zA-Z0-9]+
+expr = term ws op ws term
+expresion = expr (ws opLog ws expr)* {return text()}
+sent_expresiones = "La expresion de la condicion" ws
+        cond:palabras ws separador ws
+        "es" ws expre:expresion punto
+        {return {"condicion": cond, "expresion" : expre};}

@@ -26,6 +26,8 @@ function conversion(){
 
     var campos = modelo.campos;
     $("#id-forms").html(pd.json(campos));
+    var expresiones = modelo.expresiones;
+    $("#id-expresiones").html(pd.json(expresiones));
     modelo = modelo.proceso;
     //se pone el modelo generado
     $("#id-modelo-abstracto").text(jsonToString(modelo));
