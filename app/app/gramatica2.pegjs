@@ -7,7 +7,7 @@ function collect(obj1, obj2) {
   return obj1;
 }
 }
-start = s:secuencia ws sentC:sent_campos? {return {"proceso":s, "campos":sentC};}
+start = s:secuencia ws sentC:(sent_campos*) {return {"proceso":s, "campos":sentC};}
 
 
 separador = ","
@@ -77,8 +77,8 @@ sent_mientras = ws id_mientras
 				{return [sent]}
 
 
-sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos {return {"tarea":tarea, "campos":listaCampos}}
-/ articulo ws tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos {return {"tarea":tarea, "campos":listaCampos}}
+sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+/ articulo ws tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 campos = campo+
 campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws "obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo}}
