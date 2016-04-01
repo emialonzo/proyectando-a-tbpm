@@ -1,0 +1,16 @@
+al mismo tiempo,
+            1 el administrador asigna tareas.
+            2 el encargadoDeServicios ofrece servicios. si se cumple,
+                            servicioEsX entonces el asistenteDeServicios ofrece serivicio X.
+                            servicioEsY entonces el asistenteDeServicios ofrece serivicio Y.
+                            servicioEsZ entonces el asistenteDeServicios ofrece serivicio Z.
+                            si no el asistenteDeServicios ofrece servicio generico.
+                   fin
+       fin
+
+
+   la tarea propop,
+   es un formulario con los siguientes campos:
+   nombre que es un texto obligatorio,
+   apellido que es un texto obligatorio,
+   edad que es un numero

@@ -7,7 +7,8 @@ function collect(obj1, obj2) {
   return obj1;
 }
 }
-start = s:secuencia ws {return s;}
+start = s:secuencia ws sentC:sent_campos? {return {"proceso":s, "campos":sentC};}
+
 
 separador = ","
 ws "whitespace" = [ \t\n\r]*
@@ -19,16 +20,16 @@ digito "digito" = digits:[0-9]+ { return makeInteger(digits); }
 palabra "palabra" = [a-z]i+ { return text()}
 palabras "palabras" = ([a-z]i+ ws?)+ { return text()}
 
-secuencia = sec:(ws sent:sentencia {return sent;})+ {return {"tipo":"secuencia", "sentencia":sec};}
+secuencia = sec:(ws sent:sentencia {return sent;})+ {  return {"tipo":"secuencia", "sentencia":sec}}
 
 
 sentencia = sentEv:sent_ev {return {"tipo":"evento", "sentencia":sentEv};} /
 			task:sent_accion {return {"tipo":"task", "sentencia":task};} /
-            sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
-            sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
-            sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia };} /
-            sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM};
-          }
+      sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
+      sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
+      sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia };} /
+      sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM} }
+
 
 actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return nombre}/
         articulo ws nombre:[a-z]i+ { return nombre.join("")}
@@ -74,3 +75,10 @@ sent_mientras = ws id_mientras
 				ws condicion separador sent:secuencia
 				ws fin
 				{return [sent]}
+
+
+sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos {return {"tarea":tarea, "campos":listaCampos}}
+/ articulo ws tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos {return {"tarea":tarea, "campos":listaCampos}}
+
+campos = campo+
+campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws "obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo}}

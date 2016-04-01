@@ -18,7 +18,12 @@ function conversion(){
   var text = $("#id-modelo-texto").val();
   //parsea texto
   try {
+
     var modelo = parser.parse(text);
+    console.log(pd.json(modelo));
+    var campos = modelo.campos;
+    $("#id-forms").html(":"+pd.json(campos));
+    modelo = modelo.proceso;
     //se pone el modelo generado
     $("#id-modelo-abstracto").text(jsonToString(modelo));
     var modeloInt = intermedio.procesarModelo(modelo);
@@ -46,7 +51,6 @@ function conversion(){
   } catch (e) {
     console.error(pd.json(e));
     console.error(e);
-
     // console.log(e.message);
   }
 
