@@ -1,0 +1,37 @@
+<XML version="1.0">
+<process>
+  <laneSet>
+    <lane id='Lane_A' name='A'>
+      <flowNodeRef>1</flowNodeRef>
+      <flowNodeRef>2</flowNodeRef>
+      <flowNodeRef>3</flowNodeRef>
+      <flowNodeRef>6</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='1' name='X'></userTask>
+  <userTask id='6' name='L'></userTask>
+  <serviceTask/>
+  <exclusiveGateway/>
+  <parallelGateway/>
+  <intermediateCatchEvent id='2'>
+    <timerEventDefinition></timerEventDefinition>
+  </intermediateCatchEvent>
+  <intermediateCatchEvent id='3'>
+    <messageEventDefinition></messageEventDefinition>
+  </intermediateCatchEvent>
+  <intermediateThrowEvent/>
+  <boundaryEvent id='4' attachedToRef='1'>
+    <timerEventDefinition></timerEventDefinition>
+  </boundaryEvent>
+  <endEvent id='EndEvent_1'/>
+  <sequenceFlow id='1' sourceRef='1' targetRef='2'></sequenceFlow>
+  <sequenceFlow id='2' sourceRef='2' targetRef='3'></sequenceFlow>
+  <sequenceFlow id='3' sourceRef='3' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='4' sourceRef='4' targetRef='6'></sequenceFlow>
+  <sequenceFlow id='5' sourceRef='6' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='6' sourceRef='7' targetRef='EndEvent_1'></sequenceFlow>
+  <sequenceFlow id='7' sourceRef='StartEvent_1' targetRef='1'></sequenceFlow>
+</process>
