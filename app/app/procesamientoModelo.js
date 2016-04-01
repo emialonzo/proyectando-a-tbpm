@@ -367,7 +367,7 @@ var modelToXML = function (modelo) {
   }
   //console.log("######### obtenerFlujos ####################");
   //console.log(modelo.length);
-  console.log(pd.json(modelo));
+  //console.log(pd.json(modelo));
   //for (var i=0; i<modelo.length; i++) {
   //  obtenerFlujos(modelo[i]);
   //}
