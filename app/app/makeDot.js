@@ -128,7 +128,7 @@ function printFile() {
   file.push("rankdir=LR; node [shape=box, style=\"rounded, filled\"];");
   for (var key in taskdot) {
      var listaTareas = taskdot[key];
-      file.push("subgraph cluster" + key + " { rankdir=LR;")
+      file.push("subgraph cluster" + key.replace(/\s+/g, '_') + " { rankdir=LR;")
       file.push("labeljust=l;");
       file.push("label=\"Lane:" + key  + "\";");
      for (var prop in listaTareas) {

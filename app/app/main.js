@@ -23,11 +23,17 @@ function conversion(){
     $("#id-modelo-abstracto").text(jsonToString(modelo));
     var modeloInt = intermedio.procesarModelo(modelo);
     $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
-    var dot = toDot(modeloInt);
-    $("#id-dot").html(dot);
-    image = Viz(dot, { format: "png-image-element" });
-    // console.error(image);
-    $("#id-bpmn-model").html(image);
+
+    try {
+      var dot = toDot(modeloInt);
+      $("#id-dot").html(dot);
+      image = Viz(dot, { format: "png-image-element" });
+      // console.error(image);
+      $("#id-bpmn-model").html(image);
+    } catch (e) {
+      console.error("error al obtener graphviz");
+      console.error(e);
+    }
 
     // var bpmn = makeBpmn.makeBpmn(modeloInt);
 
@@ -35,7 +41,7 @@ function conversion(){
     try {
       $("#id-xml-code").text(procesar.modelToXML(modeloInt));
     } catch (e) {
-      console.error("eeror al pasar a xml");
+      console.error("error al pasar a xml");
     }
   } catch (e) {
     console.error(pd.json(e));
