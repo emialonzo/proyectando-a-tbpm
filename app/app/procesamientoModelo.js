@@ -376,7 +376,7 @@ var modelToXML = function (modelo) {
   conectarStartEvent(modelo.sentencia);
   //console.log("######### conectarEndEvent ####################");
   conectarEndEvent(modelo.sentencia);
-  console.log(pd.xml(conv.json2xml_str(proceso)));
+  // console.log(pd.xml(conv.json2xml_str(proceso)));
   return pd.xml(conv.json2xml_str(proceso));
   //console.log(pd.json(proceso))
 }

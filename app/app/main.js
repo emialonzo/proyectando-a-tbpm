@@ -6,10 +6,7 @@ var procesar = require('./procesamientoModelo');
 var toDot = require('./makeDot').toDot;
 var ejemplos = require('./cargarEjemplos');
 
-// var x2js = require('x2js'); //new X2JS();
-// var conv = new x2js(); // conv.json2xml_str(json);
 var Viz = require('viz.js');
-
 var pd = require('pretty-data').pd;
 
 var ejemploActivo;
@@ -19,18 +16,16 @@ var ejemploActivo;
 function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val();
-  //parsea texto
   try {
-
-    var modelo ; // = parser.parse(text);
+    var modelo ;
     try {
+      //parsea texto
       modelo = parser.parse(text);
     } catch (e) {
       console.error(e);
       console.error("Error al obtener modelo intermedio desde texto!");
       return;
     }
-    // console.log(pd.json(modelo));
 
     var campos = modelo.campos;
     $("#id-forms").html(pd.json(campos));
@@ -58,7 +53,7 @@ function conversion(){
       $("#id-bpmn-model").html(image);
       $("#id-bpmn-model img").addClass("img-responsive");
       $("#id-bpmn-model img").click(function(){
-        $(this).toggleClass("img-responsive"); 
+        $(this).toggleClass("img-responsive");
       });
     } catch (e) {
       console.error("error al obtener graphviz");
@@ -84,7 +79,8 @@ function conversion(){
     // console.log(e.message);
   }
 
-  $('#id-modelo-abstracto-container').tab('show');
+  $("#pestanias li:eq(0) a").tab('show');
+  // $('#id-bpmn-container').tab('show');
   return modelo;
 }
 
@@ -114,58 +110,23 @@ function jsonToString(str){
 
 var abc;
 
-
-var ejemploTexto =
-// el cocinero ejecuta el servicio baila la gracamiglia.
-// el cocinero espera por 30 segundos.
-// al mismo tiempo, 1 el A XX. 2 el A XY. el A XZ. fin
-
-// `el A X.
-// el A Y.
-// alternativa de X, si transcurre 20 segundos el A Z. el A espera por mensaje MMMM.`
-
-`el A X.
-la A Y.
-la A Z.
-alternativa de X, si transcurre 20 segundos la A L. la A M. la A N. fin
-al mismo tiempo,
-1 la A I. la A II. la A III.
-2 la A J. si se cumple,
-condi  entonces la A K. la A KK.
-condii entonces el A L.
-condiii entonces la A T.
-si no la A U. la A UU.
-fin
-la A JJ.
-fin`
-
-
-
+//carga los elementos del menu a partir de la lista ejemplos
 function menu(){
   var ejemplo;
 
   for (var ejemplo in ejemplos) {
     if (ejemplos.hasOwnProperty(ejemplo)) {
-    $("#barraEjemplos").append('<li><a href="#" class="ejemplo">'+ejemplo+'</a></li>');
+      $("#barraEjemplos").append('<li><a href="#" class="ejemplo">'+ejemplo+'</a></li>');
     }
   }
-
   ejemploActivo = $("#barraEjemplos li:first");
-
-
-  // for (var i = 0; i < ejemplos.length; i++) {
-  //   ejemplo = ejemplos[i]
-  //   $("#barraEjemplos").append('<li><a href="#" class="ejemplo">'+ejemplo.titulo+'</a></li>');
-  // }
 
   $(".ejemplo").click(function(){
     var titulo = $(this).html();
     console.log("click en " + titulo);
     //cargo texto
     $("#id-modelo-texto").val(ejemplos[titulo]);
-
     //desactivo "active" del resto de las
-    // $("#barraEjemplos li").removeClass("active");
     ejemploActivo.removeClass("text-success");
     //agrego a la que hizo click
     $(this).addClass("text-success");
@@ -176,22 +137,6 @@ function menu(){
 var ejemploModeloAbstracto;
 $(function() {
   menu();
-
-
-  $("#id-modelo-texto").val(ejemploTexto);
-  // $("#id-xml-code").text(ejemploBpmn);
-  // $("#id-modelo-abstracto").text(jsonToString(ejemploModeloAbstracto));
-
   parser.init(__dirname + '/gramatica2.pegjs');
-  // conversion();
-
-  // $('#pestanias li').click(function (e) {
-  //   $(this).addClass("disabled");
-  // })
-
-  // xmljson.to_json(ejemploBpmn, function(error, data){
-  //   // console.log(JSON.stringify(data, 1));
-  // });
-  // bpmnImg.getImage(ejemploBpmn);
 
 });

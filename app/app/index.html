@@ -32,7 +32,7 @@
         </button>
         <a class="navbar-brand" href="#"><span id="nombre-proyecto">Proyectando BPMN</span></a>
       </div>
-      <div id="navbar" class="navbar-collapse collapse">
+      <!-- <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#">Dashboard</a></li>
           <li><a href="#">Settings</a></li>
@@ -42,26 +42,24 @@
         <form class="navbar-form navbar-right">
           <input id="buscar-diagrama" class="form-control" placeholder="Buscar Diagrama..." type="text">
         </form>
-      </div>
+      </div> -->
     </div>
   </nav>
 
   <div class="container-fluid">
     <div class="row">
       <!-- barra lateral -->
-      <div class="col-sm-3 col-md-2 sidebar">
+      <div class="col-sm-2 col-md-2 sidebar">
 
-<ul class="nav nav-sidebar">
-        <!-- Button trigger modal -->
-        <li>
-          <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modalGramatica" style="width: 100%;">
-            Gramatica
-          </button>
-        </li>
-</ul>
         <ul class="nav nav-sidebar">
-
-
+          <!-- Button trigger modal -->
+          <li>
+            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#modalGramatica" style="width: 100%;">
+              Gramatica
+            </button>
+          </li>
+        </ul>
+        <!-- <ul class="nav nav-sidebar">
           <li>
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Carpeta..." class="carpeta-input">
@@ -70,24 +68,19 @@
                   <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
                 </button>
               </span>
-            </div> <!-- /input-group -->
+            </div>
           </li>
-
-          <li>
-            <a href="#">Pedido Bar<span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
+        </ul> -->
         <ul id="barraEjemplos" class="nav nav-sidebar">
-
         </ul>
       </div>
       <!-- principal -->
 
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <div class="col-sm-10 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
         <div id="id-texto-container" class="ploc">
-        <!-- <div id="id-texto-container" class="col-sm-6"> -->
-          <h3> Modelo textual <small>que sera convertido a bpmn</small></h3>
+          <!-- <div id="id-texto-container" class="col-sm-6"> -->
+          <h4> Modelo textual <small>que sera convertido a bpmn</small></h4>
           <div class="form-group">
             <form class="">
               <textarea id="id-modelo-texto" name="modelo-texto" class="form-control" rows="8"></textarea>
@@ -108,35 +101,35 @@
           <li role="presentation"><a href="#id-dot" aria-controls="dot" role="tab" data-toggle="tab">DEBUG(dot)</a></li>
           <li role="presentation"><a href="#id-bpmn-container" aria-controls="imagen" role="tab" data-toggle="tab">DEBUG(Imagen)</a></li>
         </ul>
-          <div class="tab-content">
+        <div class="tab-content">
 
-        <div id="id-modelo-abstracto-container" role="tabpanel" class="tab-pane  fade " >
-        <!-- <div id="id-modelo-abstracto-container" class="col-sm-6"> -->
-          <pre><code id="id-modelo-abstracto">
-          </code></pre>
-        </div>
-
-        <pre id="id-modelo-abstracto-transformado" role="tabpanel" class="tab-pane fade " >
-        </pre>
-
-        <div id="id-xml-container" role="tabpanel" class="tab-pane fade " >
-          <pre><code id="id-xml-code"></code></pre>
-        </div>
-
-        <pre id="id-forms" role="tabpanel" class="tab-pane fade " >
-        </pre>
-
-        <pre id="id-expresiones" role="tabpanel" class="tab-pane fade " >
-        </pre>
-
-        <pre id="id-dot" role="tabpanel" class="tab-pane fade " >
-        </pre>
-
-        <div id="id-bpmn-container" role="tabpanel" class="tab-pane fade  ">
-          <div id="id-bpmn-model" class="col-sm-12">
-            <img src="recursos/mozoCocinero.svg" alt="" />
+          <div id="id-modelo-abstracto-container" role="tabpanel" class="tab-pane  fade " >
+            <!-- <div id="id-modelo-abstracto-container" class="col-sm-6"> -->
+            <pre><code id="id-modelo-abstracto">
+            </code></pre>
           </div>
-        </div>
+
+          <pre id="id-modelo-abstracto-transformado" role="tabpanel" class="tab-pane fade " >
+          </pre>
+
+          <div id="id-xml-container" role="tabpanel" class="tab-pane fade " >
+            <pre><code id="id-xml-code"></code></pre>
+          </div>
+
+          <pre id="id-forms" role="tabpanel" class="tab-pane fade " >
+          </pre>
+
+          <pre id="id-expresiones" role="tabpanel" class="tab-pane fade " >
+          </pre>
+
+          <pre id="id-dot" role="tabpanel" class="tab-pane fade " >
+          </pre>
+
+          <div id="id-bpmn-container" role="tabpanel" class="tab-pane fade  ">
+            <div id="id-bpmn-model" class="col-sm-12">
+              <img src="recursos/mozoCocinero.svg" alt="" />
+            </div>
+          </div>
         </div>
 
 
@@ -153,7 +146,7 @@
           <h4 class="modal-title" id="myModalLabel">Gramatica</h4>
         </div>
         <div class="modal-body">
-          <textarea class="form-control" rows="20" id="fgramatica"></textarea>
+          <textarea class="form-control" rows="20" id="fgramatica" placeholder="Describa el proceso que desea modelar."></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
