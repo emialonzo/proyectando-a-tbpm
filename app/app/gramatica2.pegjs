@@ -82,7 +82,7 @@ sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":
 
 campos = campo+
 tipo = "texto" / "numero" / "fecha" / "pregunta"
-campo = ws nombre:palabra ws "que es un" "a"? ws tipo:palabra ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
+campo = ws nombre:palabra ws "que es un" "a"? ws tipo:tipo ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
 
 opLog = "&&" / "||"
 op = "!=" / "==" / ">=" / "<=" / ">" / "<"

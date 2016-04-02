@@ -95,6 +95,11 @@ function recursivoFlujo(nodox, ant, sig){
     var aux_id = tareas[nodo.adjunto_a];
     nodo.adjunto_a_id = aux_id;
     var aux_tarea = findById(aux_id);
+    if(!aux_tarea){
+      console.error(pd.json(nodo));
+      // throw "error procesando el nodo adjunto al asignar flujo"
+      throw "Tarea '" + nodo.adjunto_a + "' no existe"
+    }
     //la siguiente tarea del evento adjunto es la primera de la secuencia
     nodo.sig = [nodo.sentencia[0].sentencia[0].id];
     //la anterior no tiene, pero le pongo la de la tarea a ser adjuntada
