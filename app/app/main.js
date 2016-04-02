@@ -15,24 +15,36 @@ var pd = require('pretty-data').pd;
 var ejemploActivo;
 
 function conversion(){
-
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   //parsea texto
   try {
 
-    var modelo = parser.parse(text);
+    var modelo ; // = parser.parse(text);
+    try {
+      modelo = parser.parse(text);
+    } catch (e) {
+      console.error(e);
+      console.error("Error al obtener modelo intermedio desde texto!");
+    }
     // console.log(pd.json(modelo));
 
     var campos = modelo.campos;
     $("#id-forms").html(pd.json(campos));
+
     var expresiones = modelo.expresiones;
     $("#id-expresiones").html(pd.json(expresiones));
-    modelo = modelo.proceso;
-    //se pone el modelo generado
+
+    //se muestra el modelo generado por la gramática
     $("#id-modelo-abstracto").text(jsonToString(modelo));
-    var modeloInt = intermedio.procesarModelo(modelo);
-    $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
+
+    try{
+      var modeloInt = intermedio.procesarModelo(modelo.proceso);
+      $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
+    }catch (e) {
+      console.error(e);
+      console.error("Error al procesar modelo!");
+    }
 
     try {
       var dot = toDot(modeloInt);
@@ -45,14 +57,16 @@ function conversion(){
       console.error(e);
     }
 
-    // var bpmn = makeBpmn.makeBpmn(modeloInt);
 
-    // $("#id-xml-code").text(pd.xml(bpmn));
     try {
+      // var bpmn = makeBpmn.makeBpmn(modeloInt);
+      // $("#id-xml-code").text(pd.xml(bpmn));
+      //
       $("#id-xml-code").text(procesar.modelToXML(modeloInt));
     } catch (e) {
       console.error("error al pasar a xml");
     }
+
   } catch (e) {
     console.error(pd.json(e));
     console.error(e);
@@ -82,8 +96,9 @@ function safe_tags(str) {
 }
 
 function jsonToString(str){
-  console.log("jsonToString");
-  return JSON.stringify(str,null, 2);
+  // console.log("jsonToString");
+  // return JSON.stringify(str,null, 2);
+  return pd.json(str);
 }
 
 var abc;
