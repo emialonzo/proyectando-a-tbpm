@@ -1,7 +1,7 @@
 el Usuario realiza tarea X.
 la Usuario realiza tarea Y.
 la Usuario realiza tarea Z.
-alternativa de X, si transcurre 20 segundos la Usuario realiza tarea L. la Usuario realiza tarea M. la Usuario realiza tarea N. fin
+alternativa de realiza tarea X, si transcurre 20 segundos la Usuario realiza tarea L. la Usuario realiza tarea M. la Usuario realiza tarea N. fin
 al mismo tiempo,
             1 la Usuario realiza tarea I. la Usuario realiza tarea II. la Usuario realiza tarea III.
             2 la Usuario realiza tarea J. si se cumple,
