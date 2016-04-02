@@ -14,6 +14,8 @@ var pd = require('pretty-data').pd;
 
 var ejemploActivo;
 
+// console.error = alert;
+
 function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val();
@@ -26,6 +28,7 @@ function conversion(){
     } catch (e) {
       console.error(e);
       console.error("Error al obtener modelo intermedio desde texto!");
+      return;
     }
     // console.log(pd.json(modelo));
 
@@ -44,6 +47,7 @@ function conversion(){
     }catch (e) {
       console.error(e);
       console.error("Error al procesar modelo!");
+      return;
     }
 
     try {
@@ -52,9 +56,14 @@ function conversion(){
       image = Viz(dot, { format: "png-image-element" });
       // console.error(image);
       $("#id-bpmn-model").html(image);
+      $("#id-bpmn-model img").addClass("img-responsive");
+      $("#id-bpmn-model img").click(function(){
+        $(this).toggleClass("img-responsive"); 
+      });
     } catch (e) {
       console.error("error al obtener graphviz");
       console.error(e);
+      return;
     }
 
 
@@ -65,11 +74,13 @@ function conversion(){
       $("#id-xml-code").text(procesar.modelToXML(modeloInt));
     } catch (e) {
       console.error("error al pasar a xml");
+      return;
     }
 
   } catch (e) {
     console.error(pd.json(e));
     console.error(e);
+    return;
     // console.log(e.message);
   }
 
