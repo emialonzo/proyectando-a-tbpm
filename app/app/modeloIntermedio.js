@@ -3,11 +3,21 @@ var pd = require('pretty-data').pd;
 
 /////globales datos
 //contador id
-var globalId = 1;
+var globalId;
 //diccionario clave 'id', valor 'nodo'
 var dicccionarioId = {};
 //dicionario clave 'nombre de la tarea' valor 'nodo.id'
 var tareas= {};
+
+function inicializar(){
+  globalId = 3;
+  dicccionarioId = {};
+  if(!dicccionarioId){
+    dicccionarioId = {};
+  }
+  dicccionarioId["S"] = crearEvento("Inicio");
+  dicccionarioId["F"] = crearEvento("Fin");
+}
 
 var cierrogw = function (elem){
   var nodo = {
@@ -256,18 +266,6 @@ function crearEvento(tipo){
      }
    }
 }
-
-function inicializar(){
-  globalId = 1;
-  dicccionarioId = {};
-  if(!dicccionarioId){
-    dicccionarioId = {};
-  }
-  dicccionarioId["S"] = crearEvento("Inicio");
-  dicccionarioId["F"] = crearEvento("Fin");
-}
-
-
 
 //aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
