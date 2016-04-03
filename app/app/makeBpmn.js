@@ -65,6 +65,7 @@ function templateEvento(evento){
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
         aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+        aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
         aux = {"serviceTask":{ "_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
@@ -90,6 +91,34 @@ function templateEvento(evento){
         aux = {"parallelGateway": {"_id":"_"+nodo.id} }
       }
     }
+    return aux;
+  }
+
+  function templatesCampos(nodo, aux){
+    if(nodo.sentencia.campos){
+      aux.userTask['ioSpecification'] = {
+        'dataOutput' : [],
+        'outputSet' : {
+          'dataOutputRefs' : []
+        }
+      }
+      aux.userTask['property'] = [];
+      aux.userTask['dataOutputAssociation'] = [];
+
+      for (var i = 0; i < nodo.sentencia.campos.length; i++) {
+        var campo = nodo.sentencia.campos[i];
+        //creo propeidades
+        aux.userTask['property'].push({"_id":"id_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
+        //creo dataOutput
+        aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
+        aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
+        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
+        //se asocian las propiedades con la dataOutput
+        aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
+        "targetRef": "id_"+campo.nombre});
+      }
+    }
+    console.log(pd.json(aux));
     return aux;
   }
 
