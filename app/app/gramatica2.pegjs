@@ -6,6 +6,13 @@ function collect(obj1, obj2) {
   for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
   return obj1;
 }
+function getCampos(obj) {
+  try{
+    return obj.campos;
+  }catch(e){
+    return null;
+  }
+}
 }
 start = s:secuencia ws sentC:(sent_campos*) ws sentExpr:(sent_expresiones*) {return {"proceso":s, "campos":sentC, "expresiones":sentExpr};}
 
@@ -45,8 +52,8 @@ tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "añ
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "service"};}
-              / ws actor:actor ws accion:accion ws punto
-              { return {"actor": actor , "accion" : accion , "task": "human"};}
+              / ws actor:actor ws accion:accion ws punto ws (campos:sent_campos?)
+              { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
 
 
 id_y = "al mismo tiempo" / "a la vez" / "en paralelo"
@@ -59,6 +66,7 @@ sent_y = ws id_y separador
 id_o = "si se cumple"
 defecto = "si no"
 condicion = cond:[a-z]i+ ws { return cond.join("");}
+
 sent_o = ws id_o separador
          ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})
          resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})*
@@ -77,11 +85,12 @@ sent_mientras = ws id_mientras
 				{return [sent]}
 
 
-sent_campos = articulo ws tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
-/ articulo ws tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+/*sent_campos = (articulo ws)? tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}*/
+sent_campos = tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+/ tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 campos = campo+
-tipo = "texto" / "numero" / "fecha" / "pregunta"
+tipo = "texto" / "numero" / "fecha" / "booleano"
 campo = ws nombre:palabra ws "que es un" "a"? ws tipo:tipo ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
 
 opLog = "&&" / "||"

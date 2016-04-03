@@ -10,6 +10,7 @@ var Viz = require('viz.js');
 var pd = require('pretty-data').pd;
 
 var ejemploActivo;
+var entrar = true;
 
 // console.error = alert;
 
@@ -23,6 +24,7 @@ function conversion(){
       modelo = parser.parse(text);
     } catch (e) {
       console.error(e);
+      console.error(pd.json(e));
       console.error("Error al obtener modelo intermedio desde texto!");
       return;
     }
@@ -79,8 +81,10 @@ function conversion(){
     // console.log(e.message);
   }
 
-  $("#pestanias li:eq(0) a").tab('show');
-  // $('#id-bpmn-container').tab('show');
+  if(entrar){
+    $("#pestanias li:eq(0) a").tab('show');
+    entrar = false;
+  }
   return modelo;
 }
 
