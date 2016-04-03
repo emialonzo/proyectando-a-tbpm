@@ -5,12 +5,25 @@ var intermedio = require('./modeloIntermedio');
 var procesar = require('./procesamientoModelo');
 var toDot = require('./makeDot').toDot;
 var ejemplos = require('./cargarEjemplos');
+var imagen = require('../imageJava');
 
 var Viz = require('viz.js');
 var pd = require('pretty-data').pd;
+var fs = require('fs');
 
 var ejemploActivo;
 var entrar = true;
+var conYaoqiang = false;
+
+
+var x2js = require('x2js'); //new X2JS();
+var conv = new x2js();
+
+var xmlText = "<testns:MyOperation xmlns:testns='http://www.example.org'>"+
+    "<test>Success</test><test2 myAttr='SuccessAttrValueTest2'>"+
+    "<item>ddsfg</item><item>dsdgfdgfd</item><item2>testArrSize</item2></test2></testns:MyOperation>";
+var jsonObj = conv.xml_str2json( xmlText );
+console.log("pruebas" + pd.json(jsonObj));
 
 // console.error = alert;
 
@@ -65,11 +78,15 @@ function conversion(){
 
 
     try {
-      // var bpmn = makeBpmn.makeBpmn(modeloInt);
-      // $("#id-xml-code").text(pd.xml(bpmn));
-      //
-      $("#id-xml-code").text(procesar.modelToXML(modeloInt));
+      if(conYaoqiang){
+        var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
+        $("#id-xml-code").text(bpmn);
+        var base64 = imagen(bpmn, callbackYaoqiang);
+      }else{
+        $("#id-xml-code").text(procesar.modelToXML(modeloInt));
+      }
     } catch (e) {
+      console.error(e);
       console.error("error al pasar a xml");
       return;
     }
@@ -86,6 +103,17 @@ function conversion(){
     entrar = false;
   }
   return modelo;
+}
+
+function callbackYaoqiang(base64){
+  console.log("base64::" + base64);
+  var img = $('<img id="yaoqiang-img">');
+  img.attr( 'src', 'data:image/png;base64,'+base64 );
+  img.addClass("img-responsive");
+  img.click(function(){
+    $(this).toggleClass("img-responsive");
+  });
+  $("#id-bpmn-model").append(img);
 }
 
 function parseSVG(s) {

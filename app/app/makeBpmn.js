@@ -120,13 +120,24 @@ function templateEvento(evento){
     var stack =[];
     var laneActual;
     var nodo;
+    var startInsertado = false; //variable para agregar una sola vez el nodo start
+    var endNodo; //ultimo nodo procesado
     stack.push(modelo);
     while(stack.length>0){
       nodo = stack.pop();
       if(esSerializable(nodo)){
+        if(!startInsertado){
+          var idStart = "idStart";
+          losFlujos.push(
+            {"sequenceFlow": {"_id":idStart+":"+nodo.id, "_sourceRef":idStart, "_targetRef":nodo.id }}
+          );
+          losNodos.push({"startEvent":{"_id":idStart , "_name":"StartEvent"}});
+          startInsertado = true;
+        }
         asignarALane(nodo);
         asignarElFlujo(nodo);
         ponerNodo(nodo);
+        // endNodo = nodo;
       }
       if(nodo.sentencia instanceof Array){
         for (var i = nodo.sentencia.length-1; i >= 0; i--) {
@@ -134,13 +145,40 @@ function templateEvento(evento){
         }
       }
     } //fin while
+    //insertando el fin //FIXME ya estaba hecho
+    // var idEnd = "idEnd"
+    // losFlujos.push(
+    //   {"sequenceFlow": {"_id":endNodo.id+":"+idEnd, "_sourceRef":endNodo.id, "_targetRef":idEnd }}
+    // );
+    losNodos.push({"endEvent":{"_id":"F" , "_name":"EndEvent"}});
     return armarJson();
+  }
+
+  function armarDefinitionsConNamespaces(){
+    return { "definitions" : {
+      "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
+      "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
+      "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
+      "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
+      "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+      "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "_expressionLanguage":"http://www.w3.org/1999/XPath"
+    }
+    }
   }
 
   function armarJson(modelo){
     var bpmn = {};
     idProceso = "id_proceso"
-    bpmn.definitions = {};
+    bpmn.definitions = {
+      "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
+      "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
+      "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
+      "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
+      "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+      "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "_expressionLanguage":"http://www.w3.org/1999/XPath"
+    }
     bpmn.definitions["collaboration"] = []
     bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
     process = {}
@@ -163,20 +201,20 @@ function templateEvento(evento){
       process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
 
-    //agrego info del LANES
-    process.laneSet = {};
-    process.laneSet.lane = [];
-    var keys = _.keys(laneSetX);
-    for (var i = 0; i < keys.length; i++) {
-      lane = keys[i];
-      var aux = {}
-      aux.flowNodeRef = []
-      aux["_id"] = lane;
-      for (var j = 0; j < laneSetX[lane].length; j++) {
-        aux.flowNodeRef.push(laneSetX[lane][j]);
-      }
-      process.laneSet.lane.push(aux);
-    }
+    // //agrego info del LANES //FIXME lo saco porque hay problemas aca
+    // process.laneSet = {};
+    // process.laneSet.lane = [];
+    // var keys = _.keys(laneSetX);
+    // for (var i = 0; i < keys.length; i++) {
+    //   lane = keys[i];
+    //   var aux = {}
+    //   aux.flowNodeRef = []
+    //   aux["_id"] = lane;
+    //   for (var j = 0; j < laneSetX[lane].length; j++) {
+    //     aux.flowNodeRef.push(laneSetX[lane][j]);
+    //   }
+    //   process.laneSet.lane.push(aux);
+    // }
 
     bpmn.definitions.process = process;
     // console.log("*******************");
