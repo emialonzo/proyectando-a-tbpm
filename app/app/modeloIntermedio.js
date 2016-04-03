@@ -272,26 +272,25 @@ function inicializar(){
 //aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
   inicializar();
-  //console.info("Crearndo modelo BPMN a partir de una instancia del modelo intermedio.");
+  //se asigna id
   model = asignarId(model.sentencia);
-  // console.debug("Con id asignado");
-  // console.log(pd.json(model));
+  //se balancea el modelo
   model = balancearModelo(model);
-  // console.debug("MODELO BALANCEADO");
-  // console.log(pd.json(model));
+
   aux = {};
   aux.tipo = "secuencia";
   aux.sentencia = model;
   aux.id = ++globalId;
   updateNodo(aux);
+  //se asigna el flujo
   model = asignarFlujo(aux);
-  //console.log("LANES");
+  //se asignan los lanes
   asignarLanes(model);
+  //corregir flujo
   corregirFlujoSecuencia(model);
-  //console.log("LANES FIN");
+
   model = dicccionarioId[aux.id];
-  // console.debug("FLUJO");
-  // console.log(pd.json(model));
+
   return model;
 }
 
@@ -299,14 +298,9 @@ function corregirFlujoSecuencia(modelo) {
   var stack =[];
   var nodo;
   stack.push(modelo);
-  // console.log(pd.json(dicccionarioId));
-  // console.log("_______________________");
-  // console.log(pd.json(modelo));
   while(stack.length>0){
     nodo = stack.pop();
-
     corregirSiguiente(nodo);
-
     if(nodo.sentencia instanceof Array){
       for (var i = nodo.sentencia.length-1; i >= 0; i--) {
         stack.push(nodo.sentencia[i]);
@@ -315,11 +309,10 @@ function corregirFlujoSecuencia(modelo) {
   } //fin while
   return findById(modelo.id)
 }
+
 function corregirSiguiente(nodo) {
   var ret = [];
   for (var i = 0; i < nodo.sig.length; i++) {
-    // console.log("analizando el nodo con id " + nodo.id );
-    // console.log("siguientes:" + nodo.sig );
     var id_sig = nodo.sig[i];
     if((id_sig == "S")||(id_sig == "F")){
       ret.push(id_sig);
@@ -335,6 +328,7 @@ function corregirSiguiente(nodo) {
   nodo.sig = ret;
   updateNodo(nodo);
 }
+
 
 module.exports = {
   isGateway : isGateway ,

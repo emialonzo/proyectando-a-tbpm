@@ -46,14 +46,15 @@ var losFlujos = [];
 function asignarElFlujo(nodo){
   for (var i = 0; i < nodo.sig.length; i++) {
     losFlujos.push(
-      {"sequenceFlow": {"_id":nodo.id+":"+nodo.sig[i], "_sourceRef":nodo.id, "_targetRef": nodo.sig[i]}}
+      {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i]}}
     );
   }
 }
 
 function templateEvento(evento){
   if(evento.tiempo){
-    return {"timerEventDefinition":{"timeDuration":{ "_name":evento.tiempo+evento.unidad}}}
+    // return {"timerEventDefinition":{"timeDuration":{ "_name":evento.tiempo+evento.unidad}}}
+    return {"timerEventDefinition":{"timeDuration":{}}}
   }else{
     return {"messageEventDefinition":{ "_messageRef":evento.mensaje}}
   }
@@ -63,30 +64,30 @@ function templateEvento(evento){
     var aux;
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-        aux = {"userTask":{"_id":nodo.id , "_name":nodo.sentencia.accion}}
+        aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
       }
       if(nodo.sentencia.task == "service"){
-        aux = {"serviceTask":{ "_id":nodo.id , "_name":nodo.sentencia.accion}}
+        aux = {"serviceTask":{ "_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
       }
     }
     if(nodo.tipo =="and"){
-      aux = {"parallelGateway":{ "_id":nodo.id} }
+      aux = {"parallelGateway":{ "_id":"_"+nodo.id} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
-      aux = {"exclusiveGateway": {"_id":nodo.id} }
+      aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
     }
     if(nodo.tipo =="adjunto"){
-      aux = {"boundaryEvent":{"_id":nodo.id, "_attachedToRef": nodo.adjunto_a_id } }
+      aux = {"boundaryEvent":{"_id":"_"+nodo.id, "_attachedToRef": "_"+nodo.adjunto_a_id } }
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
-      aux = {"intermediateCatchEvent":{ "_id":nodo.id} }
+      aux = {"intermediateCatchEvent":{ "_id":"_"+nodo.id} }
       _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
     }
     if(nodo.tipo =="cierro"){
-      aux = {"exclusiveGateway": {"_id":nodo.id} }
+      aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
       if(nodo.tag == "and"){
-        aux = {"parallelGateway": {"_id":nodo.id} }
+        aux = {"parallelGateway": {"_id":"_"+nodo.id} }
       }
     }
     return aux;
@@ -129,7 +130,7 @@ function templateEvento(evento){
         if(!startInsertado){
           var idStart = "idStart";
           losFlujos.push(
-            {"sequenceFlow": {"_id":idStart+":"+nodo.id, "_sourceRef":idStart, "_targetRef":nodo.id }}
+            {"sequenceFlow": {"_id":idStart+"_"+"_"+nodo.id, "_sourceRef":idStart, "_targetRef":"_"+nodo.id }}
           );
           losNodos.push({"startEvent":{"_id":idStart , "_name":"StartEvent"}});
           startInsertado = true;
@@ -150,7 +151,7 @@ function templateEvento(evento){
     // losFlujos.push(
     //   {"sequenceFlow": {"_id":endNodo.id+":"+idEnd, "_sourceRef":endNodo.id, "_targetRef":idEnd }}
     // );
-    losNodos.push({"endEvent":{"_id":"F" , "_name":"EndEvent"}});
+    losNodos.push({"endEvent":{"_id":"_F" , "_name":"EndEvent"}});
     return armarJson();
   }
 
@@ -177,7 +178,8 @@ function templateEvento(evento){
       "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
       "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
       "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-      "_expressionLanguage":"http://www.w3.org/1999/XPath"
+      "_expressionLanguage":"http://www.w3.org/1999/XPath",
+      "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
     }
     bpmn.definitions["collaboration"] = []
     bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
