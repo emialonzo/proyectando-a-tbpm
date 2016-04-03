@@ -118,7 +118,7 @@ function templateEvento(evento){
         "targetRef": "id_"+campo.nombre});
       }
     }
-    console.log(pd.json(aux));
+    // console.log(pd.json(aux));
     return aux;
   }
 

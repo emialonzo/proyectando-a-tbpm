@@ -30,11 +30,11 @@ var yaoqiang = function(bpmn,callback){
   });
 
   child.stderr.on("data", function (data) {
-    // console.log(data.toString());
+    console.log(data.toString());
   });
 
   child.on('close', function (code) {
-    console.log('child process exited with code ',code);
+    // console.log('child process exited with code ',code);
     var base64Image = fs.readFileSync(filePathPng).toString('base64');
     callback(base64Image);
     return base64Image;
