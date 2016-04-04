@@ -98,6 +98,7 @@ function templateEvento(evento){
     if(nodo.sentencia.campos){
       aux.userTask['ioSpecification'] = {
         'dataOutput' : [],
+        'inputSet' : [],
         'outputSet' : {
           'dataOutputRefs' : []
         }
