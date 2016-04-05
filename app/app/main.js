@@ -15,6 +15,7 @@ var fs = require('fs');
 var BpmnModeler = window.BpmnJS;
 // var Modeler = require('bpmn-js/lib/Modeler');
 var bpmnModeler;
+var pre_xml_bpmndi;
 
 var ejemploActivo;
 var entrar = true;
@@ -93,10 +94,11 @@ function conversion(){
         if(!bpmnModeler){
           var div = $('<div id="canvas" style="height: 450px"></div>');
           // id="id-bpmn-container"
-          $("#id-bpmn-container").append(div);
+          $("#id-modeler-container").append(div);
           bpmnModeler = new BpmnModeler({
             container: '#canvas'
           });
+
           $(".djs-palette-entries div.group").each(function(){
             if($(this).data("group")!= "tools"){
               $(this).remove();
@@ -134,19 +136,23 @@ function callbackDot(image){
     $(this).toggleClass("img-responsive");
   });
 }
+
 function callbackXml(xml){
   // console.error(image);
   $("#id-xml-container").append("<hr/>");
-  var pre = $('<pre id="xml-bpmndi" />');
-  pre.text(pd.xml(xml));
-  $("#id-xml-container").append(pre);
+  if(!pre_xml_bpmndi){
+    pre_xml_bpmndi = $('<pre id="xml-bpmndi" />');
+    $("#id-xml-container").append(pre_xml_bpmndi);
+  }
+  pre_xml_bpmndi.text(pd.xml(xml));
+  // console.error(xml);
 
   bpmnModeler.importXML(xml, function(err) {
     if (err) {
       return console.error('could not import BPMN 2.0 diagram', err);
     }
     var canvas = bpmnModeler.get('canvas');
-    canvas.zoom('fit-viewport');
+    // canvas.zoom('fit-viewport');
   });
 }
 
