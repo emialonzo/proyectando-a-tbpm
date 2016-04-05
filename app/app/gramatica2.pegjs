@@ -70,7 +70,7 @@ sent_y = ws id_y separador
 
 id_o = "si se cumple"
 defecto = "si no"
-condicion = cond:[a-z]i+ ws { return cond.join("");} / expresion
+condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");} 
 
 condicion_entonces = "entonces"
 sent_o = ws id_o separador

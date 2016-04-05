@@ -3,3 +3,5 @@ basuraDeEmi
 dist
 yaoqian
 salida.*
+**/env.js
+**/bower_components
