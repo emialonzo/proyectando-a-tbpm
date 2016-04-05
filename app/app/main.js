@@ -3,11 +3,10 @@ var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
 var intermedio = require('./modeloIntermedio');
 var procesar = require('./procesamientoModelo');
-var toDot = require('./makeDot').toDot;
+var makeDot = require('./makeDot');
 var ejemplos = require('./cargarEjemplos');
 var imagen = require('../imageJava');
 
-var Viz = require('viz.js');
 var pd = require('pretty-data').pd;
 var fs = require('fs');
 
@@ -27,6 +26,7 @@ var conv = new x2js();
 // console.error = alert;
 
 function conversion(){
+  $("#id-bpmn-model").empty();
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   try {
@@ -60,15 +60,11 @@ function conversion(){
     }
 
     try {
-      var dot = toDot(modeloInt);
+      var dot = makeDot.toDot(modeloInt);
       $("#id-dot").html(dot);
-      image = Viz(dot, { format: "png-image-element" });
-      // console.error(image);
-      $("#id-bpmn-model").html(image);
-      $("#id-bpmn-model img").addClass("img-responsive");
-      $("#id-bpmn-model img").click(function(){
-        $(this).toggleClass("img-responsive");
-      });
+      console.log("Intentando generar dot");
+      makeDot.executeDot(dot, callbackDot)
+
     } catch (e) {
       console.error("error al obtener graphviz");
       console.error(e);
@@ -104,6 +100,15 @@ function conversion(){
   return modelo;
 }
 
+function callbackDot(image){
+  // console.error(image);
+  $("#id-bpmn-model").append(image);
+  $("#id-bpmn-model img").addClass("img-responsive");
+  $("#id-bpmn-model img").click(function(){
+    $(this).toggleClass("img-responsive");
+  });
+}
+
 function callbackYaoqiang(base64){
   // console.log("base64::" + base64);
   var img = $('<img id="yaoqiang-img">');
@@ -114,6 +119,7 @@ function callbackYaoqiang(base64){
   });
   $("#id-bpmn-model").append(img);
 }
+
 
 function parseSVG(s) {
   var div= document.createElementNS('http://www.w3.org/1999/xhtml', 'div');

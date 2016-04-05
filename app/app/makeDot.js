@@ -5,6 +5,11 @@ var pd = require('pretty-data').pd;
 var intermedio = require('./modeloIntermedio');
 var isGateway = intermedio.isGateway;
 
+var Viz = require('viz.js');
+
+
+
+
 var toDot = function(modelo){
   file = [];
   taskdot={};
@@ -194,7 +199,29 @@ function templateDotFlow(nodo){
 }
 
 
+var cp = require('child_process');
+
+var executeDot = function(dot_file, callback){
+    var image = Viz(dot_file, { format: "png-image-element" });
+    callback(image)
+  // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
+  //   console.log('stdout: ' + stdout);
+  //   console.log('stderr: ' + stderr);
+  //
+  //   if (error !== null) {
+  //     console.log('exec error: ' + error);
+  //   }
+  // });
+  //
+  // child.on('message', function(image) {
+  //   console.log("Llega imagen");
+  //   callback(image)
+  // });
+  // // console.log(pd.json(child));
+  // child.send(dot_file);
+}
 
 module.exports = {
-  toDot: toDot
+  toDot: toDot,
+  executeDot: executeDot
 };
