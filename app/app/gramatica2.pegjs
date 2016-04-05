@@ -109,5 +109,5 @@ expr = term ws op ws term
 expresion = expr (ws opLog ws expr)* {return text()}
 sent_expresiones = "La expresion de la condicion" ws
         cond:palabras ws separador ws
-        "es" ws expre:expresion punto
+        "es" ws expre:expresion punto ws
         {return {"condicion": cond, "expresion" : expre};}

@@ -225,11 +225,13 @@ var asociarElementosLanes = function(elem) {
 var procesarFlujos = function(elem) {
   for (var i = 0; i < elem.sig.length; i++) {
     var idFlujo = SequenceFlow_GlobalID++;
-    proceso.process.sequenceFlow.push({"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]});
+    var flujo = {"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]};
     if (elem.tipo == "xor") {
       if (elem.sentencia[i].condicion == "defecto") {
         var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
         gw._default = idFlujo;
+      } else {
+        flujo._name = elem.sentencia[i].condicion;
       }
     } else if (elem.tipo == "cierro" && elem.tag == "loop") {
       if (elem.sig[i] != elem.ref) {
@@ -237,6 +239,7 @@ var procesarFlujos = function(elem) {
         gw._default = idFlujo;
       }
     }
+    proceso.process.sequenceFlow.push(flujo);
   }
 }
 
@@ -343,6 +346,81 @@ var conectarEndEvent = function(modelo) {
   //proceso.process.sequenceFlow.push(flujo);
 }
 
+function agregarTemplates(proceso){
+  //FIXME revisar los campos que son asignados estaticamente
+  var bpmn = {};
+  idProceso = "id_proceso"
+  bpmn.definitions = {
+    "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
+    "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
+    "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
+    "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
+    "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+    "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "_expressionLanguage":"http://www.w3.org/1999/XPath",
+    "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
+  }
+  bpmn.definitions["collaboration"] = []
+  bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
+  proceso["_id"] = idProceso;
+  proceso["_isExecutable"] = true
+
+  bpmn.definitions.process = proceso;
+  return bpmn;
+}
+
+var agregarTemplateElementos = function(elem) {
+
+  if (elem.tipo == "task") {
+    var taskPos = 0;
+    for (var i=0; i< proceso.process.userTask.length; i++) {
+      if (proceso.process.userTask[i]._id == elem.id) {
+        taskPos = i;
+      }
+    }
+    templatesCamposAuxiliar(elem, taskPos);
+  } else if (elem.tipo == "evento") {
+  } else if (elem.tipo == "xor") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      agregarTemplateElementos(elem.sentencia[i]);
+    }
+  } else if (elem.tipo == "and") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      agregarTemplateElementos(elem.sentencia[i]);
+    }
+  } else if (elem.tipo == "loop") {
+    for (var i = 0; i < elem.sentencia.length; i++) {
+      agregarTemplateElementos(elem.sentencia[i])
+    }
+  } else if (elem.tipo == "secuencia") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      agregarTemplateElementos(elem.sentencia[i]);
+    }
+  } else if (elem.tipo == "cierro") {
+  } else if (elem.tipo == "adjunto") {
+    for (var i=0; i < elem.sentencia.length; i++) {
+      agregarTemplateElementos(elem.sentencia[i]);
+    }
+  }
+
+}
+
+function templatesCamposAuxiliar(nodo, taskPos) {
+  aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+  if(nodo.sentencia.campos){
+    aux.userTask['extensionElements'] = {
+      'formProperty' : []
+    }
+  }
+  for (var i = 0; i < nodo.sentencia.campos.length; i++) {
+    var campo = nodo.sentencia.campos[i];
+    var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":campo.tipo, "_required":campo.obligatorio};
+    aux.userTask.extensionElements.formProperty.push(formProperty);
+  }
+
+  proceso.process.userTask[taskPos] = aux;
+}
+
 var textToModel = function(texto) {
   parser.init(__dirname + '/gramatica2.pegjs');
   var modelo = parser.parse(texto);
@@ -366,18 +444,24 @@ var modelToXML = function (modelo) {
     asociarElementosLanes(modelo.sentencia[i]);
   }
   //console.log("######### obtenerFlujos ####################");
-  //console.log(modelo.length);
-  //console.log(pd.json(modelo));
-  //for (var i=0; i<modelo.length; i++) {
-  //  obtenerFlujos(modelo[i]);
-  //}
   obtenerFlujos(modelo);
+
   //console.log("######### conectarStartEvent ####################");
   conectarStartEvent(modelo.sentencia);
+
   //console.log("######### conectarEndEvent ####################");
   conectarEndEvent(modelo.sentencia);
-  // console.log(pd.xml(conv.json2xml_str(proceso)));
-  return pd.xml(conv.json2xml_str(proceso));
+
+  //console.log("######### completo el template para ejecutar el proceso ####################");
+  for (var i=0; i<modelo.sentencia.length; i++) {
+    agregarTemplateElementos(modelo.sentencia[i]);
+
+  }
+
+  var bpmn = agregarTemplates(proceso);
+
+  console.log(pd.xml(conv.json2xml_str(bpmn)));
+  return pd.xml(conv.json2xml_str(bpmn));
   //console.log(pd.json(proceso))
 }
 

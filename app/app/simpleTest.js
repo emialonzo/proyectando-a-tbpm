@@ -10,43 +10,24 @@ var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
 var textosPruebas = [
-
-  "el A X. " +
-  "el A espera por 20 meses. " +
-  "el A espera por mensaje respuesta. " +
-  "alternativa de X, si transcurre 20 segundos la A L. fin"
-
 /*
-"a la vez, " +
-"1 el cocinero cocina pedido. el mozo lleva el pedido." +
-"2 el mozo lleva la bebida. " +
+"si se cumple, " +
+"servicioEsX entonces el asistente ofrece serivicio X. " +
+"servicioEsY entonces el asistente ofrece serivicio Y. " +
+"si no el asistente ofrece servicio generico. " +
 "fin " +
-"el mozo toma el pedido. " +
-"el cliente come."
+"La expresion de la condicion servicioEsX, es tipoServicio == X. " +
+"La expresion de la condicion servicioEsY, es tipoServicio == Y."
 */
 
-/*
-"el cliente entra al restoran. " +
-"mientras noHayaLugar, el cliente baila."
-
-"el cliente entra al restoran. " +
-"si se cumple, " +
-"realizoReserva entonces el mozo lleva el cliente a su mesa. " +
-"si no el cliente espera que haya lugar. " +
-"fin " +
-"el mozo toma el pedido. " +
-"a la vez, " +
-"1 el cocinero cocina pedido. " +
-"2 el mozo lleva la bebida. " +
-"fin " +
-"el cliente come la comida. " +
-"el cliente pide la cuenta. " +
-"el mozo trae la cuenta. " +
-"si se cumple, " +
-"buenaAtencion entonces el cliente paga y deja propina." +
-"si no el cliente paga. " +
-"fin "
-*/
+"el usuario hace A. hace A, es un formulario con los siguientes campos: " +
+"nombre que es un texto obligatorio, " +
+"apellido que es un texto obligatorio, " +
+"edad que es un numero. " +
+"el usuario hace B. hace B, es un formulario con los siguientes campos: " +
+"nombre que es un texto, " +
+"apellido que es un texto obligatorio, " +
+"cantidad que es un numero."
 ]
 
 var options = {
@@ -117,5 +98,5 @@ function makeAllNivel(lista){
 //console.log("######################### XML GENERADO ##################################");
 //console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
 var modelo = procesamientoModelo.textToModel(textosPruebas[0]);
-modelo = intermedio.procesarModelo(modelo);
+modelo = intermedio.procesarModelo(modelo.proceso);
 procesamientoModelo.modelToXML(modelo);
