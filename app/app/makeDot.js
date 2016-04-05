@@ -204,7 +204,7 @@ var cp = require('child_process');
 var executeDot = function(dot_file, callback){
     var image = Viz(dot_file, { format: "png-image-element" });
     callback(image)
-  // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
+    // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
   //   console.log('stdout: ' + stdout);
   //   console.log('stderr: ' + stderr);
   //
