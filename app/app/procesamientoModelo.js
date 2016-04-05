@@ -362,10 +362,10 @@ function agregarTemplates(proceso){
   }
   bpmn.definitions["collaboration"] = []
   bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
-  proceso["_id"] = idProceso;
-  proceso["_isExecutable"] = true
-
-  bpmn.definitions.process = proceso;
+  
+  bpmn.definitions.process = proceso.process;
+  bpmn.definitions.process._id = idProceso;
+  bpmn.definitions.process._isExecutable = true;
   return bpmn;
 }
 
@@ -417,8 +417,12 @@ function templatesCamposAuxiliar(nodo, taskPos) {
     var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":campo.tipo, "_required":campo.obligatorio};
     aux.userTask.extensionElements.formProperty.push(formProperty);
   }
-
-  proceso.process.userTask[taskPos] = aux;
+  console.log("#################### ANTES #############################")
+  console.log(pd.json(proceso.process.userTask[taskPos]))
+  console.log("#################### DESPUES #########################")
+  proceso.process.userTask[taskPos] = aux.userTask;
+  console.log(pd.json(proceso.process.userTask[taskPos]))
+  console.log("##################################################")
 }
 
 var textToModel = function(texto) {
@@ -455,7 +459,6 @@ var modelToXML = function (modelo) {
   //console.log("######### completo el template para ejecutar el proceso ####################");
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
-
   }
 
   var bpmn = agregarTemplates(proceso);
