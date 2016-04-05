@@ -6,13 +6,15 @@ var procesar = require('./procesamientoModelo');
 var makeDot = require('./makeDot');
 var ejemplos = require('./cargarEjemplos');
 var imagen = require('../imageJava');
+var env = require('./env');
 
 var pd = require('pretty-data').pd;
 var fs = require('fs');
 
 var ejemploActivo;
 var entrar = true;
-var conYaoqiang = false;
+
+var conYaoqiang = env.conYaoqiang;
 
 
 var x2js = require('x2js'); //new X2JS();
