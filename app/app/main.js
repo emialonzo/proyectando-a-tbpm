@@ -1,3 +1,4 @@
+
 // var $ = require("jquery");
 var parser = require("./parser.js");
 var makeBpmn = require("./makeBpmn");
@@ -5,11 +6,15 @@ var intermedio = require('./modeloIntermedio');
 var procesar = require('./procesamientoModelo');
 var makeDot = require('./makeDot');
 var ejemplos = require('./cargarEjemplos');
-var imagen = require('../imageJava');
+var yaoqiang = require('../imageJava');
 var env = require('./env');
 
 var pd = require('pretty-data').pd;
 var fs = require('fs');
+
+var BpmnModeler = window.BpmnJS;
+// var Modeler = require('bpmn-js/lib/Modeler');
+var bpmnModeler;
 
 var ejemploActivo;
 var entrar = true;
@@ -29,6 +34,9 @@ var conv = new x2js();
 
 function conversion(){
   $("#id-bpmn-model").empty();
+  if(bpmnModeler){
+    bpmnModeler.clear();
+  }
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   try {
@@ -42,6 +50,7 @@ function conversion(){
       console.error("Error al obtener modelo intermedio desde texto!");
       return;
     }
+
 
     var campos = modelo.campos;
     $("#id-forms").html(pd.json(campos));
@@ -78,8 +87,23 @@ function conversion(){
       if(conYaoqiang){
         var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         $("#id-xml-code").text(bpmn);
-        var base64 = imagen(bpmn, callbackYaoqiang);
-      }else{
+        yaoqiang.generarImagen(bpmn, callbackYaoqiang);
+        yaoqiang.generarXml(bpmn, callbackXml);
+
+        if(!bpmnModeler){
+          var div = $('<div id="canvas" style="height: 450px"></div>');
+          // id="id-bpmn-container"
+          $("#id-bpmn-container").append(div);
+          bpmnModeler = new BpmnModeler({
+            container: '#canvas'
+          });
+          $(".djs-palette-entries div.group").each(function(){
+            if($(this).data("group")!= "tools"){
+              $(this).remove();
+            }
+          })
+        }
+      } else{
         $("#id-xml-code").text(procesar.modelToXML(modeloInt));
       }
     } catch (e) {
@@ -108,6 +132,21 @@ function callbackDot(image){
   $("#id-bpmn-model img").addClass("img-responsive");
   $("#id-bpmn-model img").click(function(){
     $(this).toggleClass("img-responsive");
+  });
+}
+function callbackXml(xml){
+  // console.error(image);
+  $("#id-xml-container").append("<hr/>");
+  var pre = $('<pre id="xml-bpmndi" />');
+  pre.text(pd.xml(xml));
+  $("#id-xml-container").append(pre);
+
+  bpmnModeler.importXML(xml, function(err) {
+    if (err) {
+      return console.error('could not import BPMN 2.0 diagram', err);
+    }
+    var canvas = bpmnModeler.get('canvas');
+    canvas.zoom('fit-viewport');
   });
 }
 
