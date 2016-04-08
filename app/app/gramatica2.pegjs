@@ -49,6 +49,7 @@ tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiemp
 		/ mensaje ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p};}
 
 mensaje = "mensaje" / "mail"
+
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 
@@ -70,7 +71,7 @@ sent_y = ws id_y separador
 
 id_o = "si se cumple"
 defecto = "si no"
-condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");} 
+condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");}
 
 condicion_entonces = "entonces"
 sent_o = ws id_o separador
@@ -95,12 +96,16 @@ sent_mientras = ws id_mientras
 
 /*sent_campos = (articulo ws)? tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}*/
 formulario_id = "es un formulario"
-sent_campos = tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
-/ tarea:palabras separador ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+ver_form_id = "muestra" / "despliega"
+sent_campos = tarea:(palabras separador/ palabra) ws formulario_id ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+/ tarea:(palabras separador/ palabra) ws ver_form_id ws palabras ws ":" ws listaCampos:ver_campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 campos = campo+
 tipo = "texto" / "numero" / "fecha" / "booleano"
-campo = ws nombre:palabra ws "que es un" "a"? ws tipo:tipo ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false}}
+campo = ws nombre:palabra ws "que es un" "a"? ws tipo:tipo ws ob:"obligatorio"? ws separador? ws {return {"nombre":nombre, "tipo":tipo, "obligatorio":ob?true:false, "writable":true}}
+
+ver_campos = ver_campo+
+ver_campo = ws nombre:palabra ws separador? ws {return {"nombre":nombre, "tipo":"texto", "obligatorio":true, "writable":false}}
 
 opLog = "&&" / "||"
 op = "!=" / "==" / ">=" / "<=" / ">" / "<"

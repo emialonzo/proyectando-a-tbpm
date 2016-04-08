@@ -51,10 +51,45 @@ function asignarElFlujo(nodo){
   }
 }
 
+
+function templateEventoTiempoExpresion(eventoTiempo){
+  switch (eventoTiempo.unidad) {
+    case "segundos":
+    case "segundo":
+    return "PT"+eventoTiempo.tiempo + "S"
+    break;
+    case "minutos":
+    case "minuto":
+    return "PT"+eventoTiempo.tiempo + "M"
+    break;
+    case "horas":
+    case "hora":
+    return "PT"+eventoTiempo.tiempo + "H"
+    break;
+    case "dias":
+    case "dia":
+    return "P"+eventoTiempo.tiempo + "D"
+    break;
+    case "semanas":
+    case "semana":
+    return "P"+eventoTiempo.tiempo + "W"
+    break;
+    case "meses":
+    case "mes":
+    return "P"+eventoTiempo.tiempo + "M"
+    break;
+    case "años":
+    case "año":
+    return "P"+eventoTiempo.tiempo + "Y"
+    break;
+    default:
+  }
+}
+
 function templateEvento(evento){
   if(evento.tiempo){
     // return {"timerEventDefinition":{"timeDuration":{ "_name":evento.tiempo+evento.unidad}}}
-    return {"timerEventDefinition":{"timeDuration":{}}}
+    return {"timerEventDefinition":{"timeDuration":templateEventoTiempoExpresion(evento)}}
   }else{
     return {"messageEventDefinition":{ "_messageRef":evento.mensaje}}
   }
@@ -64,7 +99,8 @@ function templateEvento(evento){
     var aux;
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-        aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+
+        aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
         aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
@@ -94,29 +130,45 @@ function templateEvento(evento){
     return aux;
   }
 
+  function getIdCampo(nodo, nombreCampo){
+    return  nombreCampo;
+    // return "id_"+nodo.id + "_" + nombreCampo;
+  }
+
   function templatesCampos(nodo, aux){
     if(nodo.sentencia.campos){
-      aux.userTask['ioSpecification'] = {
-        'dataOutput' : [],
-        'inputSet' : [],
-        'outputSet' : {
-          'dataOutputRefs' : []
-        }
+      aux.userTask['extensionElements'] = {
+        'formProperty' : []
       }
-      aux.userTask['property'] = [];
-      aux.userTask['dataOutputAssociation'] = [];
+      // aux.userTask['ioSpecification'] = {
+      //   'dataOutput' : [],
+      //   'inputSet' : [],
+      //   'outputSet' : {
+      //     'dataOutputRefs' : []
+      //   }
+      // }
+      // aux.userTask['property'] = [];
+      // aux.userTask['dataOutputAssociation'] = [];
 
       for (var i = 0; i < nodo.sentencia.campos.length; i++) {
         var campo = nodo.sentencia.campos[i];
         //creo propeidades
-        aux.userTask['property'].push({"_id":"id_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
-        //creo dataOutput
-        aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
-        aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
-        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
-        //se asocian las propiedades con la dataOutput
-        aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
-        "targetRef": "id_"+campo.nombre});
+        // aux.userTask['property'].push({"_id":getIdCampo(nodo, campo.nombre), "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
+        // //creo dataOutput
+        // aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
+        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
+        // // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
+        // //se asocian las propiedades con la dataOutput
+        // aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
+        // "targetRef": getIdCampo(nodo, campo.nombre)});
+        var formProperty;
+        if(campo.writable){
+          formProperty = {"__prefix":"activiti", "_id":nodo.id+"_"+campo.nombre, "_name":campo.nombre, "_required":campo.obligatorio, "_writable":campo.writable};
+        }else{
+          formProperty = {"__prefix":"activiti", "_id":nodo.id+"_"+campo.nombre, "_name":campo.nombre, "_required":false, "_writable":campo.writable, "_default":"${"+campo.nombre+"}"};
+        }
+        aux.userTask.extensionElements.formProperty.push(formProperty);
+
       }
     }
     // console.log(pd.json(aux));
@@ -210,6 +262,7 @@ function templateEvento(evento){
       "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
       "_expressionLanguage":"http://www.w3.org/1999/XPath",
       "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
+      "_xmlns:activiti":"http://activiti.org/bpmn",
     }
     bpmn.definitions["collaboration"] = []
     bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
