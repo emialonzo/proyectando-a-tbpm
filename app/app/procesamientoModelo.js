@@ -149,6 +149,9 @@ var obtenerTareas = function(elem) {
     } else if (elem.sentencia == "loop") {
       var cierra = {"_id":elem.id, "_default":""};
       proceso.process.exclusiveGateway.push(cierra);
+    } else if (elem.sentencia == "adjunto") {
+      var cierra = {"_id":elem.id};
+      proceso.process.exclusiveGateway.push(cierra);
     }
   } else if (elem.tipo == "adjunto") {
     var adjunto = {"_id":elem.id, "_attachedToRef":elem.adjunto_a_id};
@@ -225,22 +228,24 @@ var asociarElementosLanes = function(elem) {
 //Genero los elementos XML necesarios para los flujos
 var procesarFlujos = function(elem) {
   for (var i = 0; i < elem.sig.length; i++) {
-    var idFlujo = SequenceFlow_GlobalID++;
-    var flujo = {"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]};
-    if (elem.tipo == "xor") {
-      if (elem.sentencia[i].condicion == "defecto") {
-        var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
-        gw._default = idFlujo;
-      } else {
-        flujo._name = elem.sentencia[i].condicion;
+    if (elem.sig[i] != "F") {
+      var idFlujo = elem.id + "_" + elem.sig[i];
+      var flujo = {"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]};
+      if (elem.tipo == "xor") {
+        if (elem.sentencia[i].condicion == "defecto") {
+          var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
+          gw._default = idFlujo;
+        } else {
+          flujo._name = elem.sentencia[i].condicion;
+        }
+      } else if (elem.tipo == "cierro" && elem.tag == "loop") {
+        if (elem.sig[i] != elem.ref) {
+          var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
+          gw._default = idFlujo;
+        }
       }
-    } else if (elem.tipo == "cierro" && elem.tag == "loop") {
-      if (elem.sig[i] != elem.ref) {
-        var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
-        gw._default = idFlujo;
-      }
+      proceso.process.sequenceFlow.push(flujo);
     }
-    proceso.process.sequenceFlow.push(flujo);
   }
 }
 
@@ -275,7 +280,7 @@ var obtenerFlujos = function(modelo) {
 
 var conectarStartEvent = function(modelo) {
   var primero = modelo[0];
-  var flujoStartEvent = {"_id":SequenceFlow_GlobalID++, "_sourceRef":proceso.process.startEvent._id, "_targetRef": ""};
+  var flujoStartEvent = {"_id":"", "_sourceRef":proceso.process.startEvent._id, "_targetRef": ""};
   if (primero.tipo == "task") {
     var task;
     if (primero.sentencia.task == "service") {
@@ -283,27 +288,28 @@ var conectarStartEvent = function(modelo) {
     } else if (primero.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == primero.id});
     }
+    flujoStartEvent._id = proceso.process.startEvent._id + "_" + task._id;
     flujoStartEvent._targetRef = task._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (primero.tipo == "and") {
     var andGW = _.find(proceso.process.parallelGateway, function(val) {return val._id == primero.id});
+    flujoStartEvent._id = proceso.process.startEvent._id + "_" + andGW._id;
     flujoStartEvent._targetRef = andGW._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (primero.tipo == "xor") {
     var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == primero.id});
+    flujoStartEvent._id = proceso.process.startEvent._id + "_" + xorGW._id;
     flujoStartEvent._targetRef = xorGW._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (primero.tipo == "loop") {
     var loopGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == primero.id});
-    flujoStartEvent._targetRef = loopGW._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (ultimo.tipo == "evento") {
     var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == ultimo.id});
-    flujoStartEvent._targetRef = evento._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   }
@@ -312,7 +318,7 @@ var conectarStartEvent = function(modelo) {
 
 var conectarEndEvent = function(modelo) {
   var ultimo = modelo[modelo.length-1];
-  var flujo = {"_id":SequenceFlow_GlobalID++, "_sourceRef":"", "_targetRef": proceso.process.endEvent._id};
+  var flujo = {"_id":"", "_sourceRef":"", "_targetRef": proceso.process.endEvent._id};
   if (ultimo.tipo == "task") {
     var task;
     if (ultimo.sentencia.task == "service") {
@@ -320,31 +326,34 @@ var conectarEndEvent = function(modelo) {
     } else if (ultimo.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == ultimo.id});
     }
+    flujo._id = task._id + "_EndEvent_1"
     flujo._sourceRef = task._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
     lane.flowNodeRef.push({"__text":"EndEvent_1"});
   } else if (ultimo.tipo == "evento") {
     var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == ultimo.id});
+    flujo._id = evento._id + "_EndEvent_1"
     flujo._sourceRef = evento._id
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
     lane.flowNodeRef.push({"__text":"EndEvent_1"});
   } else if (ultimo.tipo == "cierro") {
     if (ultimo.tag == "and") {
       var andGW = _.find(proceso.process.parallelGateway, function(val) {return val._id == ultimo.id});
+      flujo._id = andGW._id + "_EndEvent_1"
       flujo._sourceRef = andGW._id
     } else if (ultimo.tag == "xor") {
       var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
+      flujo._id = xorGW._id + "_EndEvent_1"
       flujo._sourceRef = xorGW._id
     }  else if (ultimo.tag == "loop") {
       var loopGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
+      flujo._id = loopGW._id + "_EndEvent_1"
       flujo._sourceRef = loopGW._id
     }
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.lane});
     lane.flowNodeRef.push({"__text":"EndEvent_1"});
   }
-  //TODO revisar si es necesario pushear el flujo
-  //flujo._targetRef = proceso.process.endEvent._id;
-  //proceso.process.sequenceFlow.push(flujo);
+  proceso.process.sequenceFlow.push(flujo);
 }
 
 function agregarTemplates(proceso){
@@ -356,6 +365,7 @@ function agregarTemplates(proceso){
     "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
     "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
     "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
+    "_xmlns:activiti": "http://activiti.org/bpmn",
     "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
     "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
     "_expressionLanguage":"http://www.w3.org/1999/XPath",
@@ -423,10 +433,20 @@ var templateCampos = function(nodo, taskPos) {
 }
 
 var templateExpresiones = function(nodo) {
-  if (nodo.sentencia.expresion) {
-    console.log("################# LALALALALA ########################")
-  } else {
-    console.log("################# FAFAFAFAFA ########################")
+  for (var i=0; i < nodo.sentencia.length; i++) {
+    if (nodo.sentencia[i].condicion != "defecto") {
+      var condicion = nodo.sentencia[i];
+      var flujo;
+      for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
+        flujo = proceso.process.sequenceFlow[j];
+        if (flujo._name && flujo._name == condicion.condicion) {
+          var condicion = "${"+condicion.expresion+"}"
+          var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
+          flujo.conditionExpression = conditionExpression;
+          proceso.process.sequenceFlow[j] = flujo;
+        }
+      }
+    }
   }
 }
 
