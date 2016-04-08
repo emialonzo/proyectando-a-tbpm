@@ -269,28 +269,96 @@ function crearEvento(tipo){
 
 //aplica las distintas transformaciones al modelo
 var procesarModelo = function(model){
+  var modelo = model.proceso;
   inicializar();
   //se asigna id
-  model = asignarId(model.sentencia);
+  modelo = asignarId(modelo.sentencia);
   //se balancea el modelo
-  model = balancearModelo(model);
+  modelo = balancearModelo(modelo);
 
   aux = {};
   aux.tipo = "secuencia";
-  aux.sentencia = model;
+  aux.sentencia = modelo;
   aux.id = ++globalId;
   updateNodo(aux);
   //se asigna el flujo
-  model = asignarFlujo(aux);
+  modelo = asignarFlujo(aux);
   //se asignan los lanes
-  asignarLanes(model);
+  asignarLanes(modelo);
   //corregir flujo
-  corregirFlujoSecuencia(model);
+  corregirFlujoSecuencia(modelo);
 
-  model = dicccionarioId[aux.id];
 
-  return model;
+  //console.log("############## ANTES ####################")
+  //console.log(pd.json(modelo));
+  modelo = asociarCampos(modelo, model.campos);
+  //console.log("############# DESPUES ###################")
+  //console.log(pd.json(modelo));
+  //console.log("#########################################")
+
+  modelo = asociarExpresiones(modelo, model.expresiones);
+
+  modelo = dicccionarioId[aux.id];
+  return modelo;
 }
+
+var asociarCampos = function(modelo, campos) {
+  if (campos) {
+    var stack = [];
+    var nodo;
+    stack.push(modelo);
+    while (stack.length > 0) {
+      nodo = stack.pop();
+      if (nodo.tipo == "task") {
+        for (var i=0; i< campos.length; i++) {
+          if (campos[i].tarea == nodo.sentencia.accion) {
+            nodo.sentencia.campos = campos[i].campos;
+            break;
+          }
+        }
+      } else {
+        if(nodo.sentencia instanceof Array){
+          for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+            //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
+            stack.push(nodo.sentencia[i]);
+          }
+        }
+      }
+    }
+  }
+  return modelo;
+}
+
+var asociarExpresiones = function(modelo, expresiones) {
+  if (expresiones) {
+    var stack = [];
+    var nodo;
+    stack.push(modelo);
+    while (stack.length > 0) {
+      nodo = stack.pop();
+      if (nodo.tipo == "xor") {
+        for (var i=0; i < nodo.sentencia.length; i++) {
+          if (nodo.sentencia[i].condicion != "defecto") {
+            for (var j=0; j < expresiones.length; j++) {
+              if (expresiones[j].condicion == nodo.sentencia[i].condicion) {
+                nodo.sentencia[i].expresion = expresiones[i].expresion;
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        if(nodo.sentencia instanceof Array){
+          for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+            //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
+            stack.push(nodo.sentencia[i]);
+          }
+        }
+      }
+    }
+  }
+}
+
 
 function corregirFlujoSecuencia(modelo) {
   var stack =[];

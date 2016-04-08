@@ -106,6 +106,7 @@ var obtenerTareas = function(elem) {
       proceso.process.serviceTask.push(tarea);
     } else if (elem.sentencia.task == "human") {
       var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
+      //for ()
       proceso.process.userTask.push(tarea);
     }
   } else if (elem.tipo == "evento") {
@@ -362,7 +363,7 @@ function agregarTemplates(proceso){
   }
   bpmn.definitions["collaboration"] = []
   bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
-  
+
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
@@ -378,9 +379,10 @@ var agregarTemplateElementos = function(elem) {
         taskPos = i;
       }
     }
-    templatesCamposAuxiliar(elem, taskPos);
+    templateCampos(elem, taskPos);
   } else if (elem.tipo == "evento") {
   } else if (elem.tipo == "xor") {
+    templateExpresiones(elem);
     for (var i=0; i < elem.sentencia.length; i++) {
       agregarTemplateElementos(elem.sentencia[i]);
     }
@@ -405,24 +407,27 @@ var agregarTemplateElementos = function(elem) {
 
 }
 
-function templatesCamposAuxiliar(nodo, taskPos) {
-  aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+var templateCampos = function(nodo, taskPos) {
   if(nodo.sentencia.campos){
+    aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
     aux.userTask['extensionElements'] = {
       'formProperty' : []
     }
+    for (var i = 0; i < nodo.sentencia.campos.length; i++) {
+      var campo = nodo.sentencia.campos[i];
+      var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":campo.tipo, "_required":campo.obligatorio};
+      aux.userTask.extensionElements.formProperty.push(formProperty);
+    }
+    proceso.process.userTask[taskPos] = aux.userTask;
   }
-  for (var i = 0; i < nodo.sentencia.campos.length; i++) {
-    var campo = nodo.sentencia.campos[i];
-    var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":campo.tipo, "_required":campo.obligatorio};
-    aux.userTask.extensionElements.formProperty.push(formProperty);
+}
+
+var templateExpresiones = function(nodo) {
+  if (nodo.sentencia.expresion) {
+    console.log("################# LALALALALA ########################")
+  } else {
+    console.log("################# FAFAFAFAFA ########################")
   }
-  console.log("#################### ANTES #############################")
-  console.log(pd.json(proceso.process.userTask[taskPos]))
-  console.log("#################### DESPUES #########################")
-  proceso.process.userTask[taskPos] = aux.userTask;
-  console.log(pd.json(proceso.process.userTask[taskPos]))
-  console.log("##################################################")
 }
 
 var textToModel = function(texto) {
