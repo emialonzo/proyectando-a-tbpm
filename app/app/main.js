@@ -26,6 +26,14 @@ var conYaoqiang = env.conYaoqiang;
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
+// if(codeMirror){
+//   console.log("esta seteado el code mirror");
+//   console.log(codeMirror);
+// }
+// else{
+//   console.log("sin code mirror");
+// }
+
 // PRUEBAS
 // var xmlText = '<userTask completionQuantity="1" id="_3" implementation="##unspecified" isForCompensation="false" name="tarea" startQuantity="1"><ioSpecification><dataOutput id="Dout_3_1" itemSubjectRef="xsd:string" name="outNombre"/><dataOutput id="Dout_3_2" itemSubjectRef="xsd:int" name="outEdad"/><inputSet/><outputSet><dataOutputRefs>Dout_3_1</dataOutputRefs><dataOutputRefs>Dout_3_2</dataOutputRefs></outputSet></ioSpecification>id="Dout_ " itemSubjectRef="xsd:string" name="outNombre"<property id="_3_P_1" itemSubjectRef="xsd:string" name="nombre"/><property id="_3_P_2" itemSubjectRef="xsd:int" name="edad"/><dataOutputAssociation id="DOA_3_1"><sourceRef>Dout_3_1</sourceRef><targetRef>_3_P_1</targetRef></dataOutputAssociation><dataOutputAssociation id="DOA_3_2"><sourceRef>Dout_3_2</sourceRef><targetRef>_3_P_2</targetRef></dataOutputAssociation></userTask>';
 // var jsonObj = conv.xml_str2json( xmlText );
@@ -49,9 +57,10 @@ function conversion(){
       console.error(e);
       console.error(pd.json(e));
       console.error("Error al obtener modelo intermedio desde texto!");
+      errorParser(e);
       return;
     }
-
+    limpiarMensajesError();
 
     var campos = modelo.campos;
     $("#id-forms").html(pd.json(campos));
@@ -219,6 +228,29 @@ function menu(){
 }
 
 var ejemploModeloAbstracto;
+
+function posPegError(pegError) {
+  // console.log(JSON.stringify(pegError));
+    return [pegError.location.start.offset, pegError.location.end.offset]
+}
+
+function errorParser(pegError){
+  // success info warning danger
+  var tipo = "danger";
+
+  var str = `<div class="alert alert-`+ tipo +` alert-dismissible" role="alert">
+  <button type="button" class="close"
+   data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  ` + pegError + `</div>`
+  $("div#id-texto-container div#div-error").prepend(str);
+  var pos = posPegError(pegError);
+  $('#id-modelo-texto').get(0).setSelectionRange(pos[0], pos[1]);
+}
+
+function limpiarMensajesError(){
+  $("div#id-texto-container div#div-error").html("");
+}
+
 $(function() {
   menu();
   parser.init(__dirname + '/gramatica2.pegjs');

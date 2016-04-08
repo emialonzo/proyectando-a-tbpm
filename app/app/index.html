@@ -15,6 +15,7 @@
   <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
   <link rel="stylesheet" href="bower_components/bpmn-js/dist/assets/diagram-js.css">
   <link rel="stylesheet" href="bower_components/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css">
+  <link rel="stylesheet" href="../bower_components/codemirror/lib/codemirror.css">
 
   <!-- Custom styles for this template -->
   <link href="res/dashboard.css" rel="stylesheet">
@@ -91,6 +92,7 @@
               </button>
             </form>
           </div>
+          <div class="" id="div-error"></div>
         </div>
 
         <!-- Nav tabs -->
@@ -173,14 +175,16 @@
   <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <!-- <script src="bower_components/bpmn-js/dist/Modeler.js"></script> -->
   <script src="bower_components/bpmn-js/dist/bpmn-modeler.js"></script>
-
-
+  <!-- <script src="../bower_components/codemirror/lib/codemirror.js"></script> -->
 
   <!-- para toquetear -->
-  <script type="text/javascript" src="main.js" >
+  <script type="text/javascript" src="main.js" ></script>
+  <script type="text/javascript" src="util_parser.js" ></script>
+  <script type="text/javascript"  >
+//     // var myCodeMirror = CodeMirror("");
+//     var codeMirror = CodeMirror.fromTextArea(document.getElementById("id-modelo-texto"), {
+//     lineNumbers: true,
+// });
   </script>
-  <script type="text/javascript" src="util_parser.js" >
-  </script>
-
 
 </body></html>
