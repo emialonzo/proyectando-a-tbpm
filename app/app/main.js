@@ -72,7 +72,7 @@ function conversion(){
     $("#id-modelo-abstracto").text(jsonToString(modelo));
 
     try{
-      var modeloInt = intermedio.procesarModelo(modelo.proceso);
+      var modeloInt = intermedio.procesarModelo(modelo);
       $("#id-modelo-abstracto-transformado").html(pd.json(modeloInt));
     }catch (e) {
       console.error(e);

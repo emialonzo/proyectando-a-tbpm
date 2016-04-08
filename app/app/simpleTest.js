@@ -10,7 +10,23 @@ var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
 var textosPruebas = [
-/*
+
+//// define los formularios al final del texto
+//"si se cumple, " +
+//"servicioEsX entonces el asistenteDeServicios tareaX. " +
+//"si no el asistenteDeServicios tareaY. " +
+//"fin " +
+//"tareaX " +
+//"es un formulario con los siguientes campos: " +
+//"nombre que es un texto obligatorio, " +
+//"apellido que es un texto obligatorio, " +
+//"edad que es un numero. " +
+//"tareaY " +
+//"es un formulario con los siguientes campos: " +
+//"titulo que es un texto obligatorio, " +
+//"ejemplar que es un texto obligatorio."
+
+// define las expresiones al final del texto
 "si se cumple, " +
 "servicioEsX entonces el asistente ofrece serivicio X. " +
 "servicioEsY entonces el asistente ofrece serivicio Y. " +
@@ -18,16 +34,17 @@ var textosPruebas = [
 "fin " +
 "La expresion de la condicion servicioEsX, es tipoServicio == X. " +
 "La expresion de la condicion servicioEsY, es tipoServicio == Y."
-*/
 
-"el usuario hace A. hace A, es un formulario con los siguientes campos: " +
-"nombre que es un texto obligatorio, " +
-"apellido que es un texto obligatorio, " +
-"edad que es un numero. " +
-"el usuario hace B. hace B, es un formulario con los siguientes campos: " +
-"nombre que es un texto, " +
-"apellido que es un texto obligatorio, " +
-"cantidad que es un numero."
+//// define formularios junto a las tareas
+//"el usuario hace A. hace A, es un formulario con los siguientes campos: " +
+//"nombre que es un texto obligatorio, " +
+//"apellido que es un texto obligatorio, " +
+//"edad que es un numero. " +
+//"el usuario hace B. hace B, es un formulario con los siguientes campos: " +
+//"nombre que es un texto, " +
+//"apellido que es un texto obligatorio, " +
+//"cantidad que es un numero."
+
 ]
 
 var options = {
@@ -98,5 +115,5 @@ function makeAllNivel(lista){
 //console.log("######################### XML GENERADO ##################################");
 //console.log(pd.xml(conv.json2xml_str(makeBpmn.proceso)));
 var modelo = procesamientoModelo.textToModel(textosPruebas[0]);
-modelo = intermedio.procesarModelo(modelo.proceso);
+modelo = intermedio.procesarModelo(modelo);
 procesamientoModelo.modelToXML(modelo);
