@@ -152,8 +152,11 @@ function printFile() {
 function templateDotTask(nodo){
   if(nodo.sentencia.task == "human")
     return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"red\" ];";
-  else
+  else if(nodo.sentencia.task == "service")
     return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"green\" ];";
+  else
+    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"blue\" ];";
+
 }
 
 function templateEventTask(nodo){
