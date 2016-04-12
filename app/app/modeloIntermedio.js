@@ -337,14 +337,19 @@ var asociarExpresiones = function(modelo, expresiones) {
     while (stack.length > 0) {
       nodo = stack.pop();
       if (nodo.tipo == "xor") {
+        nodo.condiciones = {}
         for (var i=0; i < nodo.sentencia.length; i++) {
           if (nodo.sentencia[i].condicion != "defecto") {
             for (var j=0; j < expresiones.length; j++) {
               if (expresiones[j].condicion == nodo.sentencia[i].condicion) {
                 nodo.sentencia[i].expresion = expresiones[i].expresion;
+                nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = expresiones[i].expresion; //FIXME MUY desprolijo
                 break;
               }
             }
+          }
+          else{
+            nodo.default = nodo.sentencia[i].sentencia[0].id;
           }
         }
       } else {

@@ -5,9 +5,12 @@ var pd = require('pretty-data').pd;
 var toDot = require('./makeDot').toDot;
 var intermedio = require('./modeloIntermedio');
 var prettyjson = require('prettyjson');
+var env = require('./env');
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
+
+var conYaoqiang = env.conYaoqiang;
 
 var gramatica = null;
 var parser = null;
@@ -44,10 +47,33 @@ function esSerializable(nodo){
 
 var losFlujos = [];
 function asignarElFlujo(nodo){
-  for (var i = 0; i < nodo.sig.length; i++) {
-    losFlujos.push(
-      {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i]}}
-    );
+  if(nodo.tipo == "xor"){
+    // console.debug(nodo.condiciones);
+    var condicion ;
+    for (var i = 0; i < nodo.sig.length; i++) {
+      if(conYaoqiang){
+        condicion = nodo.condiciones[nodo.sig[i]]
+      }else{ //para activiti
+        condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
+      }
+      var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
+      if(condicion){
+        losFlujos.push(
+          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
+        );
+      }
+      else{
+        losFlujos.push(
+          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
+        );
+      }
+    }
+  }else{
+    for (var i = 0; i < nodo.sig.length; i++) {
+      losFlujos.push(
+        {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i]}}
+      );
+    }
   }
 }
 
@@ -111,7 +137,7 @@ function templateEvento(evento){
       aux = {"parallelGateway":{ "_id":"_"+nodo.id} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
-      aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
+      aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
       aux = {"boundaryEvent":{"_id":"_"+nodo.id, "_attachedToRef": "_"+nodo.adjunto_a_id } }
@@ -134,33 +160,36 @@ function templateEvento(evento){
     return  nombreCampo;
     // return "id_"+nodo.id + "_" + nombreCampo;
   }
+  function templateIdFlujo(idFrom, idTo){
+    return "_" + idFrom + "__" + idTo
+  }
 
   function templatesCampos(nodo, aux){
     if(nodo.sentencia.campos){
       aux.userTask['extensionElements'] = {
         'formProperty' : []
       }
-      // aux.userTask['ioSpecification'] = {
-      //   'dataOutput' : [],
-      //   'inputSet' : [],
-      //   'outputSet' : {
-      //     'dataOutputRefs' : []
-      //   }
-      // }
-      // aux.userTask['property'] = [];
-      // aux.userTask['dataOutputAssociation'] = [];
+      aux.userTask['ioSpecification'] = {
+        'dataOutput' : [],
+        'inputSet' : [],
+        'outputSet' : {
+          'dataOutputRefs' : []
+        }
+      }
+      aux.userTask['property'] = [];
+      aux.userTask['dataOutputAssociation'] = [];
 
       for (var i = 0; i < nodo.sentencia.campos.length; i++) {
         var campo = nodo.sentencia.campos[i];
         //creo propeidades
-        // aux.userTask['property'].push({"_id":getIdCampo(nodo, campo.nombre), "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
-        // //creo dataOutput
-        // aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
-        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
-        // // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
-        // //se asocian las propiedades con la dataOutput
-        // aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
-        // "targetRef": getIdCampo(nodo, campo.nombre)});
+        aux.userTask['property'].push({"_id":getIdCampo(nodo, campo.nombre), "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
+        //creo dataOutput
+        aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
+        aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
+        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
+        //se asocian las propiedades con la dataOutput
+        aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
+        "targetRef": getIdCampo(nodo, campo.nombre)});
         var formProperty;
         if(campo.writable){
           formProperty = {"__prefix":"activiti", "_id":nodo.id+"_"+campo.nombre, "_name":campo.nombre, "_required":campo.obligatorio, "_writable":campo.writable};
