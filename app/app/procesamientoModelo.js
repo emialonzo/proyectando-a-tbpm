@@ -32,6 +32,26 @@ var options = {
 
 //Inicializo estructuras
 var start = function(model) {
+  console.log("####################")
+  console.log("inicializo las variables globales")
+  console.log("####################")
+  proceso = {
+    process : {
+      laneSet : {
+        lane : []
+      },
+      startEvent : {},
+      userTask : [],
+      serviceTask : [],
+      exclusiveGateway : [],
+      parallelGateway : [],
+      intermediateCatchEvent : [],
+      intermediateThrowEvent : [],
+      boundaryEvent : [],
+      endEvent : {},
+      sequenceFlow : []
+    }
+  };
   proceso.process.startEvent = {
     "_id":"StartEvent_1"
   };
@@ -493,7 +513,9 @@ var modelToXML = function (modelo) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
 
-  var bpmn = agregarTemplates(proceso);
+  // console.log("########## completo el cabezal del proceso ###################")
+  var bpmn = null;
+  bpmn = agregarTemplates(proceso);
 
   console.log(pd.xml(conv.json2xml_str(bpmn)));
   return pd.xml(conv.json2xml_str(bpmn));
