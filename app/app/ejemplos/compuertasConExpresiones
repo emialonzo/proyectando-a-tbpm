@@ -1,3 +1,4 @@
+el asistente elije servicio. elije servicio, es un formulario con los siguientes campos: tipoServicio que es un texto obligatorio.
 si se cumple,
 servicioEsX entonces el asistente ofrece serivicio X.
 servicioEsY entonces el asistente ofrece serivicio Y.
