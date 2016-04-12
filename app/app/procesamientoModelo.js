@@ -3,6 +3,9 @@ var pd = require('pretty-data').pd;
 var parser = require("./parser.js");
 var x2js = require('x2js');
 var subproceso = require('./subproceso');
+var env = require('./env');
+
+var conSubproceso = env.conSubproceso;
 
 var proceso = {
   process : {
@@ -426,7 +429,7 @@ var agregarTemplateElementos = function(elem) {
           taskPos = i;
         }
       }
-  } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso") {
+  } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
       if (proceso.process.subProcess[i]._id == elem.id) {

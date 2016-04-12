@@ -109,7 +109,7 @@ ver_campo = ws nombre:palabra ws separador? ws {return {"nombre":nombre, "tipo":
 
 opLog = "&&" / "||"
 op = "!=" / "==" / ">=" / "<=" / ">" / "<"
-term = [a-zA-Z0-9]+
+term = [a-zA-Z0-9"]+
 expr = term ws op ws term
 expresion = expr (ws opLog ws expr)* {return text()}
 sent_expresiones = "La expresion de la condicion" ws

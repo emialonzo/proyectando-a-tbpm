@@ -1,4 +1,5 @@
 
 module.exports = {
-  "conYaoqiang" : false
+  "conYaoqiang" : true,
+  "conSubproceso" : true,
 };
