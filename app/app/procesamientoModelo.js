@@ -382,7 +382,7 @@ function agregarTemplates(proceso){
 
 var agregarTemplateElementos = function(elem) {
 
-  if (elem.tipo == "task") {
+  if (elem.tipo == "task" && elem.sentencia.task == "human") {
     var taskPos = 0;
     for (var i=0; i< proceso.process.userTask.length; i++) {
       if (proceso.process.userTask[i]._id == elem.id) {
@@ -390,6 +390,13 @@ var agregarTemplateElementos = function(elem) {
       }
     }
     templateCampos(elem, taskPos);
+  } else if (elem.tipo == "task" && elem.sentencia.task == "service") {
+      var taskPos = 0;
+      for (var i=0; i< proceso.process.serviceTask.length; i++) {
+        if (proceso.process.serviceTask[i]._id == elem.id) {
+          taskPos = i;
+        }
+      }
   } else if (elem.tipo == "evento") {
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
