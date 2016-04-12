@@ -11,6 +11,8 @@ var conv = new x2js();
 
 var textosPruebas = [
 
+"el administrador de tareas, ejecuta el subproceso evaluar opciones."
+
 //// define las expresiones al final del texto
 //"si se cumple, " +
 //"servicioEsX entonces el asistente ofrece serivicio X. " +
@@ -45,30 +47,30 @@ var textosPruebas = [
 //"apellido que es un texto obligatorio, " +
 //"cantidad que es un numero."
 
-"la Usuario realiza tarea X. realiza tarea X, es un formulario con los siguientes campos: " +
-"nombre que es un texto obligatorio, " +
-"edad que es un numero. " +
-"la Usuario realiza tarea Y. realiza tarea Y, es un formulario con los siguientes campos:  " +
-"titulo que es un texto obligatorio, " +
-"version que es un numero. " +
-"la Usuario realizaTareaZ. " +
-"alternativa de realiza tarea X, si transcurre 20 segundos la Usuario realiza tarea L. fin " +
-"al mismo tiempo, " +
-"1 la Usuario realiza tarea I. la Usuario realiza tarea II. " +
-"2 la Usuario realiza tarea J. " +
-"si se cumple, " +
-"condi entonces la Usuario realiza tarea K. la Usuario realiza tarea KK. " +
-"condii entonces el Usuario realiza tarea L. " +
-"si no la Usuario realiza tarea U. la Usuario realiza tarea UU. " +
-"fin " +
-"la Usuario realiza tarea JJ. " +
-"fin " +
-//"tareaY " +
-//"es un formulario con los siguientes campos: " +
+//"la Usuario realiza tarea X. realiza tarea X, es un formulario con los siguientes campos: " +
+//"nombre que es un texto obligatorio, " +
+//"edad que es un numero. " +
+//"la Usuario realiza tarea Y. realiza tarea Y, es un formulario con los siguientes campos:  " +
 //"titulo que es un texto obligatorio, " +
-//"ejemplar que es un texto obligatorio."
-"La expresion de la condicion condi, es variable == valori. " +
-"La expresion de la condicion condii, es variable == valorii. "
+//"version que es un numero. " +
+//"la Usuario realizaTareaZ. " +
+//"alternativa de realiza tarea X, si transcurre 20 segundos la Usuario realiza tarea L. fin " +
+//"al mismo tiempo, " +
+//"1 la Usuario realiza tarea I. la Usuario realiza tarea II. " +
+//"2 la Usuario realiza tarea J. " +
+//"si se cumple, " +
+//"condi entonces la Usuario realiza tarea K. la Usuario realiza tarea KK. " +
+//"condii entonces el Usuario realiza tarea L. " +
+//"si no la Usuario realiza tarea U. la Usuario realiza tarea UU. " +
+//"fin " +
+//"la Usuario realiza tarea JJ. " +
+//"fin " +
+////"tareaY " +
+////"es un formulario con los siguientes campos: " +
+////"titulo que es un texto obligatorio, " +
+////"ejemplar que es un texto obligatorio."
+//"La expresion de la condicion condi, es variable == valori. " +
+//"La expresion de la condicion condii, es variable == valorii. "
 
 ]
 

@@ -2,6 +2,7 @@ var _ = require("underscore");
 var pd = require('pretty-data').pd;
 var parser = require("./parser.js");
 var x2js = require('x2js');
+var subproceso = require('./subproceso');
 
 var proceso = {
   process : {
@@ -17,6 +18,7 @@ var proceso = {
     intermediateThrowEvent : [],
     boundaryEvent : [],
     endEvent : {},
+    subProcess : [],
     sequenceFlow : []
   }
 };
@@ -32,9 +34,6 @@ var options = {
 
 //Inicializo estructuras
 var start = function(model) {
-  console.log("####################")
-  console.log("inicializo las variables globales")
-  console.log("####################")
   proceso = {
     process : {
       laneSet : {
@@ -49,6 +48,7 @@ var start = function(model) {
       intermediateThrowEvent : [],
       boundaryEvent : [],
       endEvent : {},
+      subProcess : [],
       sequenceFlow : []
     }
   };
@@ -128,6 +128,9 @@ var obtenerTareas = function(elem) {
       var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
       //for ()
       proceso.process.userTask.push(tarea);
+    } else if (elem.sentencia.task == "subproceso") {
+      var subproceso = {"_id":elem.id, "_name":elem.sentencia.accion};
+      proceso.process.subProcess.push(subproceso);
     }
   } else if (elem.tipo == "evento") {
     var intermediateCatchEvent = {"_id":elem.id};
@@ -195,6 +198,8 @@ var asociarElementosLanes = function(elem) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == elem.id});
     } else if (elem.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == elem.id});
+    } else if (elem.sentencia.task == "subproceso") {
+      task = _.find(proceso.process.subProcess, function(val){ return val._id == elem.id});
     }
     lane.flowNodeRef.push(task._id);
   } else if (elem.tipo == "evento") {
@@ -307,6 +312,8 @@ var conectarStartEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == primero.id});
     } else if (primero.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == primero.id});
+    } else if (primero.sentencia.task == "subproceso") {
+      task = _.find(proceso.process.subProcess, function(val){ return val._id == primero.id});
     }
     flujoStartEvent._id = proceso.process.startEvent._id + "_" + task._id;
     flujoStartEvent._targetRef = task._id;
@@ -345,6 +352,8 @@ var conectarEndEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == ultimo.id});
     } else if (ultimo.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == ultimo.id});
+    } else if (ultimo.sentencia.task == "subproceso") {
+      task = _.find(proceso.process.subProcess, function(val){ return val._id == ultimo.id});
     }
     flujo._id = task._id + "_EndEvent_1"
     flujo._sourceRef = task._id;
@@ -417,6 +426,14 @@ var agregarTemplateElementos = function(elem) {
           taskPos = i;
         }
       }
+  } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso") {
+    var subProcessPos = 0;
+    for (var i=0; i< proceso.process.subProcess.length; i++) {
+      if (proceso.process.subProcess[i]._id == elem.id) {
+        subProcessPos = i;
+      }
+    }
+    templateSubproceso(elem, subProcessPos);
   } else if (elem.tipo == "evento") {
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
@@ -441,7 +458,6 @@ var agregarTemplateElementos = function(elem) {
       agregarTemplateElementos(elem.sentencia[i]);
     }
   }
-
 }
 
 var templateCampos = function(nodo, taskPos) {
@@ -475,6 +491,37 @@ var templateExpresiones = function(nodo) {
       }
     }
   }
+}
+
+var templateSubproceso = function(elem, subProcessPos) {
+  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion);
+  console.log("###################### ELEM ######################")
+  console.log(pd.json(elem));
+  console.log("#################################################################")
+  console.log("###################### XML DEL SUBPROCESO ######################")
+  console.log(pd.xml(xmlSubProceso))
+  console.log("#################################################################")
+
+  var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
+  console.log("###################### JSON DEL SUBPROCESO ######################")
+  console.log(pd.json(jsonSubProceso))
+  console.log("#################################################################")
+  var auxSubProceso = {"subprocess":{"_id":elem.id,"_name":elem.sentencia.accion}};
+  auxSubProceso.subprocess.startEvent =  jsonSubProceso.definitions.process.startEvent;
+  auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
+  auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
+  auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
+  auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
+  auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
+  auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
+  auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+  auxSubProceso.subprocess.endEvent = jsonSubProceso.definitions.process.endEvent;
+  auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
+  auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+  proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
+}
+var obtenerxmlSubProceso = function(name) {
+  return subproceso.obtenerXML(name);
 }
 
 var textToModel = function(texto) {
@@ -522,7 +569,13 @@ var modelToXML = function (modelo) {
   //console.log(pd.json(proceso))
 }
 
+var modelToXMLaux = function(bpmn){
+  var procesoJSON = conv.xml_str2json(bpmn);
+  return pd.json(procesoJSON);
+}
+
 module.exports = {
   textToModel : textToModel,
-  modelToXML : modelToXML
+  modelToXML : modelToXML,
+  modelToXMLaux : modelToXMLaux
 }

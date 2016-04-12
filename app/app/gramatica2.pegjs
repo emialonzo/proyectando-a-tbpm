@@ -58,9 +58,16 @@ servicio_id = "ejecuta el servicio"
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "service"};}
+              / ws actor:actor ws "ejecuta el subproceso" ws accion:accion ws punto
+              { return {"actor": actor , "accion" : accion , "task": "subproceso"};}
               / ws actor:actor ws accion:accion ws punto ws (campos:sent_campos?)
               { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
 
+/*sent_campos = (articulo ws)? tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}*/
+formulario_id = "es un formulario"
+ver_form_id = "muestra" / "despliega"
+sent_campos = tarea:(palabras separador/ palabra) ws formulario_id ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
+/ tarea:(palabras separador/ palabra) ws ver_form_id ws palabras ws ":" ws listaCampos:ver_campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 id_y = "al mismo tiempo" / "a la vez" / "en paralelo"
 sent_y = ws id_y separador
@@ -92,13 +99,6 @@ sent_mientras = ws id_mientras
 				ws condicion separador sent:secuencia
 				ws fin
 				{return [sent]}
-
-
-/*sent_campos = (articulo ws)? tarea:palabra ws "es un formulario"  ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}*/
-formulario_id = "es un formulario"
-ver_form_id = "muestra" / "despliega"
-sent_campos = tarea:(palabras separador/ palabra) ws formulario_id ws palabras ws ":" ws listaCampos:campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
-/ tarea:(palabras separador/ palabra) ws ver_form_id ws palabras ws ":" ws listaCampos:ver_campos punto ws{return {"tarea":tarea, "campos":listaCampos}}
 
 campos = campo+
 tipo = "texto" / "numero" / "fecha" / "booleano"

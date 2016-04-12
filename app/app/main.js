@@ -120,7 +120,10 @@ function conversion(){
           })
         }
       } else{
-        $("#id-xml-code").text(procesar.modelToXML(modeloInt));
+        var procesoBPMN = procesar.modelToXML(modeloInt);
+        $("#id-xml-code").text(procesoBPMN);
+        var procesoJSON = procesar.modelToXMLaux(procesoBPMN);
+        $("#id-json-code").text(procesoJSON);
       }
     } catch (e) {
       console.error(e);
