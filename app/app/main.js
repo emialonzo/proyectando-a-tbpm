@@ -11,6 +11,7 @@ var env = require('./env');
 
 var pd = require('pretty-data').pd;
 var fs = require('fs');
+const ipcRenderer = require('electron').ipcRenderer;
 
 var BpmnModeler = window.BpmnJS;
 // var Modeler = require('bpmn-js/lib/Modeler');
@@ -25,6 +26,10 @@ var conYaoqiang = env.conYaoqiang;
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
+
+function ejecutarProceso(){
+  ipcRenderer.send('abrir-motor');
+}
 
 // if(codeMirror){
 //   console.log("esta seteado el code mirror");
