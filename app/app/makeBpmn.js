@@ -45,6 +45,8 @@ function esSerializable(nodo){
   }
 }
 
+var propiedadesProceso = {}
+
 var losFlujos = [];
 function asignarElFlujo(nodo){
   if(nodo.tipo == "xor"){
@@ -125,7 +127,6 @@ function templateEvento(evento){
     var aux;
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-
         aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
         aux = templatesCampos(nodo, aux);
       }
@@ -156,40 +157,85 @@ function templateEvento(evento){
     return aux;
   }
 
+  function templateIdFlujo(idFrom, idTo){
+    return "_" + idFrom + "__" + idTo
+  }
+
   function getIdCampo(nodo, nombreCampo){
     return  nombreCampo;
     // return "id_"+nodo.id + "_" + nombreCampo;
   }
-  function templateIdFlujo(idFrom, idTo){
-    return "_" + idFrom + "__" + idTo
+  function getIdDataOutputCampo(nodo, campo){
+    return  "data_" + nodo.id + "_"+campo.nombre;
+    // return "id_"+nodo.id + "_" + nombreCampo;
   }
+function agregarPrpiedad(nodo, campo){
+  if(!propiedadesProceso[campo.nombre]){
+    propiedadesProceso[campo.nombre] = {"_id":getIdCampo(nodo, campo.nombre), "_itemSubjectRef":"xsd:string", "_name":campo.nombre}
+  }
+}
 
   function templatesCampos(nodo, aux){
     if(nodo.sentencia.campos){
       aux.userTask['extensionElements'] = {
         'formProperty' : []
       }
-      aux.userTask['ioSpecification'] = {
-        'dataOutput' : [],
-        'inputSet' : [],
-        'outputSet' : {
-          'dataOutputRefs' : []
-        }
-      }
-      aux.userTask['property'] = [];
-      aux.userTask['dataOutputAssociation'] = [];
+      aux.userTask['ioSpecification'] = {}
+      //   'inputSet' : {},
+      //   'outputSet' : {}
+      //
+      //   // 'dataOutput' : [],
+      //   // 'inputSet' : {
+      //   //   'dataInputRefs' : []
+      //   // },
+      //   // 'outputSet' : {
+      //   //   'dataOutputRefs' : []
+      //   // }
+      // }
+      // aux.userTask['property'] = [];
+      // aux.userTask['dataOutputAssociation'] = [];
+      // aux.userTask['dataInputAssociation'] = [];
+
+      var data, set, association;
 
       for (var i = 0; i < nodo.sentencia.campos.length; i++) {
         var campo = nodo.sentencia.campos[i];
         //creo propeidades
-        aux.userTask['property'].push({"_id":getIdCampo(nodo, campo.nombre), "_itemSubjectRef":"xsd:string", "_name":campo.nombre});
-        //creo dataOutput
-        aux.userTask.ioSpecification.dataOutput.push({"_id":"dataOut_"+campo.nombre, "_itemSubjectRef":"xsd:string", "_name":"dataout_"+campo.nombre});
-        aux.userTask.ioSpecification.outputSet.dataOutputRefs.push("dataOut_"+campo.nombre);
-        // aux.userTask.ioSpecification.outputSet.dataOutputRefs.push({"_id":"dataOut_"+campo.nombre});
-        //se asocian las propiedades con la dataOutput
-        aux.userTask.dataOutputAssociation.push({ "sourceRef":"dataOut_"+campo.nombre,
-        "targetRef": getIdCampo(nodo, campo.nombre)});
+        agregarPrpiedad(nodo, campo); //agrega la propiedad del nombre de campo al proceso
+
+        if(campo.writable){
+          if(!aux.userTask.ioSpecification.dataOutput){
+            aux.userTask.ioSpecification.dataOutput = [];
+
+            aux.userTask.ioSpecification.inputSet = {}
+            aux.userTask.ioSpecification.outputSet = {}
+
+            aux.userTask.ioSpecification.outputSet.dataOutputRefs = []
+            aux.userTask.dataOutputAssociation = []
+          }
+          //creo dataOutput
+          aux.userTask.ioSpecification.dataOutput.push({"_id":getIdDataOutputCampo(nodo, campo), "_itemSubjectRef":"xsd:string", "_name":getIdDataOutputCampo(nodo, campo)});
+          aux.userTask.ioSpecification.outputSet.dataOutputRefs.push(getIdDataOutputCampo(nodo, campo));
+          //se asocian las propiedades con la dataOutput
+          aux.userTask.dataOutputAssociation.push({ "sourceRef":getIdDataOutputCampo(nodo, campo), "targetRef": getIdCampo(nodo, campo.nombre)});
+        }else{
+          if(!aux.userTask.ioSpecification.dataInput){
+            aux.userTask.ioSpecification.dataInput = [];
+
+            aux.userTask.ioSpecification.inputSet = {};
+            aux.userTask.ioSpecification.outputSet = {};
+
+            aux.userTask.ioSpecification.inputSet.dataInputRefs = []
+            aux.userTask.dataInputAssociation = []
+          }
+          //creo dataInput
+          aux.userTask.ioSpecification.dataInput.push({"_id":getIdDataOutputCampo(nodo, campo), "_itemSubjectRef":"xsd:string", "_name":getIdDataOutputCampo(nodo, campo)});
+          aux.userTask.ioSpecification.inputSet.dataInputRefs.push(getIdDataOutputCampo(nodo, campo));
+          //se asocian las propiedades con la dataOutput
+          aux.userTask.dataInputAssociation.push({ "sourceRef": getIdCampo(nodo, campo.nombre), "targetRef":getIdDataOutputCampo(nodo, campo) });
+        }
+
+        //activiti
         var formProperty;
         if(campo.writable){
           formProperty = {"__prefix":"activiti", "_id":nodo.id+"_"+campo.nombre, "_name":campo.nombre, "_required":campo.obligatorio, "_writable":campo.writable};
@@ -199,6 +245,12 @@ function templateEvento(evento){
         aux.userTask.extensionElements.formProperty.push(formProperty);
 
       }
+      // if (aux.userTask.ioSpecification.dataOutput){
+      //   aux.userTask.ioSpecification.dataOutput.shift()
+      // }
+      // if (aux.userTask.ioSpecification.dataInput){
+      //   aux.userTask.ioSpecification.dataInput.shift()
+      // }
     }
     // console.log(pd.json(aux));
     return aux;
@@ -228,6 +280,7 @@ function templateEvento(evento){
     laneSetX = {};
     losNodos = [];
     losFlujos = [];
+    propiedadesProceso = {};
     //inicializo variables locales
     var stack =[];
     var laneActual;
@@ -299,6 +352,13 @@ function templateEvento(evento){
     process["_id"] = idProceso;
     process["_isExecutable"] = true
 
+    process.property = []
+    for (var prop in propiedadesProceso) {
+      if (propiedadesProceso.hasOwnProperty(prop)) {
+        process.property.push(propiedadesProceso[prop]);
+      }
+    }
+
     //agrego tareas, eventos y compuertas
     for (var i = 0; i < losNodos.length; i++) {
       var keys = _.keys(losNodos[i]);
@@ -331,6 +391,7 @@ function templateEvento(evento){
     // }
 
     bpmn.definitions.process = process;
+
     // console.log("*******************");
     // console.log(pd.json(losNodos));
     // console.log("*******************");
