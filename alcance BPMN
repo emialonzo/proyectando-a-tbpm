@@ -1,0 +1,18 @@
+Estan:
+-Lane
+-Tarea de usuario
+-XOR
+-AND
+-Evento inicio
+-Evento fin
+-Subproceso
+-Loop
+-Evento timer intermedio
+-Evento timer adjunto interrumpible
+
+Faltan:
+-Pool
+-Tarea de servicio
+-Tarea manual
+-Evento de envío y recepción de mensaje (a otro pool)
+-Evento timer adjunto no interrumpible

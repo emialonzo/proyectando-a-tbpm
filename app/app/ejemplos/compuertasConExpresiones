@@ -5,5 +5,5 @@ servicioEsY entonces el asistente ofrece serivicio Y.
 si no el asistente ofrece servicio generico.
 fin
 
-La expresion de la condicion servicioEsX, es tipoServicio == X.
-La expresion de la condicion servicioEsY, es tipoServicio == Y.
+La expresion de la condicion servicioEsX, es tipoServicio == "X".
+La expresion de la condicion servicioEsY, es tipoServicio == "Y".
