@@ -580,7 +580,7 @@ var modelToXML = function (modelo) {
   console.log(pd.xml(bpmn));
   console.log("##############################################");
   var path = __dirname + "/XMLgenerados/";
-  var nombreArchivo = "prueba2.bpmn";
+  var nombreArchivo = "prueba.bpmn";
   console.log("############################ ESCRIBO EL ARCHIVO EN: " + path + nombreArchivo + " ############################");
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
   console.log("#############################################################################################################");
