@@ -4,7 +4,7 @@ var parser = require("./parser.js");
 var x2js = require('x2js');
 var subproceso = require('./subproceso');
 var env = require('./env');
-
+var fs = require('fs');
 var conSubproceso = env.conSubproceso;
 
 var proceso = {
@@ -28,6 +28,7 @@ var proceso = {
 
 var conv = new x2js();
 var SequenceFlow_GlobalID = 1;
+var path = __dirname;
 
 var options = {
   keysColor: 'blue',
@@ -392,6 +393,7 @@ function agregarTemplates(proceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
   idProceso = "id_proceso"
+  nombreProceso = "nombre_proceso"
   bpmn.definitions = {
     "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
     "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
@@ -409,6 +411,7 @@ function agregarTemplates(proceso){
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
+  bpmn.definitions.process._name = nombreProceso;
   return bpmn;
 }
 
@@ -523,8 +526,11 @@ var templateSubproceso = function(elem, subProcessPos) {
   auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
-var obtenerxmlSubProceso = function(name) {
-  return subproceso.obtenerXML(name);
+
+var obtenerxmlSubProceso = function(nombreArchivo) {
+  var archivo = path + "/XMLgenerados/" + nombreArchivo + ".bpmn";
+  var subproceso = fs.readFileSync(archivo).toString();
+  return subproceso;
 }
 
 var textToModel = function(texto) {
@@ -566,10 +572,19 @@ var modelToXML = function (modelo) {
   // console.log("########## completo el cabezal del proceso ###################")
   var bpmn = null;
   bpmn = agregarTemplates(proceso);
-
-  console.log(pd.xml(conv.json2xml_str(bpmn)));
+  console.log("############## PROCESO GENERADO ##############");
+  console.log(pd.json(proceso));
+  console.log("##############################################");
+  bpmn = conv.json2xml_str(bpmn);
+  console.log("############## XML GENERADO ##############");
+  console.log(pd.xml(bpmn));
+  console.log("##############################################");
+  var path = __dirname + "/XMLgenerados/";
+  var nombreArchivo = "prueba2.bpmn";
+  console.log("############################ ESCRIBO EL ARCHIVO EN: " + path + nombreArchivo + " ############################");
+  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
+  console.log("#############################################################################################################");
   return pd.xml(conv.json2xml_str(bpmn));
-  //console.log(pd.json(proceso))
 }
 
 var modelToXMLaux = function(bpmn){

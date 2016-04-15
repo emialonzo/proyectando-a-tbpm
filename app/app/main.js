@@ -53,6 +53,10 @@ function conversion(){
   }
   //obtengo texto
   var text = $("#id-modelo-texto").val();
+  var nombre = $("#id-nombre-proceso").val();
+  console.log("##########################################")
+  console.log(nombre)
+  console.log("##########################################")
   try {
     var modelo ;
     try {
