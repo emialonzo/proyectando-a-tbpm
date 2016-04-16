@@ -231,6 +231,8 @@ function menu(){
     console.log("click en " + titulo);
     //cargo texto
     $("#id-modelo-texto").val(ejemplos[titulo]);
+    $("#id-nombre-proceso").val(titulo);
+
     //desactivo "active" del resto de las
     ejemploActivo.removeClass("text-success");
     //agrego a la que hizo click
