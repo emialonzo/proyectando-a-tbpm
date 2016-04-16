@@ -284,7 +284,7 @@ function esSerializable(nodo){
   }
 }
 
-var obtenerFlujos = function(modelo) {
+var generarFlujos = function(modelo) {
   //inicializo variables locales
   var stack =[];
   var nodo;
@@ -501,17 +501,7 @@ var templateExpresiones = function(nodo) {
 
 var templateSubproceso = function(elem, subProcessPos) {
   var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion);
-  console.log("###################### ELEM ######################")
-  console.log(pd.json(elem));
-  console.log("#################################################################")
-  console.log("###################### XML DEL SUBPROCESO ######################")
-  console.log(pd.xml(xmlSubProceso))
-  console.log("#################################################################")
-
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
-  console.log("###################### JSON DEL SUBPROCESO ######################")
-  console.log(pd.json(jsonSubProceso))
-  console.log("#################################################################")
   var auxSubProceso = {"subprocess":{"_id":elem.id,"_name":elem.sentencia.accion}};
   auxSubProceso.subprocess.startEvent =  jsonSubProceso.definitions.process.startEvent;
   auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
@@ -540,54 +530,47 @@ var textToModel = function(texto) {
 }
 
 var modelToXML = function (modelo) {
-  //console.log(pd.json(modelo));
-  //Inicializo estructuras
   start();
-  //console.log("######### obtenerLanes ####################");
   for (var i=0; i<modelo.sentencia.length; i++) {
     obtenerLanes(modelo.sentencia[i]);
   }
-  //console.log("######### obtenerTareas ####################");
   for (var i=0; i<modelo.sentencia.length; i++) {
     obtenerTareas(modelo.sentencia[i]);
   }
-  //console.log("######### asociarElementosLanes ####################");
   for (var i=0; i < modelo.sentencia.length; i++) {
     asociarElementosLanes(modelo.sentencia[i]);
   }
-  //console.log("######### obtenerFlujos ####################");
-  obtenerFlujos(modelo);
-
-  //console.log("######### conectarStartEvent ####################");
+  generarFlujos(modelo);
   conectarStartEvent(modelo.sentencia);
-
-  //console.log("######### conectarEndEvent ####################");
   conectarEndEvent(modelo.sentencia);
 
-  //console.log("######### completo el template para ejecutar el proceso ####################");
+  //////////////////////////////////////////////////////////////////////////
+  //FIXME a partir de aca hay que ver como separamos para obtener
+  //por un lado el XML basico y por otro lado el ejecutable en activiti
+  /////////////////////////////////////////////////////////////////////////
+
+  //Agrega a cada elemento los artefactos necesarios para ejecutar el proceso
+  var bpmn = conv.json2xml_str(proceso);
+  var path = __dirname + "/XMLbasicos/";
+  var nombreArchivo = "prueba.bpmn";
+  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
+  generarXMLejecutable(modelo, proceso);
+  return pd.xml(bpmn);
+}
+
+var generarXMLejecutable = function(modelo, proceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
-
-  // console.log("########## completo el cabezal del proceso ###################")
   var bpmn = null;
   bpmn = agregarTemplates(proceso);
-  console.log("############## PROCESO GENERADO ##############");
-  console.log(pd.json(proceso));
-  console.log("##############################################");
   bpmn = conv.json2xml_str(bpmn);
-  console.log("############## XML GENERADO ##############");
-  console.log(pd.xml(bpmn));
-  console.log("##############################################");
-  var path = __dirname + "/XMLgenerados/";
+  var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = "prueba.bpmn";
-  console.log("############################ ESCRIBO EL ARCHIVO EN: " + path + nombreArchivo + " ############################");
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  console.log("#############################################################################################################");
-  return pd.xml(conv.json2xml_str(bpmn));
 }
 
-var modelToXMLaux = function(bpmn){
+var xml2json = function(bpmn){
   var procesoJSON = conv.xml_str2json(bpmn);
   return pd.json(procesoJSON);
 }
@@ -595,5 +578,6 @@ var modelToXMLaux = function(bpmn){
 module.exports = {
   textToModel : textToModel,
   modelToXML : modelToXML,
-  modelToXMLaux : modelToXMLaux
+  generarXMLejecutable : generarXMLejecutable,
+  xml2json : xml2json,
 }

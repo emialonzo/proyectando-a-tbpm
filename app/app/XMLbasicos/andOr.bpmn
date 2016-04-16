@@ -1,0 +1,54 @@
+<process>
+  <laneSet>
+    <lane id='Lane_administrador' name='administrador'>
+      <flowNodeRef>3</flowNodeRef>
+      <flowNodeRef>5</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+    </lane>
+    <lane id='Lane_encargadoDeServicios' name='encargadoDeServicios'>
+      <flowNodeRef>7</flowNodeRef>
+      <flowNodeRef>8</flowNodeRef>
+    </lane>
+    <lane id='Lane_asistenteDeServicios' name='asistenteDeServicios'>
+      <flowNodeRef>10</flowNodeRef>
+      <flowNodeRef>12</flowNodeRef>
+      <flowNodeRef>14</flowNodeRef>
+      <flowNodeRef>16</flowNodeRef>
+      <flowNodeRef>18</flowNodeRef>
+      <flowNodeRef>17</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='5' name='asigna tareas'></userTask>
+  <userTask id='7' name='ofrece servicios'></userTask>
+  <userTask id='10' name='ofrece serivicio X'></userTask>
+  <userTask id='12' name='ofrece serivicio Y'></userTask>
+  <userTask id='14' name='ofrece serivicio Z'></userTask>
+  <userTask id='16' name='ofrece servicio generico'></userTask>
+  <serviceTask/>
+  <exclusiveGateway id='8' default='8_16'></exclusiveGateway>
+  <exclusiveGateway id='18'></exclusiveGateway>
+  <parallelGateway id='3'></parallelGateway>
+  <parallelGateway id='17'></parallelGateway>
+  <intermediateCatchEvent/>
+  <intermediateThrowEvent/>
+  <boundaryEvent/>
+  <endEvent id='EndEvent_1'/>
+  <subProcess/>
+  <sequenceFlow id='3_5' sourceRef='3' targetRef='5'></sequenceFlow>
+  <sequenceFlow id='3_7' sourceRef='3' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='5_17' sourceRef='5' targetRef='17'></sequenceFlow>
+  <sequenceFlow id='7_8' sourceRef='7' targetRef='8'></sequenceFlow>
+  <sequenceFlow id='8_10' sourceRef='8' targetRef='10' name='servicioEsX'></sequenceFlow>
+  <sequenceFlow id='8_12' sourceRef='8' targetRef='12' name='servicioEsY'></sequenceFlow>
+  <sequenceFlow id='8_14' sourceRef='8' targetRef='14' name='servicioEsZ'></sequenceFlow>
+  <sequenceFlow id='8_16' sourceRef='8' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='10_18' sourceRef='10' targetRef='18'></sequenceFlow>
+  <sequenceFlow id='12_18' sourceRef='12' targetRef='18'></sequenceFlow>
+  <sequenceFlow id='14_18' sourceRef='14' targetRef='18'></sequenceFlow>
+  <sequenceFlow id='16_18' sourceRef='16' targetRef='18'></sequenceFlow>
+  <sequenceFlow id='18_17' sourceRef='18' targetRef='17'></sequenceFlow>
+  <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
+  <sequenceFlow id='17_EndEvent_1' sourceRef='17' targetRef='EndEvent_1'></sequenceFlow>
+</process>
