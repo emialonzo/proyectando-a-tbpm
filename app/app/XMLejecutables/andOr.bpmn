@@ -9,7 +9,7 @@
   <collaboration>
     <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
   </collaboration>
-  <process id='id_proceso' isExecutable='true' name='nombre_proceso'>
+  <process id='id_proceso' isExecutable='true' name='andOr'>
     <laneSet>
       <lane id='Lane_administrador' name='administrador'>
         <flowNodeRef>3</flowNodeRef>

@@ -389,11 +389,10 @@ var conectarEndEvent = function(modelo) {
   proceso.process.sequenceFlow.push(flujo);
 }
 
-function agregarTemplates(proceso){
+function agregarTemplates(proceso, nombreProceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
   idProceso = "id_proceso"
-  nombreProceso = "nombre_proceso"
   bpmn.definitions = {
     "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
     "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
@@ -529,7 +528,7 @@ var textToModel = function(texto) {
   return modelo;
 }
 
-var modelToXML = function (modelo) {
+var modelToXML = function (modelo, nombreProceso) {
   start();
   for (var i=0; i<modelo.sentencia.length; i++) {
     obtenerLanes(modelo.sentencia[i]);
@@ -552,21 +551,21 @@ var modelToXML = function (modelo) {
   //Agrega a cada elemento los artefactos necesarios para ejecutar el proceso
   var bpmn = conv.json2xml_str(proceso);
   var path = __dirname + "/XMLbasicos/";
-  var nombreArchivo = "prueba.bpmn";
+  var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  generarXMLejecutable(modelo, proceso);
+  generarXMLejecutable(modelo, proceso, nombreProceso);
   return pd.xml(bpmn);
 }
 
-var generarXMLejecutable = function(modelo, proceso){
+var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
   var bpmn = null;
-  bpmn = agregarTemplates(proceso);
+  bpmn = agregarTemplates(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLejecutables/";
-  var nombreArchivo = "prueba.bpmn";
+  var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
 }
 

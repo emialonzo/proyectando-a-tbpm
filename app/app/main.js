@@ -124,7 +124,7 @@ function conversion(){
           })
         }
       } else{
-        var procesoBPMN = procesar.modelToXML(modeloInt);
+        var procesoBPMN = procesar.modelToXML(modeloInt, nombre);
         $("#id-xml-code").text(procesoBPMN);
         var procesoJSON = procesar.xml2json(procesoBPMN);
         $("#id-json-code").text(procesoJSON);
