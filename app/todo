@@ -1,10 +1,71 @@
-parentizar, como manejar la precedencia
-mejorar el manejo de tareas
+todo
+ * actores con nombres compuestos
+ * condiciones: que sean expresiones y determinar como evaluarlas(!!).
+ * agregar a activiti de manera limpia (sin alterar el xml generado)
+ * (progreso)agregar datos a tareas de usuario, como formularios. Una posibilidad es "El usuarioX ingresa solicitud. Ingresa solicitud es un formulario con nombre, apellido, edad que es un entero, fecha de nacimiento que es un date."
+ - agregar posibilidad de modificar la gramática, en especial palabras claves
+ - autcompletado (codemirror)
+ * subprocesos
+ * implementar eventos: timers y
+ - implementar eventos: mensajes.
+
+ todo: martes 12 abril
+  - que la tarea adjunta este en la misma secuencia y este definida (antes?)
+  - que la tarea sobre la que se declara el formulario debe existir
+  - afinar expresiones la definicion de expresiones y validarlas (testearlas)
+  - posibilidad de elegir bien que bpmn incluir en los subprocesos
+  - definir invocacion de webservices:
+    - Definir web service
+    - Definir mapeo de parametros de entrada
+    - Definir mapeo de parametros de salida
 
 
+faltaria:
+ Eventos interrumpibles (esta hecha la gramatica)
+ Mensajes de envío a otro pool (esta hecha la gramatica)
+ se reazlia muchas veces el proceso xxx
 
-##########
-preguntas:
- * donde van las gw?
- * buenas paracticas, verbos infinitivos
- * ALCANCE
+
+:::::::::::::::: INTERRUMPIBLE ::::::::::::::::
+el A X.
+el A espera por 20 segundos.
+el A espera por mensaje respuesta.
+SE INTERRUMPE X, si transcurre 20 segundo la A L. fin
+
+XML
+
+:::::::::::::::: POOLS ::::::::::::::::
+el Usuario espera por mensaje respuesta DE NOMBRE_POOL.
+el Usuario ENVIA MENSAJE A NOMBRE_POOL.
+
+<collaboration id="COLLABORATION_1" isClosed="false">
+  <participant id="_2" name="Principal" processRef="PROCESS_1">
+    <participantMultiplicity maximum="1" minimum="0"/>
+  </participant>
+  <participant id="_3" name="pa mensajes">
+    <participantMultiplicity maximum="1" minimum="0"/>
+  </participant>
+  <messageFlow id="_7" sourceRef="_5" targetRef="_3"/> //linkeo el evento que tira mensaje con el pool que lo recibe
+  <messageFlow id="_11" sourceRef="_3" targetRef="_8"/> //linkeo el pool que manda el mensaje con el evento que lo recibe
+</collaboration>
+
+<process id="PROCESS_1" isClosed="false" isExecutable="true" processType="None">
+  <intermediateThrowEvent id="_5" name="mando msj">
+    <incoming>_6</incoming>
+    <inputSet/>
+    <messageEventDefinition id="_5_ED_1"/>
+  </intermediateThrowEvent>
+  <intermediateCatchEvent id="_8" name="Intermediate Catch Event" parallelMultiple="false">
+    <outgoing>_10</outgoing>
+    <outputSet/>
+    <messageEventDefinition id="_8_ED_1"/>
+  </intermediateCatchEvent>
+....
+
+
+:::::::::::::::: LOOP  ::::::::::::::::
+dentro de la definicion de una tarea hay dos posibilidades:
+1(sacado de yaoqiang): <standardLoopCharacteristics testBefore="false"/>
+2(sacada de la doc de activiti): <multiInstanceLoopCharacteristics isSequential="false|true">
+  <loopCardinality>5</loopCardinality>
+</multiInstanceLoopCharacteristics>
