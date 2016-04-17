@@ -446,6 +446,7 @@ var agregarTemplateElementos = function(elem) {
           taskPos = i;
         }
       }
+      templateServiceTask(elem, taskPos);
   } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
@@ -493,6 +494,14 @@ var templateCampos = function(nodo, taskPos) {
     }
     proceso.process.userTask[taskPos] = aux.userTask;
   }
+}
+
+var templateServiceTask = function(elem, taskPos) {
+  console.log("######################## ELEM ########################")
+  console.log(pd.json(elem))
+  console.log("######################################################")
+  aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":"org.activiti.ImplementacionWebService"}}
+  proceso.process.serviceTask[taskPos] = aux.serviceTask;
 }
 
 var templateExpresiones = function(nodo) {
