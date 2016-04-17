@@ -56,7 +56,9 @@ tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "añ
 
 servicio_id = "ejecuta el servicio"
 accion = ([a-z]i+ ws)* { return text()}
-sent_accion =  ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
+sent_accion =  ws actor:actor ws "realiza la tarea manual" ws accion:accion ws punto
+              { return {"actor": actor , "accion" : accion , "task": "manual"};}
+              /ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "service"};}
               / ws actor:actor ws "ejecuta el subproceso" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "subproceso"};}

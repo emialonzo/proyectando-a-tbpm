@@ -14,6 +14,7 @@ var proceso = {
     },
     startEvent : {},
     userTask : [],
+    manualTask : [],
     serviceTask : [],
     exclusiveGateway : [],
     parallelGateway : [],
@@ -45,6 +46,7 @@ var start = function(model) {
       },
       startEvent : {},
       userTask : [],
+      manualTask : [],
       serviceTask : [],
       exclusiveGateway : [],
       parallelGateway : [],
@@ -130,8 +132,10 @@ var obtenerTareas = function(elem) {
       proceso.process.serviceTask.push(tarea);
     } else if (elem.sentencia.task == "human") {
       var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
-      //for ()
       proceso.process.userTask.push(tarea);
+    } else if (elem.sentencia.task == "manual") {
+      var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
+      proceso.process.manualTask.push(tarea);
     } else if (elem.sentencia.task == "subproceso") {
       var subproceso = {"_id":elem.id, "_name":elem.sentencia.accion};
       proceso.process.subProcess.push(subproceso);
@@ -202,6 +206,8 @@ var asociarElementosLanes = function(elem) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == elem.id});
     } else if (elem.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == elem.id});
+    } else if (elem.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == elem.id});
     } else if (elem.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == elem.id});
     }
@@ -316,6 +322,8 @@ var conectarStartEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == primero.id});
     } else if (primero.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == primero.id});
+    } else if (primero.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == primero.id});
     } else if (primero.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == primero.id});
     }
@@ -356,6 +364,8 @@ var conectarEndEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == ultimo.id});
     } else if (ultimo.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == ultimo.id});
+    } else if (ultimo.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == ultimo.id});
     } else if (ultimo.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == ultimo.id});
     }
@@ -447,6 +457,14 @@ var agregarTemplateElementos = function(elem) {
         }
       }
       templateServiceTask(elem, taskPos);
+  } else if (elem.tipo == "task" && elem.sentencia.task == "manual") {
+      var taskPos = 0;
+      for (var i=0; i< proceso.process.manualTask.length; i++) {
+        if (proceso.process.manualTask[i]._id == elem.id) {
+          taskPos = i;
+        }
+      }
+      //FIXME hay que ver si agregan algo para ejecutarla
   } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
@@ -526,17 +544,38 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable) {
   var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
   var auxSubProceso = {"subprocess":{"_id":elem.id,"_name":elem.sentencia.accion}};
-  auxSubProceso.subprocess.startEvent =  jsonSubProceso.definitions.process.startEvent;
-  auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
-  auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
-  auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
-  auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
-  auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
-  auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
-  auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+  auxSubProceso.subprocess.startEvent = jsonSubProceso.definitions.process.startEvent;
   auxSubProceso.subprocess.endEvent = jsonSubProceso.definitions.process.endEvent;
-  auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
-  auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+  if (jsonSubProceso.definitions.process.userTask.length > 0) {
+     auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
+  }
+  if (jsonSubProceso.definitions.process.serviceTask.length > 0) {
+     auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
+  }
+  if (jsonSubProceso.definitions.process.manualTask.length > 0) {
+     auxSubProceso.subprocess.manualTask = jsonSubProceso.definitions.process.manualTask;
+  }
+  if (jsonSubProceso.definitions.process.exclusiveGateway.length > 0) {
+     auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
+  }
+  if (jsonSubProceso.definitions.process.parallelGateway.length > 0) {
+     auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
+  }
+  if (jsonSubProceso.definitions.process.intermediateCatchEvent.length > 0) {
+     auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
+  }
+  if (jsonSubProceso.definitions.process.intermediateThrowEvent.length > 0) {
+     auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
+  }
+  if (jsonSubProceso.definitions.process.boundaryEvent.length > 0) {
+     auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+  }
+  if (jsonSubProceso.definitions.process.subProcess.length > 0) {
+     auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
+  }
+  if (jsonSubProceso.definitions.process.sequenceFlow.length > 0) {
+     auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+  }
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
 

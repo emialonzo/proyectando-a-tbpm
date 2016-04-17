@@ -1,6 +1,8 @@
 Estan:
 -Lane
 -Tarea de usuario
+-Tarea de servicio
+-Tarea manual
 -XOR
 -AND
 -Evento inicio
@@ -12,7 +14,5 @@ Estan:
 
 Faltan:
 -Pool
--Tarea de servicio
--Tarea manual
 -Evento de envío y recepción de mensaje (a otro pool)
 -Evento timer adjunto no interrumpible
