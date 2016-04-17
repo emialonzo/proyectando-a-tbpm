@@ -92,6 +92,7 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[0].sig = sig;
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
+    nodo.default = nodo.sig[0];
     nodo.sig.push(nodo.ref);
     //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
@@ -355,7 +356,6 @@ var asociarExpresiones = function(modelo, expresiones) {
       } else {
         if(nodo.sentencia instanceof Array){
           for (var i = nodo.sentencia.length-1; i >= 0; i--) {
-            //console.log("Tipo:"+nodo.tipo + " id:" + nodo.id + " agrega:" + nodo.sentencia[i].id);
             stack.push(nodo.sentencia[i]);
           }
         }

@@ -53,11 +53,13 @@ function asignarElFlujo(nodo){
     // console.debug(nodo.condiciones);
     var condicion ;
     for (var i = 0; i < nodo.sig.length; i++) {
-      if(conYaoqiang){
-        condicion = nodo.condiciones[nodo.sig[i]]
-      }else{ //para activiti
-        condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
-      }
+      if(nodo.condiciones){
+        if(conYaoqiang){
+          condicion = nodo.condiciones[nodo.sig[i]]
+        }else{ //para activiti
+          condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
+        }
+      }  else{condicion=""}
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       if(condicion){
         losFlujos.push(
@@ -138,6 +140,9 @@ function templateEvento(evento){
       aux = {"parallelGateway":{ "_id":"_"+nodo.id} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
+      if(!nodo.default){
+        nodo.default = nodo.sig[0];
+      }
       aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
@@ -152,6 +157,8 @@ function templateEvento(evento){
       aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
       if(nodo.tag == "and"){
         aux = {"parallelGateway": {"_id":"_"+nodo.id} }
+      } else if(nodo.tag == "loop"){
+        aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
       }
     }
     return aux;
