@@ -23,6 +23,7 @@ ws "whitespace" = [ \t\n\r]*
 articulo = "el" / "la" / "los" / "las"
 punto = "."
 fin = "fin"
+finproceso = "finproceso"
 
 Integer "integer" = [0-9]+ { return parseInt(text(), 10); }
 digito "digito" = digits:[0-9]+ { return makeInteger(digits); }
@@ -33,10 +34,10 @@ secuencia = sec:(ws sent:sentencia {return sent;})+ {  return {"tipo":"secuencia
 
 sentencia =
       sentEv:sent_ev {return {"tipo":"evento", "sentencia":sentEv};} /
-			task:sent_accion {return {"tipo":"task", "sentencia":task};} /
+			task:sent_accion {return {"tipo":"task", "sentencia":task, "doc": text()};} /
       sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
       sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
-      sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia };} /
+      sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia, "interrumpible":sentAdj.interrumpible };} /
       sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM} }
 
 
@@ -44,12 +45,14 @@ actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return 
         articulo ws nombre:[a-z]i+ { return nombre.join("")}
 
 tiempo_evento  = "espera por"
-sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {"evento":evento, "actor":actor}}
+sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {"evento":evento, "actor":actor}} /
+          ws actor:actor ws "envia mensaje a" ws pool:palabras ws punto {return {"evento":{"tipo":"mensaje", "throw":true}, "actor":actor, "pool":pool, "tipo":"throw"}}
+
 tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiempo" : d, "unidad":unidad};}
-		/ mensaje ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p};}
+		/ mensaje_evento
 
+mensaje_evento = mensaje ws "de" ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p};}
 mensaje = "mensaje" / "mail"
-
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 
@@ -92,7 +95,8 @@ sent_o = ws id_o separador
 adj_id = "alternativa de"
 adj_cond = "transcurre" / "llega" ws mensaje
 condicional = "si"
-sent_adj = ws "alternativa de" ws p:palabras ws "," ws "si" ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec]}}
+sent_adj = ws adj_id ws p:palabras ws separador ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":false}} /
+  ws "se interrumpe" ws p:palabras ws separador ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":true}}
 
 id_mientras = "mientras"
 sent_mientras = ws id_mientras
