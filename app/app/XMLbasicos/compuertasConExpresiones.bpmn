@@ -1,37 +1,49 @@
-<process>
-  <laneSet>
-    <lane id='Lane_asistente' name='asistente'>
-      <flowNodeRef>3</flowNodeRef>
-      <flowNodeRef>4</flowNodeRef>
-      <flowNodeRef>6</flowNodeRef>
-      <flowNodeRef>8</flowNodeRef>
-      <flowNodeRef>10</flowNodeRef>
-      <flowNodeRef>11</flowNodeRef>
-      <flowNodeRef>StartEvent_1</flowNodeRef>
-      <flowNodeRef>EndEvent_1</flowNodeRef>
-    </lane>
-  </laneSet>
-  <startEvent id='StartEvent_1'/>
-  <userTask id='3' name='elije servicio'></userTask>
-  <userTask id='6' name='ofrece serivicio X'></userTask>
-  <userTask id='8' name='ofrece serivicio Y'></userTask>
-  <userTask id='10' name='ofrece servicio generico'></userTask>
-  <serviceTask/>
-  <exclusiveGateway id='4' default='4_10'></exclusiveGateway>
-  <exclusiveGateway id='11'></exclusiveGateway>
-  <parallelGateway/>
-  <intermediateCatchEvent/>
-  <intermediateThrowEvent/>
-  <boundaryEvent/>
-  <endEvent id='EndEvent_1'/>
-  <subProcess/>
-  <sequenceFlow id='3_4' sourceRef='3' targetRef='4'></sequenceFlow>
-  <sequenceFlow id='4_6' sourceRef='4' targetRef='6' name='servicioEsX'></sequenceFlow>
-  <sequenceFlow id='4_8' sourceRef='4' targetRef='8' name='servicioEsY'></sequenceFlow>
-  <sequenceFlow id='4_10' sourceRef='4' targetRef='10'></sequenceFlow>
-  <sequenceFlow id='6_11' sourceRef='6' targetRef='11'></sequenceFlow>
-  <sequenceFlow id='8_11' sourceRef='8' targetRef='11'></sequenceFlow>
-  <sequenceFlow id='10_11' sourceRef='10' targetRef='11'></sequenceFlow>
-  <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
-  <sequenceFlow id='11_EndEvent_1' sourceRef='11' targetRef='EndEvent_1'></sequenceFlow>
-</process>
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
+  </collaboration>
+  <process id='id_proceso' isExecutable='true' name='compuertasConExpresiones'>
+    <laneSet>
+      <lane id='Lane_asistente' name='asistente'>
+        <flowNodeRef>3</flowNodeRef>
+        <flowNodeRef>4</flowNodeRef>
+        <flowNodeRef>6</flowNodeRef>
+        <flowNodeRef>8</flowNodeRef>
+        <flowNodeRef>10</flowNodeRef>
+        <flowNodeRef>11</flowNodeRef>
+        <flowNodeRef>StartEvent_1</flowNodeRef>
+        <flowNodeRef>EndEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='StartEvent_1'/>
+    <userTask id='3' name='elije servicio'></userTask>
+    <userTask id='6' name='ofrece serivicio X'></userTask>
+    <userTask id='8' name='ofrece serivicio Y'></userTask>
+    <userTask id='10' name='ofrece servicio generico'></userTask>
+    <serviceTask/>
+    <exclusiveGateway id='4' default='4_10'></exclusiveGateway>
+    <exclusiveGateway id='11'></exclusiveGateway>
+    <parallelGateway/>
+    <intermediateCatchEvent/>
+    <intermediateThrowEvent/>
+    <boundaryEvent/>
+    <endEvent id='EndEvent_1'/>
+    <subProcess/>
+    <sequenceFlow id='3_4' sourceRef='3' targetRef='4'></sequenceFlow>
+    <sequenceFlow id='4_6' sourceRef='4' targetRef='6' name='servicioEsX'></sequenceFlow>
+    <sequenceFlow id='4_8' sourceRef='4' targetRef='8' name='servicioEsY'></sequenceFlow>
+    <sequenceFlow id='4_10' sourceRef='4' targetRef='10'></sequenceFlow>
+    <sequenceFlow id='6_11' sourceRef='6' targetRef='11'></sequenceFlow>
+    <sequenceFlow id='8_11' sourceRef='8' targetRef='11'></sequenceFlow>
+    <sequenceFlow id='10_11' sourceRef='10' targetRef='11'></sequenceFlow>
+    <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
+    <sequenceFlow id='11_EndEvent_1' sourceRef='11' targetRef='EndEvent_1'></sequenceFlow>
+  </process>
+</definitions>

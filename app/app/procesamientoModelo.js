@@ -389,6 +389,21 @@ var conectarEndEvent = function(modelo) {
   proceso.process.sequenceFlow.push(flujo);
 }
 
+var agregarSubprocesos = function(modelo, proceso) {
+  for (var i=0; i<modelo.sentencia.length; i++) {
+    var elem = modelo.sentencia[i];
+    if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
+      var subProcessPos = 0;
+      for (var i=0; i< proceso.process.subProcess.length; i++) {
+        if (proceso.process.subProcess[i]._id == elem.id) {
+          subProcessPos = i;
+        }
+      }
+      templateSubproceso(elem, subProcessPos, false);
+    }
+  }
+}
+
 function agregarTemplates(proceso, nombreProceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
@@ -438,7 +453,7 @@ var agregarTemplateElementos = function(elem) {
         subProcessPos = i;
       }
     }
-    templateSubproceso(elem, subProcessPos);
+    templateSubproceso(elem, subProcessPos, true);
   } else if (elem.tipo == "evento") {
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
@@ -498,8 +513,8 @@ var templateExpresiones = function(nodo) {
   }
 }
 
-var templateSubproceso = function(elem, subProcessPos) {
-  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion);
+var templateSubproceso = function(elem, subProcessPos, ejecutable) {
+  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
   var auxSubProceso = {"subprocess":{"_id":elem.id,"_name":elem.sentencia.accion}};
   auxSubProceso.subprocess.startEvent =  jsonSubProceso.definitions.process.startEvent;
@@ -516,8 +531,13 @@ var templateSubproceso = function(elem, subProcessPos) {
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
 
-var obtenerxmlSubProceso = function(nombreArchivo) {
-  var archivo = path + "/XMLgenerados/" + nombreArchivo + ".bpmn";
+var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
+  var archivo = path;
+  if (ejecutable) {
+    archivo = archivo + "/XMLejecutables/" + nombreArchivo + ".bpmn";
+  } else {
+    archivo = archivo + "/XMLbasicos/" + nombreArchivo + ".bpmn";
+  }
   var subproceso = fs.readFileSync(archivo).toString();
   return subproceso;
 }
@@ -543,13 +563,10 @@ var modelToXML = function (modelo, nombreProceso) {
   conectarStartEvent(modelo.sentencia);
   conectarEndEvent(modelo.sentencia);
 
-  //////////////////////////////////////////////////////////////////////////
-  //FIXME a partir de aca hay que ver como separamos para obtener
-  //por un lado el XML basico y por otro lado el ejecutable en activiti
-  /////////////////////////////////////////////////////////////////////////
+  agregarSubprocesos(modelo, proceso);
 
-  //Agrega a cada elemento los artefactos necesarios para ejecutar el proceso
-  var bpmn = conv.json2xml_str(proceso);
+  var bpmn = agregarTemplates(proceso, nombreProceso);
+  bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLbasicos/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
@@ -561,8 +578,7 @@ var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
-  var bpmn = null;
-  bpmn = agregarTemplates(proceso, nombreProceso);
+  var bpmn = agregarTemplates(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";

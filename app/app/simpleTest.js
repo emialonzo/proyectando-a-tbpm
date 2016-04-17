@@ -35,4 +35,4 @@ var textosPruebas = fs.readFileSync(path + nombreArchivo).toString();
 
 var modelo = procesamientoModelo.textToModel(textosPruebas);
 modelo = intermedio.procesarModelo(modelo);
-procesamientoModelo.modelToXML(modelo);
+procesamientoModelo.modelToXML(modelo,nombreArchivo);
