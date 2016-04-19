@@ -7,3 +7,6 @@ al mismo tiempo,
                             si no el asistenteDeServicios ofrece servicio generico.
                    fin
        fin
+La expresion de la condicion servicioEsX, es tipoServicio == "X".
+La expresion de la condicion servicioEsY, es tipoServicio == "Y".
+La expresion de la condicion servicioEsZ, es tipoServicio == "Z".

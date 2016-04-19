@@ -4,7 +4,7 @@ var parser = require("./parser.js");
 var x2js = require('x2js');
 var subproceso = require('./subproceso');
 var env = require('./env');
-
+var fs = require('fs');
 var conSubproceso = env.conSubproceso;
 
 var proceso = {
@@ -14,6 +14,7 @@ var proceso = {
     },
     startEvent : {},
     userTask : [],
+    manualTask : [],
     serviceTask : [],
     exclusiveGateway : [],
     parallelGateway : [],
@@ -28,6 +29,7 @@ var proceso = {
 
 var conv = new x2js();
 var SequenceFlow_GlobalID = 1;
+var path = __dirname;
 
 var options = {
   keysColor: 'blue',
@@ -44,6 +46,7 @@ var start = function(model) {
       },
       startEvent : {},
       userTask : [],
+      manualTask : [],
       serviceTask : [],
       exclusiveGateway : [],
       parallelGateway : [],
@@ -129,8 +132,10 @@ var obtenerTareas = function(elem) {
       proceso.process.serviceTask.push(tarea);
     } else if (elem.sentencia.task == "human") {
       var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
-      //for ()
       proceso.process.userTask.push(tarea);
+    } else if (elem.sentencia.task == "manual") {
+      var tarea = {"_id":elem.id, "_name":elem.sentencia.accion};
+      proceso.process.manualTask.push(tarea);
     } else if (elem.sentencia.task == "subproceso") {
       var subproceso = {"_id":elem.id, "_name":elem.sentencia.accion};
       proceso.process.subProcess.push(subproceso);
@@ -201,6 +206,8 @@ var asociarElementosLanes = function(elem) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == elem.id});
     } else if (elem.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == elem.id});
+    } else if (elem.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == elem.id});
     } else if (elem.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == elem.id});
     }
@@ -283,7 +290,7 @@ function esSerializable(nodo){
   }
 }
 
-var obtenerFlujos = function(modelo) {
+var generarFlujos = function(modelo) {
   //inicializo variables locales
   var stack =[];
   var nodo;
@@ -315,6 +322,8 @@ var conectarStartEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == primero.id});
     } else if (primero.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == primero.id});
+    } else if (primero.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == primero.id});
     } else if (primero.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == primero.id});
     }
@@ -355,6 +364,8 @@ var conectarEndEvent = function(modelo) {
       task = _.find(proceso.process.serviceTask, function(val){ return val._id == ultimo.id});
     } else if (ultimo.sentencia.task == "human") {
       task = _.find(proceso.process.userTask, function(val){ return val._id == ultimo.id});
+    } else if (ultimo.sentencia.task == "manual") {
+      task = _.find(proceso.process.manualTask, function(val){ return val._id == ultimo.id});
     } else if (ultimo.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == ultimo.id});
     }
@@ -388,7 +399,22 @@ var conectarEndEvent = function(modelo) {
   proceso.process.sequenceFlow.push(flujo);
 }
 
-function agregarTemplates(proceso){
+var agregarSubprocesos = function(modelo, proceso) {
+  for (var i=0; i<modelo.sentencia.length; i++) {
+    var elem = modelo.sentencia[i];
+    if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
+      var subProcessPos = 0;
+      for (var i=0; i< proceso.process.subProcess.length; i++) {
+        if (proceso.process.subProcess[i]._id == elem.id) {
+          subProcessPos = i;
+        }
+      }
+      templateSubproceso(elem, subProcessPos, false);
+    }
+  }
+}
+
+function agregarTemplates(proceso, nombreProceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
   idProceso = "id_proceso"
@@ -409,6 +435,7 @@ function agregarTemplates(proceso){
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
+  bpmn.definitions.process._name = nombreProceso;
   return bpmn;
 }
 
@@ -429,6 +456,15 @@ var agregarTemplateElementos = function(elem) {
           taskPos = i;
         }
       }
+      templateServiceTask(elem, taskPos);
+  } else if (elem.tipo == "task" && elem.sentencia.task == "manual") {
+      var taskPos = 0;
+      for (var i=0; i< proceso.process.manualTask.length; i++) {
+        if (proceso.process.manualTask[i]._id == elem.id) {
+          taskPos = i;
+        }
+      }
+      //FIXME hay que ver si agregan algo para ejecutarla
   } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
@@ -436,7 +472,7 @@ var agregarTemplateElementos = function(elem) {
         subProcessPos = i;
       }
     }
-    templateSubproceso(elem, subProcessPos);
+    templateSubproceso(elem, subProcessPos, true);
   } else if (elem.tipo == "evento") {
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
@@ -478,6 +514,14 @@ var templateCampos = function(nodo, taskPos) {
   }
 }
 
+var templateServiceTask = function(elem, taskPos) {
+  console.log("######################## ELEM ########################")
+  console.log(pd.json(elem))
+  console.log("######################################################")
+  aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":"org.activiti.ImplementacionWebService"}}
+  proceso.process.serviceTask[taskPos] = aux.serviceTask;
+}
+
 var templateExpresiones = function(nodo) {
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
@@ -496,35 +540,54 @@ var templateExpresiones = function(nodo) {
   }
 }
 
-var templateSubproceso = function(elem, subProcessPos) {
-  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion);
-  console.log("###################### ELEM ######################")
-  console.log(pd.json(elem));
-  console.log("#################################################################")
-  console.log("###################### XML DEL SUBPROCESO ######################")
-  console.log(pd.xml(xmlSubProceso))
-  console.log("#################################################################")
-
+var templateSubproceso = function(elem, subProcessPos, ejecutable) {
+  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
-  console.log("###################### JSON DEL SUBPROCESO ######################")
-  console.log(pd.json(jsonSubProceso))
-  console.log("#################################################################")
   var auxSubProceso = {"subprocess":{"_id":elem.id,"_name":elem.sentencia.accion}};
-  auxSubProceso.subprocess.startEvent =  jsonSubProceso.definitions.process.startEvent;
-  auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
-  auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
-  auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
-  auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
-  auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
-  auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
-  auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+  auxSubProceso.subprocess.startEvent = jsonSubProceso.definitions.process.startEvent;
   auxSubProceso.subprocess.endEvent = jsonSubProceso.definitions.process.endEvent;
-  auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
-  auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+  if (jsonSubProceso.definitions.process.userTask.length > 0) {
+     auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
+  }
+  if (jsonSubProceso.definitions.process.serviceTask.length > 0) {
+     auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
+  }
+  if (jsonSubProceso.definitions.process.manualTask.length > 0) {
+     auxSubProceso.subprocess.manualTask = jsonSubProceso.definitions.process.manualTask;
+  }
+  if (jsonSubProceso.definitions.process.exclusiveGateway.length > 0) {
+     auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
+  }
+  if (jsonSubProceso.definitions.process.parallelGateway.length > 0) {
+     auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
+  }
+  if (jsonSubProceso.definitions.process.intermediateCatchEvent.length > 0) {
+     auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
+  }
+  if (jsonSubProceso.definitions.process.intermediateThrowEvent.length > 0) {
+     auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
+  }
+  if (jsonSubProceso.definitions.process.boundaryEvent.length > 0) {
+     auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+  }
+  if (jsonSubProceso.definitions.process.subProcess.length > 0) {
+     auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
+  }
+  if (jsonSubProceso.definitions.process.sequenceFlow.length > 0) {
+     auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+  }
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
-var obtenerxmlSubProceso = function(name) {
-  return subproceso.obtenerXML(name);
+
+var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
+  var archivo = path;
+  if (ejecutable) {
+    archivo = archivo + "/XMLejecutables/" + nombreArchivo + ".bpmn";
+  } else {
+    archivo = archivo + "/XMLbasicos/" + nombreArchivo + ".bpmn";
+  }
+  var subproceso = fs.readFileSync(archivo).toString();
+  return subproceso;
 }
 
 var textToModel = function(texto) {
@@ -533,46 +596,44 @@ var textToModel = function(texto) {
   return modelo;
 }
 
-var modelToXML = function (modelo) {
-  //console.log(pd.json(modelo));
-  //Inicializo estructuras
+var modelToXML = function (modelo, nombreProceso) {
   start();
-  //console.log("######### obtenerLanes ####################");
   for (var i=0; i<modelo.sentencia.length; i++) {
     obtenerLanes(modelo.sentencia[i]);
   }
-  //console.log("######### obtenerTareas ####################");
   for (var i=0; i<modelo.sentencia.length; i++) {
     obtenerTareas(modelo.sentencia[i]);
   }
-  //console.log("######### asociarElementosLanes ####################");
   for (var i=0; i < modelo.sentencia.length; i++) {
     asociarElementosLanes(modelo.sentencia[i]);
   }
-  //console.log("######### obtenerFlujos ####################");
-  obtenerFlujos(modelo);
-
-  //console.log("######### conectarStartEvent ####################");
+  generarFlujos(modelo);
   conectarStartEvent(modelo.sentencia);
-
-  //console.log("######### conectarEndEvent ####################");
   conectarEndEvent(modelo.sentencia);
 
-  //console.log("######### completo el template para ejecutar el proceso ####################");
+  agregarSubprocesos(modelo, proceso);
+
+  var bpmn = agregarTemplates(proceso, nombreProceso);
+  bpmn = conv.json2xml_str(bpmn);
+  var path = __dirname + "/XMLbasicos/";
+  var nombreArchivo = nombreProceso + ".bpmn";
+  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
+  generarXMLejecutable(modelo, proceso, nombreProceso);
+  return pd.xml(bpmn);
+}
+
+var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
-
-  // console.log("########## completo el cabezal del proceso ###################")
-  var bpmn = null;
-  bpmn = agregarTemplates(proceso);
-
-  console.log(pd.xml(conv.json2xml_str(bpmn)));
-  return pd.xml(conv.json2xml_str(bpmn));
-  //console.log(pd.json(proceso))
+  var bpmn = agregarTemplates(proceso, nombreProceso);
+  bpmn = conv.json2xml_str(bpmn);
+  var path = __dirname + "/XMLejecutables/";
+  var nombreArchivo = nombreProceso + ".bpmn";
+  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
 }
 
-var modelToXMLaux = function(bpmn){
+var xml2json = function(bpmn){
   var procesoJSON = conv.xml_str2json(bpmn);
   return pd.json(procesoJSON);
 }
@@ -580,5 +641,6 @@ var modelToXMLaux = function(bpmn){
 module.exports = {
   textToModel : textToModel,
   modelToXML : modelToXML,
-  modelToXMLaux : modelToXMLaux
+  generarXMLejecutable : generarXMLejecutable,
+  xml2json : xml2json,
 }

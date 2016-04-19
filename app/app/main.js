@@ -53,6 +53,10 @@ function conversion(){
   }
   //obtengo texto
   var text = $("#id-modelo-texto").val();
+  var nombre = $("#id-nombre-proceso").val();
+  console.log("##########################################")
+  console.log(nombre)
+  console.log("##########################################")
   try {
     var modelo ;
     try {
@@ -120,9 +124,9 @@ function conversion(){
           })
         }
       } else{
-        var procesoBPMN = procesar.modelToXML(modeloInt);
+        var procesoBPMN = procesar.modelToXML(modeloInt, nombre);
         $("#id-xml-code").text(procesoBPMN);
-        var procesoJSON = procesar.modelToXMLaux(procesoBPMN);
+        var procesoJSON = procesar.xml2json(procesoBPMN);
         $("#id-json-code").text(procesoJSON);
       }
     } catch (e) {
@@ -227,6 +231,8 @@ function menu(){
     console.log("click en " + titulo);
     //cargo texto
     $("#id-modelo-texto").val(ejemplos[titulo]);
+    $("#id-nombre-proceso").val(titulo);
+
     //desactivo "active" del resto de las
     ejemploActivo.removeClass("text-success");
     //agrego a la que hizo click
