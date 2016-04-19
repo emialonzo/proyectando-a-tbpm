@@ -15,20 +15,26 @@ var yaoqiang = function(bpmn,callback, generarXml){
     if(err) {
         return console.log(err);
     }
-
   });
 
   var formato = generarXml? 'salidaBPMNDI.bpmn' : ''
+
   var child = require('child_process').spawn(
     'java', ['-jar', 'yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar', filePath , '--export', formato]
   );
-
   child.stdout.on('data', function(data) {
     // console.log(data.toString());
   });
 
   child.stderr.on("data", function (data) {
-    console.log(data.toString());
+    var env = require('./app/env');
+    var excepcionSiFallaYaoqiang = env.excepcionSiFallaYaoqiang || false;
+    if(excepcionSiFallaYaoqiang){
+      // console.error("Error al procesar en yaoqiang");
+      throw "Error al procesar en yaoqiang"
+    }else{
+      console.log(data.toString());
+    }
   });
 
   child.on('close', function (code) {

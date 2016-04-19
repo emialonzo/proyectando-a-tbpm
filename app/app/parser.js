@@ -7,7 +7,7 @@ var parser = null;
 //path es la ruta relativa donde se encuentra la gramatica,
 var init = function(path){
   // var path = path || __dirname + '/gramatica.pegjs';
-  var path = path || __dirname + '/gramatica.pegjs'; //gramatica por defecto
+  var path = path || __dirname + '/gramatica2.pegjs'; //gramatica por defecto
   gramatica = fs.readFileSync(path).toString();
   parser = PEG.buildParser(gramatica);
 }
@@ -48,7 +48,7 @@ var parseText = function(text){
     console.console.log("Tratando de inicializar.");
     init();
     control();
-  } 
+  }
   var modeloAbstracto = parser.parse(text);
   return modeloAbstracto;
 }

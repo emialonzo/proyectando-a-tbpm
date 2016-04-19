@@ -419,6 +419,11 @@ function agregarPrpiedad(nodo, campo){
     return pd.xml(conv.json2xml_str(makeJsonBpmn((modelo))))
   }
 
+  function makeBpmnForTest(modelo){
+    // console.log("makeBpmn::makeBpmnForTest");
+    return pd.xml(conv.json2xml_str(makeJsonBpmn((modelo))))
+  }
+
 
 
 //inicializo algunos valores necesarios
@@ -467,5 +472,6 @@ var generarXML = function (modelo) {
 }
 
 module.exports = {
-  makeBpmn: makeBpmn
+  makeBpmn: makeBpmn,
+  makeBpmnForTest: makeBpmnForTest,
 }

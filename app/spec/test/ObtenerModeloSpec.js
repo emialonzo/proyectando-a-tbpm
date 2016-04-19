@@ -1,7 +1,7 @@
 var intermedio = require('../../app/modeloIntermedio');
 var fs = require('fs');
 
-describe("Modelo", function() {
+xdescribe("Modelo", function() {
 
 
   beforeEach(function() {
@@ -13,7 +13,7 @@ describe("Modelo", function() {
     console.log("--------->" + __dirname);
     var modelo = JSON.parse(fs.readFileSync( __dirname + "/parserOutput.txt").toString());
     modelo = intermedio.asignarId(modelo.sentencia);
-    expect(intermedio.findById(3)).toBeDefined(); 
+    expect(intermedio.findById(3)).toBeDefined();
     expect(intermedio.findById(9393)).not.toBeDefined();
   });
 
