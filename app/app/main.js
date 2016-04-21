@@ -54,9 +54,9 @@ function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   var nombre = $("#id-nombre-proceso").val();
-  console.log("##########################################")
-  console.log(nombre)
-  console.log("##########################################")
+  // console.log("##########################################")
+  // console.log(nombre)
+  // console.log("##########################################")
   try {
     var modelo ;
     try {
@@ -92,7 +92,7 @@ function conversion(){
     try {
       var dot = makeDot.toDot(modeloInt);
       $("#id-dot").html(dot);
-      console.log("Intentando generar dot");
+      // console.log("Intentando generar dot");
       makeDot.executeDot(dot, callbackDot)
 
     } catch (e) {
@@ -151,21 +151,23 @@ function conversion(){
 
 function callbackDot(image){
   // console.error(image);
-  $("#id-bpmn-model").append(image);
-  $("#id-bpmn-model img").addClass("img-responsive");
-  $("#id-bpmn-model img").click(function(){
+  $("#id-dot").prepend(image);
+  $("#id-dot img").addClass("img-responsive");
+  $("#id-dot img").after("<hr />");
+  $("#id-dot img").click(function(){
     $(this).toggleClass("img-responsive");
   });
 }
 
 function callbackXml(xml){
   // console.error(image);
-  $("#id-xml-container").append("<hr/>");
-  if(!pre_xml_bpmndi){
-    pre_xml_bpmndi = $('<pre id="xml-bpmndi" />');
-    $("#id-xml-container").append(pre_xml_bpmndi);
-  }
-  pre_xml_bpmndi.text(pd.xml(xml));
+  // $("#id-xml-container").append("<hr/>");
+  // if(!pre_xml_bpmndi){
+  //   pre_xml_bpmndi = $('<pre id="xml-bpmndi" />');
+  //   $("#id-xml-container").append(pre_xml_bpmndi);
+  // }
+  $("#id-xml-ejecutar").text(pd.xml(xml));
+  // pre_xml_bpmndi.text(pd.xml(xml));
   // console.error(xml);
 
   bpmnModeler.importXML(xml, function(err) {
@@ -175,6 +177,14 @@ function callbackXml(xml){
     var canvas = bpmnModeler.get('canvas');
     // canvas.zoom('fit-viewport');
   });
+  console.log("XML finalizado!");
+  var myNotification = new Notification('XML terminado', {
+    body: 'Se ha terminado de generar el XML'
+  });
+
+  myNotification.onclick = function () {
+    // console.log('Notification clicked')
+  }
 }
 
 function callbackYaoqiang(base64){
@@ -266,6 +276,14 @@ function limpiarMensajesError(){
 }
 
 $(function() {
+  $('.btn-descargar').click(function(){
+    var idContainer = $(this).data('target');
+    var xml = $(idContainer).text();
+    ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
+    // console.log(xml);
+
+
+  })
   menu();
   parser.init(__dirname + '/gramatica2.pegjs');
 
