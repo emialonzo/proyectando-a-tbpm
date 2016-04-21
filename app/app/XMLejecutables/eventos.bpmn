@@ -1,0 +1,58 @@
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id_eventos' name='PoolProcess' processRef='id_eventos'/>
+  </collaboration>
+  <process id='id_eventos' isExecutable='true' name='eventos'>
+    <laneSet>
+      <lane id='Lane_A' name='A'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_9</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+        <flowNodeRef>_EndEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='_StartEvent_1'/>
+    <userTask id='_3' name='X'></userTask>
+    <userTask id='_9' name='L'></userTask>
+    <manualTask/>
+    <serviceTask/>
+    <exclusiveGateway id='_10'></exclusiveGateway>
+    <parallelGateway/>
+    <intermediateCatchEvent id='_4'>
+      <timerEventDefinition>
+        <timeDuration>PT20S</timeDuration>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+    <intermediateCatchEvent id='_5'>
+      <messageEventDefinition messageRef='administracion'/>
+    </intermediateCatchEvent>
+    <intermediateThrowEvent id='_6'>
+      <messageEventDefinition messageRef='administracion'/>
+    </intermediateThrowEvent>
+    <boundaryEvent id='_7' attachedToRef='_3' cancelActivity='true'>
+      <timerEventDefinition>
+        <timeDuration>PT20S</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <endEvent id='_EndEvent_1'/>
+    <subProcess/>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
+    <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
+    <sequenceFlow id='_6_10' sourceRef='_6' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_7_9' sourceRef='_7' targetRef='_9'></sequenceFlow>
+    <sequenceFlow id='_9_10' sourceRef='_9' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_10_EndEvent_1' sourceRef='_10' targetRef='_EndEvent_1'></sequenceFlow>
+  </process>
+</definitions>
