@@ -1,5 +1,7 @@
 const electron = require('electron');
 const ipcMain = require('electron').ipcMain;
+const dialog = require('electron').dialog;
+var fs = require('fs');
 
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
@@ -35,7 +37,7 @@ app.on('ready', function() {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  // const dialog = require('electron').dialog;
+
   // console.log(dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}));
 
   // Emitted when the window is closed.
@@ -56,4 +58,33 @@ ipcMain.on('abrir-motor', function(){
     engineWindow = null;
     mainWindow.show();
   });
+})
+
+
+ipcMain.on('guardar-archivo', function(event, nombre_archivo, extension, contenido){
+  // dialog.showSaveDialog([browserWindow, ]options[, callback])
+  // console.log("guardando archivo:" + nombre_archivo);
+  // console.log("extension:"+extension);
+  // console.log("contenido:"+contenido);
+
+  var path = dialog.showSaveDialog({
+    'title':"Guardando archivo",
+    'defaultPath': app.getPath('home'),
+    'filters' : [
+      { name: extension, extensions: [extension] },
+  ]
+  })
+  if(path){
+    if(!path.endsWith("."+extension)){
+      path += "." + extension
+    }
+    console.log("Archivo a guardar:" + path);
+    fs.writeFile(path, contenido+"\n", function(err) {
+      if(err) {
+        return console.log(err);
+      }
+    });
+  }
+
+
 })
