@@ -82,8 +82,6 @@ var obtenerLanes = function(elem) {
         {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
          "_name": elem.sentencia.actor});
     }
-  } else if (elem.tipo == "condicion") {
-    obtenerLanes(elem.sentencia);
   } else if (elem.tipo == "xor") {
     for (var i=0; i < elem.sentencia.length; i++) {
       obj = elem.sentencia[i];
@@ -112,12 +110,49 @@ var obtenerLanes = function(elem) {
   }
 }
 
+function templateEventoTiempoExpresion(eventoTiempo){
+  switch (eventoTiempo.unidad) {
+    case "segundos":
+    case "segundo":
+    return "PT"+eventoTiempo.tiempo + "S"
+    break;
+    case "minutos":
+    case "minuto":
+    return "PT"+eventoTiempo.tiempo + "M"
+    break;
+    case "horas":
+    case "hora":
+    return "PT"+eventoTiempo.tiempo + "H"
+    break;
+    case "dias":
+    case "dia":
+    return "P"+eventoTiempo.tiempo + "D"
+    break;
+    case "semanas":
+    case "semana":
+    return "P"+eventoTiempo.tiempo + "W"
+    break;
+    case "meses":
+    case "mes":
+    return "P"+eventoTiempo.tiempo + "M"
+    break;
+    case "años":
+    case "año":
+    return "P"+eventoTiempo.tiempo + "Y"
+    break;
+    default:
+  }
+}
+
 var extensionEvento = function(elem, evento) {
   var extensionEvento;
   if (evento.tipo == "timer") {
-    extensionEvento = {"timerEventDefinition":""}
+    extensionEvento = {"timerEventDefinition":{"timeDuration":templateEventoTiempoExpresion(evento)}}
   } else if (evento.tipo == "mensaje") {
-    extensionEvento = {"messageEventDefinition":""}
+    console.log("######################################3")
+    console.log(pd.json(evento))
+    console.log("######################################3")
+    extensionEvento = {"messageEventDefinition":{ "_messageRef":evento.pool}}
   }
   _.extend(elem, extensionEvento);
 }
@@ -141,9 +176,24 @@ var obtenerTareas = function(elem) {
       proceso.process.subProcess.push(subproceso);
     }
   } else if (elem.tipo == "evento") {
-    var intermediateCatchEvent = {"_id":elem.id};
-    extensionEvento(intermediateCatchEvent, elem.sentencia.evento);
-    proceso.process.intermediateCatchEvent.push(intermediateCatchEvent);
+    //console.log("############################# ELEM #############################")
+    //console.log(pd.json(elem))
+    //console.log("##################################################################")
+    if (elem.sentencia.evento.tipo == "timer") {
+      var intermediateCatchEvent = {"_id":elem.id};
+      extensionEvento(intermediateCatchEvent, elem.sentencia.evento);
+      proceso.process.intermediateCatchEvent.push(intermediateCatchEvent);
+    } else if (elem.sentencia.evento.tipo == "mensaje") {
+      if (elem.sentencia.evento.throw) {
+        var intermediateThrowEvent = {"_id":elem.id};
+        extensionEvento(intermediateThrowEvent, elem.sentencia.evento);
+        proceso.process.intermediateThrowEvent.push(intermediateThrowEvent);
+      } else {
+        var intermediateCatchEvent = {"_id":elem.id};
+        extensionEvento(intermediateCatchEvent, elem.sentencia.evento);
+        proceso.process.intermediateCatchEvent.push(intermediateCatchEvent);
+      }
+    }
   } else if (elem.tipo == "xor") {
     var id = elem.id;
     var abre = {"_id":id, "_default":""};
@@ -185,7 +235,7 @@ var obtenerTareas = function(elem) {
       proceso.process.exclusiveGateway.push(cierra);
     }
   } else if (elem.tipo == "adjunto") {
-    var adjunto = {"_id":elem.id, "_attachedToRef":elem.adjunto_a_id};
+    var adjunto = {"_id":elem.id, "_attachedToRef":elem.adjunto_a_id, "_cancelActivity":elem.interrumpible};
     extensionEvento(adjunto, elem.evento);
     proceso.process.boundaryEvent.push(adjunto);
     for (var i=0; i < elem.sentencia.length; i++) {
@@ -213,10 +263,13 @@ var asociarElementosLanes = function(elem) {
     }
     lane.flowNodeRef.push(task._id);
   } else if (elem.tipo == "evento") {
-    var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == elem.id});
+    var evento;
+    if (elem.sentencia.evento.tipo == "mensaje" && elem.sentencia.evento.throw == true) {
+      evento = _.find(proceso.process.intermediateThrowEvent, function(val){ return val._id == elem.id});
+    } else {
+      evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == elem.id});
+    }
     lane.flowNodeRef.push(evento._id);
-  } else if (elem.tipo == "condicion") {
-    asociarElementosLanes(elem.sentencia);
   } else if (elem.tipo == "xor") {
     var gwAbre = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
     lane.flowNodeRef.push(gwAbre._id);
@@ -515,9 +568,6 @@ var templateCampos = function(nodo, taskPos) {
 }
 
 var templateServiceTask = function(elem, taskPos) {
-  console.log("######################## ELEM ########################")
-  console.log(pd.json(elem))
-  console.log("######################################################")
   aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":"org.activiti.ImplementacionWebService"}}
   proceso.process.serviceTask[taskPos] = aux.serviceTask;
 }
@@ -619,6 +669,7 @@ var modelToXML = function (modelo, nombreProceso) {
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
   generarXMLejecutable(modelo, proceso, nombreProceso);
+  console.log(pd.xml(bpmn));
   return pd.xml(bpmn);
 }
 
