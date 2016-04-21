@@ -46,12 +46,12 @@ actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return 
 
 tiempo_evento  = "espera por"
 sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return {"evento":evento, "actor":actor}} /
-          ws actor:actor ws "envia mensaje a" ws pool:palabras ws punto {return {"evento":{"tipo":"mensaje", "throw":true}, "actor":actor, "pool":pool, "tipo":"throw"}}
+          ws actor:actor ws "envia mensaje a" ws pool:palabras ws punto {return {"evento":{"tipo":"mensaje", "throw":true, "pool":pool}, "actor":actor, }}
 
-tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiempo" : d, "unidad":unidad};}
+tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiempo" : d, "unidad":unidad, "throw":false};}
 		/ mensaje_evento
 
-mensaje_evento = mensaje ws "de" ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p};}
+mensaje_evento = mensaje ws "de" ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p, "pool":p, "throw":false};}
 mensaje = "mensaje" / "mail"
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"

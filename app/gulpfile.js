@@ -28,13 +28,37 @@ gulp.task('build', ['clean'], function(){
 
 gulp.task('clean', function () {
   return gulp.src('dist', {read: false})
-    .pipe(clean());
+  .pipe(clean());
 });
 
 gulp.task('test',  function () {
-	gulp.src('spec/test/*.js')
-  				.pipe(jasmine())
-		// .pipe(jasmine({
-		// 	reporter: new reporters.JUnitXmlReporter()
-		// }))
-  });
+  gulp.src('spec/test/*.js')
+  .pipe(jasmine())
+  // .pipe(jasmine({
+  // 	reporter: new reporters.JUnitXmlReporter()
+  // }))
+});
+
+
+
+var browserify = require('gulp-browserify');
+var uglify = require('gulp-uglify');
+
+// Basic usage
+gulp.task('scripts', function() {
+  // Single entry point to browserify
+  gulp.src('app/main.js')
+  .pipe(browserify({
+    insertGlobals : true,
+    debug : true
+  }))
+  .pipe(uglify())
+  .pipe(gulp.dest('./build/js'))
+});
+
+// gulp.task('uglify', ['scripts'], function() {
+//   return gulp.src('build/car-finder.js')
+//     .pipe(uglify())
+//     .pipe(rename('car-finder.min.js'))
+//     .pipe(gulp.dest('public/javascripts'));
+// });
