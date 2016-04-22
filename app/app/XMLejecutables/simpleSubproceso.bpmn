@@ -7,63 +7,58 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
+    <participant id='pool_id_simpleSubproceso' name='PoolProcess' processRef='id_simpleSubproceso'/>
   </collaboration>
-  <process id='id_proceso' isExecutable='true' name='simpleSubproceso'>
+  <process id='id_simpleSubproceso' isExecutable='true' name='simpleSubproceso'>
     <laneSet>
       <lane id='Lane_usuario' name='usuario'>
-        <flowNodeRef>3</flowNodeRef>
-        <flowNodeRef>StartEvent_1</flowNodeRef>
-        <flowNodeRef>EndEvent_1</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+        <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
-    <startEvent id='StartEvent_1'/>
+    <startEvent id='_StartEvent_1'/>
     <userTask/>
+    <manualTask/>
     <serviceTask/>
     <exclusiveGateway/>
     <parallelGateway/>
     <intermediateCatchEvent/>
     <intermediateThrowEvent/>
     <boundaryEvent/>
-    <endEvent id='EndEvent_1'/>
-    <subProcess id='3' name='compuertasConExpresiones'>
-      <startEvent id='StartEvent_1'/>
-      <userTask id='_3' name='elije servicio' activiti:candidateGroups='asistente'>
+    <endEvent id='_EndEvent_1'/>
+    <subProcess id='_3' name='compuertasConExpresiones'>
+      <startEvent id='compuertasConExpresiones_StartEvent_1'/>
+      <endEvent id='compuertasConExpresiones_EndEvent_1'/>
+      <userTask id='compuertasConExpresiones_3' name='elije servicio' activiti:candidateGroups='asistente'>
         <extensionElements>
           <activiti:formProperty id='tipoServicio' name='tipoServicio' type='texto' required='true'/>
         </extensionElements>
       </userTask>
-      <userTask id='6' name='ofrece serivicio X'></userTask>
-      <userTask id='8' name='ofrece serivicio Y'></userTask>
-      <userTask id='10' name='ofrece servicio generico'></userTask>
-      <serviceTask></serviceTask>
-      <exclusiveGateway id='4' default='4_10'></exclusiveGateway>
-      <exclusiveGateway id='11'></exclusiveGateway>
-      <parallelGateway></parallelGateway>
-      <intermediateCatchEvent></intermediateCatchEvent>
-      <intermediateThrowEvent></intermediateThrowEvent>
-      <boundaryEvent></boundaryEvent>
-      <endEvent id='EndEvent_1'/>
-      <subProcess></subProcess>
-      <sequenceFlow id='3_4' sourceRef='3' targetRef='4'></sequenceFlow>
-      <sequenceFlow id='4_6' sourceRef='4' targetRef='6' name='servicioEsX'>
+      <userTask id='compuertasConExpresiones_6' name='ofrece serivicio X'></userTask>
+      <userTask id='compuertasConExpresiones_8' name='ofrece serivicio Y'></userTask>
+      <userTask id='compuertasConExpresiones_10' name='ofrece servicio generico'></userTask>
+      <exclusiveGateway id='compuertasConExpresiones_4' default='4_10'></exclusiveGateway>
+      <exclusiveGateway id='compuertasConExpresiones_11'></exclusiveGateway>
+      <sequenceFlow id='compuertasConExpresiones_3_4' sourceRef='compuertasConExpresiones_3' targetRef='compuertasConExpresiones_4'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_4_6' sourceRef='compuertasConExpresiones_4' targetRef='compuertasConExpresiones_6' name='servicioEsX'>
         <conditionExpression xsi:type='tFormalExpression'>
           <![CDATA[${tipoServicio == "X"}]]>
         </conditionExpression>
       </sequenceFlow>
-      <sequenceFlow id='4_8' sourceRef='4' targetRef='8' name='servicioEsY'>
+      <sequenceFlow id='compuertasConExpresiones_4_8' sourceRef='compuertasConExpresiones_4' targetRef='compuertasConExpresiones_8' name='servicioEsY'>
         <conditionExpression xsi:type='tFormalExpression'>
           <![CDATA[${tipoServicio == "Y"}]]>
         </conditionExpression>
       </sequenceFlow>
-      <sequenceFlow id='4_10' sourceRef='4' targetRef='10'></sequenceFlow>
-      <sequenceFlow id='6_11' sourceRef='6' targetRef='11'></sequenceFlow>
-      <sequenceFlow id='8_11' sourceRef='8' targetRef='11'></sequenceFlow>
-      <sequenceFlow id='10_11' sourceRef='10' targetRef='11'></sequenceFlow>
-      <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
-      <sequenceFlow id='11_EndEvent_1' sourceRef='11' targetRef='EndEvent_1'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_4_10' sourceRef='compuertasConExpresiones_4' targetRef='compuertasConExpresiones_10'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_6_11' sourceRef='compuertasConExpresiones_6' targetRef='compuertasConExpresiones_11'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_8_11' sourceRef='compuertasConExpresiones_8' targetRef='compuertasConExpresiones_11'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_10_11' sourceRef='compuertasConExpresiones_10' targetRef='compuertasConExpresiones_11'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_StartEvent_1_3' sourceRef='compuertasConExpresiones_StartEvent_1' targetRef='compuertasConExpresiones_3'></sequenceFlow>
+      <sequenceFlow id='compuertasConExpresiones_11_EndEvent_1' sourceRef='compuertasConExpresiones_11' targetRef='compuertasConExpresiones_EndEvent_1'></sequenceFlow>
     </subProcess>
-    <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
-    <sequenceFlow id='3_EndEvent_1' sourceRef='3' targetRef='EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_3_EndEvent_1' sourceRef='_3' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>

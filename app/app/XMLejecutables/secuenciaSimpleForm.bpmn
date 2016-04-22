@@ -7,9 +7,9 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
+    <participant id='pool_id_secuenciaSimpleForm' name='PoolProcess' processRef='id_secuenciaSimpleForm'/>
   </collaboration>
-  <process id='id_proceso' isExecutable='true' name='secuenciaSimple'>
+  <process id='id_secuenciaSimpleForm' isExecutable='true' name='secuenciaSimpleForm'>
     <laneSet>
       <lane id='Lane_persona' name='persona'>
         <flowNodeRef>_3</flowNodeRef>
@@ -22,7 +22,12 @@
     </laneSet>
     <startEvent id='_StartEvent_1'/>
     <userTask id='_3' name='se levanta de la cama'></userTask>
-    <userTask id='_4' name='va al banio'></userTask>
+    <userTask id='_4' name='va al banio' activiti:candidateGroups='persona'>
+      <extensionElements>
+        <activiti:formProperty id='nombre' name='nombre' type='texto' required='false'></activiti:formProperty>
+        <activiti:formProperty id='apellido' name='apellido' type='texto' required='true'></activiti:formProperty>
+      </extensionElements>
+    </userTask>
     <userTask id='_5' name='se lava los dientes'></userTask>
     <userTask id='_6' name='se vuelve a acostar'></userTask>
     <manualTask/>
