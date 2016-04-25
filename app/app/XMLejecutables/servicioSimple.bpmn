@@ -7,27 +7,36 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
+    <participant id='pool_id_servicioSimple' name='PoolProcess' processRef='id_servicioSimple'/>
   </collaboration>
-  <process id='id_proceso' isExecutable='true' name='servicioSimple'>
+  <process id='id_servicioSimple' isExecutable='true' name='servicioSimple'>
     <laneSet>
       <lane id='Lane_usuario' name='usuario'>
-        <flowNodeRef>3</flowNodeRef>
-        <flowNodeRef>StartEvent_1</flowNodeRef>
-        <flowNodeRef>EndEvent_1</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+        <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
-    <startEvent id='StartEvent_1'/>
-    <userTask/>
-    <serviceTask id='_3' name='A' activiti:class='org.activiti.ImplementacionWebService'></serviceTask>
+    <startEvent id='_StartEvent_1'/>
+    <userTask id='_3' name='realiza tarea B'></userTask>
+    <userTask id='_6' name='realiza tarea C'></userTask>
+    <manualTask/>
+    <serviceTask id='_4' name='generar' activiti:class='org.activiti.ImplementacionWebService'></serviceTask>
+    <serviceTask id='_5' name='archivar' activiti:class='org.activiti.ImplementacionWebService'></serviceTask>
     <exclusiveGateway/>
     <parallelGateway/>
     <intermediateCatchEvent/>
     <intermediateThrowEvent/>
     <boundaryEvent/>
-    <endEvent id='EndEvent_1'/>
+    <endEvent id='_EndEvent_1'/>
     <subProcess/>
-    <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
-    <sequenceFlow id='3_EndEvent_1' sourceRef='3' targetRef='EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
+    <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_6_EndEvent_1' sourceRef='_6' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>

@@ -7,43 +7,44 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id' name='PoolProcess' processRef='id_proceso'/>
+    <participant id='pool_id_compuertasConExpresiones' name='PoolProcess' processRef='id_compuertasConExpresiones'/>
   </collaboration>
-  <process id='id_proceso' isExecutable='true' name='compuertasConExpresiones'>
+  <process id='id_compuertasConExpresiones' isExecutable='true' name='compuertasConExpresiones'>
     <laneSet>
       <lane id='Lane_asistente' name='asistente'>
-        <flowNodeRef>3</flowNodeRef>
-        <flowNodeRef>4</flowNodeRef>
-        <flowNodeRef>6</flowNodeRef>
-        <flowNodeRef>8</flowNodeRef>
-        <flowNodeRef>10</flowNodeRef>
-        <flowNodeRef>11</flowNodeRef>
-        <flowNodeRef>StartEvent_1</flowNodeRef>
-        <flowNodeRef>EndEvent_1</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_8</flowNodeRef>
+        <flowNodeRef>_10</flowNodeRef>
+        <flowNodeRef>_11</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+        <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
-    <startEvent id='StartEvent_1'/>
-    <userTask id='3' name='elije servicio'></userTask>
-    <userTask id='6' name='ofrece serivicio X'></userTask>
-    <userTask id='8' name='ofrece serivicio Y'></userTask>
-    <userTask id='10' name='ofrece servicio generico'></userTask>
+    <startEvent id='_StartEvent_1'/>
+    <userTask id='_3' name='elije servicio'></userTask>
+    <userTask id='_6' name='ofrece serivicio X'></userTask>
+    <userTask id='_8' name='ofrece serivicio Y'></userTask>
+    <userTask id='_10' name='ofrece servicio generico'></userTask>
+    <manualTask/>
     <serviceTask/>
-    <exclusiveGateway id='4' default='4_10'></exclusiveGateway>
-    <exclusiveGateway id='11'></exclusiveGateway>
+    <exclusiveGateway id='_4' default='4_10'></exclusiveGateway>
+    <exclusiveGateway id='_11'></exclusiveGateway>
     <parallelGateway/>
     <intermediateCatchEvent/>
     <intermediateThrowEvent/>
     <boundaryEvent/>
-    <endEvent id='EndEvent_1'/>
+    <endEvent id='_EndEvent_1'/>
     <subProcess/>
-    <sequenceFlow id='3_4' sourceRef='3' targetRef='4'></sequenceFlow>
-    <sequenceFlow id='4_6' sourceRef='4' targetRef='6' name='servicioEsX'></sequenceFlow>
-    <sequenceFlow id='4_8' sourceRef='4' targetRef='8' name='servicioEsY'></sequenceFlow>
-    <sequenceFlow id='4_10' sourceRef='4' targetRef='10'></sequenceFlow>
-    <sequenceFlow id='6_11' sourceRef='6' targetRef='11'></sequenceFlow>
-    <sequenceFlow id='8_11' sourceRef='8' targetRef='11'></sequenceFlow>
-    <sequenceFlow id='10_11' sourceRef='10' targetRef='11'></sequenceFlow>
-    <sequenceFlow id='StartEvent_1_3' sourceRef='StartEvent_1' targetRef='3'></sequenceFlow>
-    <sequenceFlow id='11_EndEvent_1' sourceRef='11' targetRef='EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6' name='servicioEsX'></sequenceFlow>
+    <sequenceFlow id='_4_8' sourceRef='_4' targetRef='_8' name='servicioEsY'></sequenceFlow>
+    <sequenceFlow id='_4_10' sourceRef='_4' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_6_11' sourceRef='_6' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_8_11' sourceRef='_8' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_10_11' sourceRef='_10' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_11_EndEvent_1' sourceRef='_11' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>
