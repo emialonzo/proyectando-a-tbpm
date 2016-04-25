@@ -539,6 +539,15 @@ var agregarTemplateElementos = function(elem) {
     }
     templateSubproceso(elem, subProcessPos, true);
   } else if (elem.tipo == "evento") {
+    if (elem.sentencia.evento.tipo == "mensaje" && elem.sentencia.evento.throw) {
+      for (var i=0; i< proceso.process.intermediateThrowEvent.length; i++) {
+        if (proceso.process.intermediateThrowEvent[i]._id == "_"+elem.id ) {
+          eventPos = i;
+          break;
+        }
+      }
+      agregarTemplatesEventoMensaje(elem, eventPos);
+    }
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
     for (var i=0; i < elem.sentencia.length; i++) {
@@ -564,6 +573,31 @@ var agregarTemplateElementos = function(elem) {
   }
 }
 
+//"serviceTask": {
+//  "-id": "elem.id",
+//  "-name": "elem.sentencia.accion",
+//  "-activiti:type": "mail",
+//  "extensionElements": {
+//    "activiti:field": [
+//      {
+//        "-name": "to",
+//        "activiti:expression": "proyectotbpm@gmail.com"
+//      },
+//      {
+//        "-name": "subject",
+//        "activiti:string": elem.sentencia.accion
+//      },
+//      {
+//        "-name": "html",
+//        "activiti:expression": "Se ejecuto el evento."
+//      }
+//    ]
+//  }
+//}
+var agregarTemplatesEventoMensaje = function(elem, eventPos) {
+
+}
+
 var templateCampos = function(nodo, taskPos) {
   if(nodo.sentencia.campos){
     aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
@@ -587,6 +621,8 @@ var templateServiceTask = function(elem, taskPos) {
 }
 
 var templateExpresiones = function(nodo) {
+  //FIXME aca es donde se deberia generar la tarea de usuario
+  //donde se decide que flujo de salida se debe tomar en el XOR
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
       var condicion = nodo.sentencia[i];
