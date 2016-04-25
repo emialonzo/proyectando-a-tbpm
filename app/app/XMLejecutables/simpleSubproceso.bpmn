@@ -18,14 +18,6 @@
       </lane>
     </laneSet>
     <startEvent id='_StartEvent_1'/>
-    <userTask/>
-    <manualTask/>
-    <serviceTask/>
-    <exclusiveGateway/>
-    <parallelGateway/>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
-    <boundaryEvent/>
     <endEvent id='_EndEvent_1'/>
     <subProcess id='_3' name='compuertasConExpresiones'>
       <startEvent id='compuertasConExpresiones_StartEvent_1'/>

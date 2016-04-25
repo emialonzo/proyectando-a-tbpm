@@ -26,9 +26,9 @@
         <flowNodeRef>_20</flowNodeRef>
         <flowNodeRef>_22</flowNodeRef>
         <flowNodeRef>_23</flowNodeRef>
-        <flowNodeRef>_27</flowNodeRef>
-        <flowNodeRef>_24</flowNodeRef>
         <flowNodeRef>_26</flowNodeRef>
+        <flowNodeRef>_24</flowNodeRef>
+        <flowNodeRef>_25</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
         <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
@@ -47,44 +47,36 @@
     <userTask id='_22' name='realiza tarea U'></userTask>
     <userTask id='_23' name='realiza tarea UU'></userTask>
     <userTask id='_24' name='realiza tarea JJ'></userTask>
-    <manualTask/>
-    <serviceTask/>
-    <exclusiveGateway id='_25'></exclusiveGateway>
     <exclusiveGateway id='_15' default='15_22'></exclusiveGateway>
-    <exclusiveGateway id='_27'></exclusiveGateway>
+    <exclusiveGateway id='_26'></exclusiveGateway>
     <parallelGateway id='_9'></parallelGateway>
-    <parallelGateway id='_26'></parallelGateway>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
+    <parallelGateway id='_25'></parallelGateway>
     <boundaryEvent id='_6' attachedToRef='_3' cancelActivity='false'>
       <timerEventDefinition>
         <timeDuration>PT20S</timeDuration>
       </timerEventDefinition>
     </boundaryEvent>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
-    <sequenceFlow id='_5_25' sourceRef='_5' targetRef='_25'></sequenceFlow>
+    <sequenceFlow id='_5_9' sourceRef='_5' targetRef='_9'></sequenceFlow>
     <sequenceFlow id='_6_8' sourceRef='_6' targetRef='_8'></sequenceFlow>
-    <sequenceFlow id='_8_25' sourceRef='_8' targetRef='_25'></sequenceFlow>
-    <sequenceFlow id='_25_9' sourceRef='_25' targetRef='_9'></sequenceFlow>
     <sequenceFlow id='_9_11' sourceRef='_9' targetRef='_11'></sequenceFlow>
     <sequenceFlow id='_9_14' sourceRef='_9' targetRef='_14'></sequenceFlow>
     <sequenceFlow id='_11_12' sourceRef='_11' targetRef='_12'></sequenceFlow>
-    <sequenceFlow id='_12_26' sourceRef='_12' targetRef='_26'></sequenceFlow>
+    <sequenceFlow id='_12_25' sourceRef='_12' targetRef='_25'></sequenceFlow>
     <sequenceFlow id='_14_15' sourceRef='_14' targetRef='_15'></sequenceFlow>
     <sequenceFlow id='_15_17' sourceRef='_15' targetRef='_17' name='condi'></sequenceFlow>
     <sequenceFlow id='_15_20' sourceRef='_15' targetRef='_20' name='condii'></sequenceFlow>
     <sequenceFlow id='_15_22' sourceRef='_15' targetRef='_22'></sequenceFlow>
     <sequenceFlow id='_17_18' sourceRef='_17' targetRef='_18'></sequenceFlow>
-    <sequenceFlow id='_18_27' sourceRef='_18' targetRef='_27'></sequenceFlow>
-    <sequenceFlow id='_20_27' sourceRef='_20' targetRef='_27'></sequenceFlow>
+    <sequenceFlow id='_18_26' sourceRef='_18' targetRef='_26'></sequenceFlow>
+    <sequenceFlow id='_20_26' sourceRef='_20' targetRef='_26'></sequenceFlow>
     <sequenceFlow id='_22_23' sourceRef='_22' targetRef='_23'></sequenceFlow>
-    <sequenceFlow id='_23_27' sourceRef='_23' targetRef='_27'></sequenceFlow>
-    <sequenceFlow id='_27_24' sourceRef='_27' targetRef='_24'></sequenceFlow>
-    <sequenceFlow id='_24_26' sourceRef='_24' targetRef='_26'></sequenceFlow>
+    <sequenceFlow id='_23_26' sourceRef='_23' targetRef='_26'></sequenceFlow>
+    <sequenceFlow id='_26_24' sourceRef='_26' targetRef='_24'></sequenceFlow>
+    <sequenceFlow id='_24_25' sourceRef='_24' targetRef='_25'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
-    <sequenceFlow id='_26_EndEvent_1' sourceRef='_26' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_25_EndEvent_1' sourceRef='_25' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>

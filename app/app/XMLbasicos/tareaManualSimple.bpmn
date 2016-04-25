@@ -11,28 +11,16 @@
   </collaboration>
   <process id='id_tareaManualSimple' isExecutable='true' name='tareaManualSimple'>
     <laneSet>
-      <lane id='Lane_usuario' name='usuario'>
+      <lane id='Lane_administrador de papeles' name='administrador de papeles'>
         <flowNodeRef>_3</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
-      </lane>
-      <lane id='Lane_administrador de papeles' name='administrador de papeles'>
-        <flowNodeRef>_4</flowNodeRef>
         <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id='_StartEvent_1'/>
-    <userTask id='_3' name='entrega los papeles al admin'></userTask>
-    <manualTask id='_4' name='quemar papeles'></manualTask>
-    <serviceTask/>
-    <exclusiveGateway/>
-    <parallelGateway/>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
-    <boundaryEvent/>
+    <manualTask id='_3' name='quemar papeles'></manualTask>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
-    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
-    <sequenceFlow id='_4_EndEvent_1' sourceRef='_4' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_3_EndEvent_1' sourceRef='_3' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>

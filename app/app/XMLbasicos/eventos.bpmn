@@ -24,10 +24,7 @@
     <startEvent id='_StartEvent_1'/>
     <userTask id='_3' name='X'></userTask>
     <userTask id='_9' name='L'></userTask>
-    <manualTask/>
-    <serviceTask/>
     <exclusiveGateway id='_10'></exclusiveGateway>
-    <parallelGateway/>
     <intermediateCatchEvent id='_4'>
       <timerEventDefinition>
         <timeDuration>PT20S</timeDuration>
@@ -45,7 +42,6 @@
       </timerEventDefinition>
     </boundaryEvent>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>

@@ -25,15 +25,7 @@
     <userTask id='_4' name='va al banio'></userTask>
     <userTask id='_5' name='se lava los dientes'></userTask>
     <userTask id='_6' name='se vuelve a acostar'></userTask>
-    <manualTask/>
-    <serviceTask/>
-    <exclusiveGateway/>
-    <parallelGateway/>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
-    <boundaryEvent/>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
