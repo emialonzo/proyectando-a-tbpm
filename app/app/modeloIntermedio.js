@@ -99,7 +99,13 @@ function recursivoFlujo(nodox, ant, sig){
   } else if(nodo.tipo == "adjunto"){
     // var aux = recursivoFlujo({"tipo":"secuencia", "sentencia":nodo.sentencia}, nodo.id, sig);
     //obtengo flujo de la secuencia interna de la ejecucion del evento adjunto
-    var aux = recursivoFlujo(nodo.sentencia[0], nodo.id, sig);
+    var aux
+    if(nodo.interrumpible){
+      console.log("Era una tarea interrumpible... deberia ajustar el siguiente");
+      aux = recursivoFlujo(nodo.sentencia[0], nodo.id, sig);
+    } else{
+      aux = recursivoFlujo(nodo.sentencia[0], nodo.id, "F");
+    }
     nodo.sentencia = [aux];
 
     //obtengo la tarea a la que debo adjuntar
@@ -191,7 +197,7 @@ function recursivoBalance(modelo){
     var elem = modelo.shift();
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
-    } else if(elem.tipo == "adjunto"){
+    } else if((elem.tipo == "adjunto") && elem.interrumpible){
       modelo.unshift(cierrogw(elem));
     }
     if(elem.sentencia instanceof Array){

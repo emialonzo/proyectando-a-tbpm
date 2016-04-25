@@ -5,6 +5,7 @@ var makeBpmn = require("./makeBpmn");
 var intermedio = require('./modeloIntermedio');
 var procesar = require('./procesamientoModelo');
 var makeDot = require('./makeDot');
+var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
 var yaoqiang = require('../imageJava');
 var env = require('./env');
@@ -90,10 +91,9 @@ function conversion(){
     }
 
     try {
-      var dot = makeDot.toDot(modeloInt);
-      $("#id-dot").html(dot);
-      // console.log("Intentando generar dot");
-      makeDot.executeDot(dot, callbackDot)
+      // var dot = makeDot.toDot(modeloInt);
+      // $("#id-dot").html(dot);
+      // makeDot.executeDot(dot, callbackDot)
 
     } catch (e) {
       console.error("error al obtener graphviz");
@@ -105,7 +105,14 @@ function conversion(){
     try {
       if(conYaoqiang){
         var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
+        // var bpmn = procesar.modelToXML(modeloInt, nombre);
         $("#id-xml-code").text(bpmn);
+        $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
+
+        var dot2 = makeDot2.toDot(bpmn);
+        $("#id-dot").html(dot2);
+        makeDot.executeDot(dot2, callbackDot)
+
         yaoqiang.generarImagen(bpmn, callbackYaoqiang);
         yaoqiang.generarXml(bpmn, callbackXml);
 
