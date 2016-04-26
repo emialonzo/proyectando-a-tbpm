@@ -7,10 +7,10 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id_eventos' name='PoolProcess' processRef='id_eventos'/>
+    <participant id='pool_id_eventos' name='Pool_eventos' processRef='id_eventos'/>
   </collaboration>
   <process id='id_eventos' isExecutable='true' name='eventos'>
-    <laneSet>
+    <laneSet id='laneSet_id_eventos'>
       <lane id='Lane_A' name='A'>
         <flowNodeRef>_3</flowNodeRef>
         <flowNodeRef>_4</flowNodeRef>

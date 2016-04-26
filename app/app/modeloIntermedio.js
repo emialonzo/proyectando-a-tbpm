@@ -101,7 +101,7 @@ function recursivoFlujo(nodox, ant, sig){
     //obtengo flujo de la secuencia interna de la ejecucion del evento adjunto
     var aux
     if(nodo.interrumpible){
-      console.log("Era una tarea interrumpible... deberia ajustar el siguiente");
+      //console.log("Era una tarea interrumpible... deberia ajustar el siguiente");
       aux = recursivoFlujo(nodo.sentencia[0], nodo.id, sig);
     } else{
       aux = recursivoFlujo(nodo.sentencia[0], nodo.id, "F");

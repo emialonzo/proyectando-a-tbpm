@@ -495,8 +495,8 @@ function agregarTemplates(proceso, nombreProceso){
   }
   bpmn.definitions["collaboration"] = []
   var idPool = "pool_" + idProceso;
-  bpmn.definitions.collaboration.push({"participant":{"_id":idPool, "_name":"PoolProcess", "_processRef":idProceso}});
-
+  bpmn.definitions.collaboration.push({"participant":{"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso}});
+  proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
@@ -598,7 +598,6 @@ var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
   proceso.process.serviceTask.push(mailTask.serviceTask);
   proceso.process.intermediateThrowEvent.splice(eventPos,1);
   if (proceso.process.intermediateThrowEvent.length == 0) {
-    console.log("BORRE EL ULTIMO")
     delete proceso.process.intermediateThrowEvent;
   }
 }
