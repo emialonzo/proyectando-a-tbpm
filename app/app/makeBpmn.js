@@ -63,19 +63,19 @@ function asignarElFlujo(nodo){
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       if(condicion){
         losFlujos.push(
-          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
+          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
         );
       }
       else{
         losFlujos.push(
-          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
+          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
         );
       }
     }
   }else{
     for (var i = 0; i < nodo.sig.length; i++) {
       losFlujos.push(
-        {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i]}}
+        {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
       );
     }
   }
@@ -125,40 +125,67 @@ function templateEvento(evento){
   }
 }
 
+var losPools={}
+var losMensajes=[]
+var idMensaje = -100;
+function templateEventoPool(evento, idEvento){
+  var prefijo = "id_"
+  var idPool = prefijo+evento.pool
+  if(evento.tipo == "mensaje"){
+    if(!losPools[evento.pool]){
+      losPools[evento.pool] ={"_id": idPool, "_name":evento.pool}
+    }
+    idMensaje++
+    if(!evento.throw){
+      losMensajes.push({"_id":templateId(idMensaje), "_sourceRef":idPool , "_targetRef":templateId(idEvento)})
+    }else{
+      losMensajes.push({"_id":templateId(idMensaje), "_sourceRef":templateId(idEvento) , "_targetRef":idPool})
+    }
+  }
+}
+
   function templateNodo(nodo){
     var aux;
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-        aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
+        aux = {"userTask":{"_id":templateId(nodo.id) , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
         aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
-        aux = {"serviceTask":{ "_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+        aux = {"serviceTask":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
       }
     }
     if(nodo.tipo =="and"){
-      aux = {"parallelGateway":{ "_id":"_"+nodo.id} }
+      aux = {"parallelGateway":{ "_id":templateId(nodo.id)} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
       if(!nodo.default){
         nodo.default = nodo.sig[0];
       }
-      aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
-      aux = {"boundaryEvent":{"_id":"_"+nodo.id, "_attachedToRef": "_"+nodo.adjunto_a_id } }
+      aux = {"boundaryEvent":{"_id":templateId(nodo.id), "_attachedToRef": "_"+nodo.adjunto_a_id } }
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
-      aux = {"intermediateCatchEvent":{ "_id":"_"+nodo.id} }
-      _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
+      if(nodo.sentencia.evento.throw){
+        aux = {"intermediateThrowEvent":{ "_id":templateId(nodo.id)} }
+        console.log("che guachin aca hay un throw");
+        _.extend(aux.intermediateThrowEvent, templateEvento(nodo.sentencia.evento));
+      }else{
+        aux = {"intermediateCatchEvent":{ "_id":templateId(nodo.id)} }
+        _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
+      }
+      templateEventoPool(nodo.sentencia.evento, nodo.id)
+
     }
     if(nodo.tipo =="cierro"){
-      aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id)} }
       if(nodo.tag == "and"){
-        aux = {"parallelGateway": {"_id":"_"+nodo.id} }
+        aux = {"parallelGateway": {"_id":templateId(nodo.id)} }
       } else if(nodo.tag == "loop"){
-        aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
+        aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
       }
     }
     return aux;
@@ -166,6 +193,10 @@ function templateEvento(evento){
 
   function templateIdFlujo(idFrom, idTo){
     return "_" + idFrom + "__" + idTo
+  }
+
+  function templateId(id){
+    return "_" + id
   }
 
   function getIdCampo(nodo, nombreCampo){
@@ -270,7 +301,7 @@ function agregarPrpiedad(nodo, campo){
 
   var laneSetX = {};
   function laneNodo(nodo){
-    return nodo.id;
+    return templateId(nodo.id);
   }
 
   function asignarALane(nodo){
@@ -288,6 +319,8 @@ function agregarPrpiedad(nodo, campo){
     losNodos = [];
     losFlujos = [];
     propiedadesProceso = {};
+    losPools={}
+    losMensajes=[]
     //inicializo variables locales
     var stack =[];
     var laneActual;
@@ -301,7 +334,7 @@ function agregarPrpiedad(nodo, campo){
         if(!startInsertado){
           var idStart = "idStart";
           losFlujos.push(
-            {"sequenceFlow": {"_id":idStart+"_"+"_"+nodo.id, "_sourceRef":idStart, "_targetRef":"_"+nodo.id }}
+            {"sequenceFlow": {"_id":idStart+"_"+templateId(nodo.id), "_sourceRef":idStart, "_targetRef":templateId(nodo.id) }}
           );
           losNodos.push({"startEvent":{"_id":idStart , "_name":"StartEvent"}});
           startInsertado = true;
@@ -353,15 +386,52 @@ function agregarPrpiedad(nodo, campo){
       "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
       "_xmlns:activiti":"http://activiti.org/bpmn",
     }
-    bpmn.definitions["collaboration"] = []
-    bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
+    // bpmn.definitions["collaboration"] = []
+    bpmn.definitions.collaboration={}
+    bpmn.definitions.collaboration.participant = []
+    //creando un participante por cada mensaje
+    bpmn.definitions.collaboration.participant.push({"_id":"pool_id", "_name":"PoolProcess", "_processRef":idProceso})
+    for (var pool in losPools) {
+      if (losPools.hasOwnProperty(pool)) {
+        bpmn.definitions.collaboration.participant.push(losPools[pool])
+      }
+    }
+    //armando el flujo de mensajes
+    if(losMensajes.length>0){
+      bpmn.definitions.collaboration.messageFlow=[]
+      for (var i = 0; i < losMensajes.length; i++) {
+        var mensaje=losMensajes[i]
+        bpmn.definitions.collaboration.messageFlow.push(mensaje)
+      }
+    }
+    // bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
     process = {}
+    // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
+    // process.laneSet = {};
+    // process.laneSet._id = "wertyujcfghjv"
+    //
+    // process.laneSet.lane = [];
+    // var keys = _.keys(laneSetX);
+    // for (var i = 0; i < keys.length; i++) {
+    //   lane = keys[i];
+    //   var aux = {}
+    //   aux.flowNodeRef = []
+    //   aux["_id"] = templateId(lane);
+    //   aux["_name"] = "nombre_"+lane
+    //   for (var j = 0; j < laneSetX[lane].length; j++) {
+    //     aux.flowNodeRef.push(laneSetX[lane][j]);
+    //   }
+    //   process.laneSet.lane.push(aux);
+    // }
+
     process["_id"] = idProceso;
     process["_isExecutable"] = true
 
-    process.property = []
     for (var prop in propiedadesProceso) {
       if (propiedadesProceso.hasOwnProperty(prop)) {
+        if(!process.property){
+          process.property = []
+        }
         process.property.push(propiedadesProceso[prop]);
       }
     }
@@ -382,20 +452,7 @@ function agregarPrpiedad(nodo, campo){
       process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
 
-    // //agrego info del LANES //FIXME lo saco porque hay problemas aca
-    // process.laneSet = {};
-    // process.laneSet.lane = [];
-    // var keys = _.keys(laneSetX);
-    // for (var i = 0; i < keys.length; i++) {
-    //   lane = keys[i];
-    //   var aux = {}
-    //   aux.flowNodeRef = []
-    //   aux["_id"] = lane;
-    //   for (var j = 0; j < laneSetX[lane].length; j++) {
-    //     aux.flowNodeRef.push(laneSetX[lane][j]);
-    //   }
-    //   process.laneSet.lane.push(aux);
-    // }
+
 
     bpmn.definitions.process = process;
 
