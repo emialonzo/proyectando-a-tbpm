@@ -47,6 +47,14 @@ function ejecutarProceso(){
 
 // console.error = alert;
 
+function saveDiagram() {
+  bpmnModeler.saveXML({ format: true }, function(err, xml) {
+    if(!err){
+      ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
+    }
+  });
+}
+
 function conversion(){
   $("#id-bpmn-model").empty();
   if(bpmnModeler){
@@ -104,8 +112,8 @@ function conversion(){
 
     try {
       if(conYaoqiang){
-        var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         // var bpmn = procesar.modelToXML(modeloInt, nombre);
+        var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         $("#id-xml-code").text(bpmn);
         $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
 
@@ -123,6 +131,10 @@ function conversion(){
           bpmnModeler = new BpmnModeler({
             container: '#canvas'
           });
+
+          var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
+
+          $("#id-modeler-container").prepend(button)
 
           $(".djs-palette-entries div.group").each(function(){
             if($(this).data("group")!= "tools"){
@@ -262,7 +274,7 @@ var ejemploModeloAbstracto;
 
 function posPegError(pegError) {
   // console.log(JSON.stringify(pegError));
-    return [pegError.location.start.offset, pegError.location.end.offset]
+  return [pegError.location.start.offset, pegError.location.end.offset]
 }
 
 function errorParser(pegError){
@@ -271,7 +283,7 @@ function errorParser(pegError){
 
   var str = `<div class="alert alert-`+ tipo +` alert-dismissible" role="alert">
   <button type="button" class="close"
-   data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   ` + pegError + `</div>`
   $("div#id-texto-container div#div-error").prepend(str);
   var pos = posPegError(pegError);
