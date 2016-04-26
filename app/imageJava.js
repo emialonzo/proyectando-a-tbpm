@@ -3,6 +3,10 @@
 var fs = require('fs');
 var nombreArchivo = "salida"
 
+var x2js = require('x2js'); //new X2JS();
+var conv = new x2js();
+
+
 
 var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
 var filePathPng = __dirname + '/' + nombreArchivo + '.png';
@@ -39,8 +43,30 @@ var yaoqiang = function(bpmn,callback, generarXml){
 
   child.on('close', function (code) {
     if(generarXml){
+      //leo archivo xml
       var xml = fs.readFileSync(filePathBpmndi).toString();
-      callback(xml);
+
+      //inicializando ajuste de archivo generado
+      var jsonBpmn = conv.xml_str2json( bpmn );
+      var jsonYao = conv.xml_str2json( xml );
+      //ajustando pools
+      console.log(jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape);
+      var listaShapes = jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape
+      for (var i = 0; i < listaShapes.length; i++) {
+        var shape = listaShapes[i]
+        if(shape.Bounds._width<0){
+          console.log("chingale!!");
+          shape.Bounds._width = 200;
+          shape.Bounds._height = shape.BPMNLabel.Bounds._height
+          // shape.isExpanded="true"
+        }
+        listaShapes[i] = shape
+      }
+      //ajustando condiciones
+      jsonYao.definitions.process.sequenceFlow = jsonBpmn.definitions.process.sequenceFlow
+
+      // callback(xml);
+      callback(conv.json2xml_str(jsonYao))
     }else{
       var base64Image = fs.readFileSync(filePathPng).toString('base64');
       callback(base64Image);
@@ -58,6 +84,7 @@ var generarImagen = function(bpmn, callback){
   }
   yaoqiang(bpmn, callback, false);
 }
+
 var generarXml = function(bpmn, callback){
   try {
     fs.unlinkSync(filePathBpmndi);
