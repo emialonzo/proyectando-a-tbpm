@@ -125,6 +125,25 @@ function templateEvento(evento){
   }
 }
 
+var losPools={}
+var losMensajes=[]
+var idMensaje = -100;
+function templateEventoPool(evento, idEvento){
+  var prefijo = "id_"
+  var idPool = prefijo+evento.pool
+  if(evento.tipo == "mensaje"){
+    if(!losPools[evento.pool]){
+      losPools[evento.pool] ={"_id": idPool, "_name":evento.pool}
+    }
+    idMensaje++
+    if(!evento.throw){
+      losMensajes.push({"_id":templateId(idMensaje), "_sourceRef":idPool , "_targetRef":templateId(idEvento)})
+    }else{
+      losMensajes.push({"_id":templateId(idMensaje), "_sourceRef":templateId(idEvento) , "_targetRef":idPool})
+    }
+  }
+}
+
   function templateNodo(nodo){
     var aux;
     if(nodo.tipo =="task"){
@@ -150,8 +169,16 @@ function templateEvento(evento){
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
-      aux = {"intermediateCatchEvent":{ "_id":"_"+nodo.id} }
-      _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
+      if(nodo.sentencia.evento.throw){
+        aux = {"intermediateThrowEvent":{ "_id":"_"+nodo.id} }
+        console.log("che guachin aca hay un throw");
+        _.extend(aux.intermediateThrowEvent, templateEvento(nodo.sentencia.evento));
+      }else{
+        aux = {"intermediateCatchEvent":{ "_id":"_"+nodo.id} }
+        _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
+      }
+      templateEventoPool(nodo.sentencia.evento, nodo.id)
+
     }
     if(nodo.tipo =="cierro"){
       aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
@@ -166,6 +193,10 @@ function templateEvento(evento){
 
   function templateIdFlujo(idFrom, idTo){
     return "_" + idFrom + "__" + idTo
+  }
+
+  function templateId(id){
+    return "_" + id
   }
 
   function getIdCampo(nodo, nombreCampo){
@@ -288,6 +319,8 @@ function agregarPrpiedad(nodo, campo){
     losNodos = [];
     losFlujos = [];
     propiedadesProceso = {};
+    losPools={}
+    losMensajes=[]
     //inicializo variables locales
     var stack =[];
     var laneActual;
@@ -353,8 +386,25 @@ function agregarPrpiedad(nodo, campo){
       "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
       "_xmlns:activiti":"http://activiti.org/bpmn",
     }
-    bpmn.definitions["collaboration"] = []
-    bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
+    // bpmn.definitions["collaboration"] = []
+    bpmn.definitions.collaboration={}
+    bpmn.definitions.collaboration.participant = []
+    //creando un participante por cada mensaje
+    bpmn.definitions.collaboration.participant.push({"_id":"pool_id", "_name":"PoolProcess", "_processRef":idProceso})
+    for (var pool in losPools) {
+      if (losPools.hasOwnProperty(pool)) {
+        bpmn.definitions.collaboration.participant.push(losPools[pool])
+      }
+    }
+    //armando el flujo de mensajes
+    if(losMensajes.length>0){
+      bpmn.definitions.collaboration.messageFlow=[]
+      for (var i = 0; i < losMensajes.length; i++) {
+        var mensaje=losMensajes[i]
+        bpmn.definitions.collaboration.messageFlow.push(mensaje)
+      }
+    }
+    // bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
     process = {}
     process["_id"] = idProceso;
     process["_isExecutable"] = true
