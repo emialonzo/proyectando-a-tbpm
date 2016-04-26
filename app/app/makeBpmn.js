@@ -301,7 +301,7 @@ function agregarPrpiedad(nodo, campo){
 
   var laneSetX = {};
   function laneNodo(nodo){
-    return nodo.id;
+    return templateId(nodo.id);
   }
 
   function asignarALane(nodo){
@@ -406,12 +406,32 @@ function agregarPrpiedad(nodo, campo){
     }
     // bpmn.definitions.collaboration.push({"participant":{"_id":"pool_id", "_name":"PoolProcess", "_id":"pool_id", "_processRef":idProceso}});
     process = {}
+    // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
+    // process.laneSet = {};
+    // process.laneSet._id = "wertyujcfghjv"
+    //
+    // process.laneSet.lane = [];
+    // var keys = _.keys(laneSetX);
+    // for (var i = 0; i < keys.length; i++) {
+    //   lane = keys[i];
+    //   var aux = {}
+    //   aux.flowNodeRef = []
+    //   aux["_id"] = templateId(lane);
+    //   aux["_name"] = "nombre_"+lane
+    //   for (var j = 0; j < laneSetX[lane].length; j++) {
+    //     aux.flowNodeRef.push(laneSetX[lane][j]);
+    //   }
+    //   process.laneSet.lane.push(aux);
+    // }
+
     process["_id"] = idProceso;
     process["_isExecutable"] = true
 
-    process.property = []
     for (var prop in propiedadesProceso) {
       if (propiedadesProceso.hasOwnProperty(prop)) {
+        if(!process.property){
+          process.property = []
+        }
         process.property.push(propiedadesProceso[prop]);
       }
     }
@@ -432,20 +452,7 @@ function agregarPrpiedad(nodo, campo){
       process["sequenceFlow"].push(losFlujos[i]["sequenceFlow"]);
     }
 
-    // //agrego info del LANES //FIXME lo saco porque hay problemas aca
-    // process.laneSet = {};
-    // process.laneSet.lane = [];
-    // var keys = _.keys(laneSetX);
-    // for (var i = 0; i < keys.length; i++) {
-    //   lane = keys[i];
-    //   var aux = {}
-    //   aux.flowNodeRef = []
-    //   aux["_id"] = lane;
-    //   for (var j = 0; j < laneSetX[lane].length; j++) {
-    //     aux.flowNodeRef.push(laneSetX[lane][j]);
-    //   }
-    //   process.laneSet.lane.push(aux);
-    // }
+
 
     bpmn.definitions.process = process;
 
