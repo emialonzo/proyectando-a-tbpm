@@ -1,5 +1,7 @@
 el A X.
 el A espera por 20 segundos.
-el A espera por mensaje de administracion.
 el A envia mensaje a administracion.
+el A espera por mensaje de administracion.
+el A envia mensaje a urbanizacion.
+el A espera por mensaje de urbanizacion.
 se interrumpe X, si transcurre 20 segundo la A L. fin

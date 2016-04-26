@@ -539,14 +539,24 @@ var agregarTemplateElementos = function(elem) {
     }
     templateSubproceso(elem, subProcessPos, true);
   } else if (elem.tipo == "evento") {
-    if (elem.sentencia.evento.tipo == "mensaje" && elem.sentencia.evento.throw) {
-      for (var i=0; i< proceso.process.intermediateThrowEvent.length; i++) {
-        if (proceso.process.intermediateThrowEvent[i]._id == "_"+elem.id ) {
-          eventPos = i;
-          break;
+    if (elem.sentencia.evento.tipo == "mensaje") {
+      if (elem.sentencia.evento.throw) {
+        for (var i=0; i< proceso.process.intermediateThrowEvent.length; i++) {
+          if (proceso.process.intermediateThrowEvent[i]._id == "_"+elem.id ) {
+            eventPos = i;
+            break;
+          }
         }
+        agregarTemplatesEventoMensajeThrow(elem, eventPos);
+      } else {
+        for (var i=0; i< proceso.process.intermediateCatchEvent.length; i++) {
+          if (proceso.process.intermediateCatchEvent[i]._id == "_"+elem.id ) {
+            eventPos = i;
+            break;
+          }
+        }
+        agregarTemplatesEventoMensajeCatch(elem, eventPos);
       }
-      agregarTemplatesEventoMensaje(elem, eventPos);
     }
   } else if (elem.tipo == "xor") {
     templateExpresiones(elem);
@@ -573,29 +583,37 @@ var agregarTemplateElementos = function(elem) {
   }
 }
 
-//"serviceTask": {
-//  "-id": "elem.id",
-//  "-name": "elem.sentencia.accion",
-//  "-activiti:type": "mail",
-//  "extensionElements": {
-//    "activiti:field": [
-//      {
-//        "-name": "to",
-//        "activiti:expression": "proyectotbpm@gmail.com"
-//      },
-//      {
-//        "-name": "subject",
-//        "activiti:string": elem.sentencia.accion
-//      },
-//      {
-//        "-name": "html",
-//        "activiti:expression": "Se ejecuto el evento."
-//      }
-//    ]
-//  }
-//}
-var agregarTemplatesEventoMensaje = function(elem, eventPos) {
+var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
+  var mailTask = {"serviceTask":{"_id":"_"+elem.id, "_name":"mensaje para "+ elem.sentencia.evento.pool, "_activiti:type":"mail"}};
+  mailTask.serviceTask['extensionElements'] = {
+    'activiti:field':[
+      {"_name": "to","activiti:string": "proyectotbpm@gmail.com"},
+      {"_name": "subject","activiti:string": mailTask.serviceTask._name},
+      {"_name": "html","activiti:string": "Se ejecuto el evento."}
+    ]
+  }
+  if (!proceso.process.serviceTask) {
+    proceso.process.serviceTask = [];
+  }
+  proceso.process.serviceTask.push(mailTask.serviceTask);
+  proceso.process.intermediateThrowEvent.splice(eventPos,1);
+  if (proceso.process.intermediateThrowEvent.length == 0) {
+    console.log("BORRE EL ULTIMO")
+    delete proceso.process.intermediateThrowEvent;
+  }
+}
 
+var agregarTemplatesEventoMensajeCatch = function(elem, eventPos) {
+  var task = {"userTask":{"_id":"_"+elem.id, "_name":"espero mensaje de "+ elem.sentencia.evento.pool}};
+  if (!proceso.process.userTask) {
+    proceso.process.userTask = [];
+  }
+  proceso.process.userTask.push(task.userTask);
+  proceso.process.intermediateCatchEvent.splice(eventPos,1);
+  if (proceso.process.intermediateCatchEvent.length == 0) {
+    console.log("BORRE EL ULTIMO");
+    delete proceso.process.intermediateThrowEvent;
+  }
 }
 
 var templateCampos = function(nodo, taskPos) {

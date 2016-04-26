@@ -16,27 +16,35 @@
         <flowNodeRef>_4</flowNodeRef>
         <flowNodeRef>_5</flowNodeRef>
         <flowNodeRef>_6</flowNodeRef>
-        <flowNodeRef>_9</flowNodeRef>
+        <flowNodeRef>_7</flowNodeRef>
+        <flowNodeRef>_8</flowNodeRef>
+        <flowNodeRef>_11</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
         <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id='_StartEvent_1'/>
     <userTask id='_3' name='X'></userTask>
-    <userTask id='_9' name='L'></userTask>
-    <exclusiveGateway id='_10'></exclusiveGateway>
+    <userTask id='_11' name='L'></userTask>
+    <exclusiveGateway id='_12'></exclusiveGateway>
     <intermediateCatchEvent id='_4'>
       <timerEventDefinition>
         <timeDuration>PT20S</timeDuration>
       </timerEventDefinition>
     </intermediateCatchEvent>
-    <intermediateCatchEvent id='_5'>
+    <intermediateCatchEvent id='_6'>
       <messageEventDefinition messageRef='administracion'/>
     </intermediateCatchEvent>
-    <intermediateThrowEvent id='_6'>
+    <intermediateCatchEvent id='_8'>
+      <messageEventDefinition messageRef='urbanizacion'/>
+    </intermediateCatchEvent>
+    <intermediateThrowEvent id='_5'>
       <messageEventDefinition messageRef='administracion'/>
     </intermediateThrowEvent>
-    <boundaryEvent id='_7' attachedToRef='_3' cancelActivity='true'>
+    <intermediateThrowEvent id='_7'>
+      <messageEventDefinition messageRef='urbanizacion'/>
+    </intermediateThrowEvent>
+    <boundaryEvent id='_9' attachedToRef='_3' cancelActivity='true'>
       <timerEventDefinition>
         <timeDuration>PT20S</timeDuration>
       </timerEventDefinition>
@@ -45,10 +53,12 @@
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
-    <sequenceFlow id='_6_10' sourceRef='_6' targetRef='_10'></sequenceFlow>
-    <sequenceFlow id='_7_9' sourceRef='_7' targetRef='_9'></sequenceFlow>
-    <sequenceFlow id='_9_10' sourceRef='_9' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_6_7' sourceRef='_6' targetRef='_7'></sequenceFlow>
+    <sequenceFlow id='_7_8' sourceRef='_7' targetRef='_8'></sequenceFlow>
+    <sequenceFlow id='_8_12' sourceRef='_8' targetRef='_12'></sequenceFlow>
+    <sequenceFlow id='_9_11' sourceRef='_9' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_11_12' sourceRef='_11' targetRef='_12'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
-    <sequenceFlow id='_10_EndEvent_1' sourceRef='_10' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_12_EndEvent_1' sourceRef='_12' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>
