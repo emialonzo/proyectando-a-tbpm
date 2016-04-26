@@ -63,19 +63,19 @@ function asignarElFlujo(nodo){
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       if(condicion){
         losFlujos.push(
-          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
+          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
         );
       }
       else{
         losFlujos.push(
-          {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
+          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
         );
       }
     }
   }else{
     for (var i = 0; i < nodo.sig.length; i++) {
       losFlujos.push(
-        {"sequenceFlow": {"_id":"_"+nodo.id+"_"+"_"+nodo.sig[i], "_sourceRef":"_"+nodo.id, "_targetRef": "_"+nodo.sig[i]}}
+        {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
       );
     }
   }
@@ -148,44 +148,44 @@ function templateEventoPool(evento, idEvento){
     var aux;
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-        aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
+        aux = {"userTask":{"_id":templateId(nodo.id) , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
         aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
-        aux = {"serviceTask":{ "_id":"_"+nodo.id , "_name":nodo.sentencia.accion}}
+        aux = {"serviceTask":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
       }
     }
     if(nodo.tipo =="and"){
-      aux = {"parallelGateway":{ "_id":"_"+nodo.id} }
+      aux = {"parallelGateway":{ "_id":templateId(nodo.id)} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
       if(!nodo.default){
         nodo.default = nodo.sig[0];
       }
-      aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
-      aux = {"boundaryEvent":{"_id":"_"+nodo.id, "_attachedToRef": "_"+nodo.adjunto_a_id } }
+      aux = {"boundaryEvent":{"_id":templateId(nodo.id), "_attachedToRef": "_"+nodo.adjunto_a_id } }
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
       if(nodo.sentencia.evento.throw){
-        aux = {"intermediateThrowEvent":{ "_id":"_"+nodo.id} }
+        aux = {"intermediateThrowEvent":{ "_id":templateId(nodo.id)} }
         console.log("che guachin aca hay un throw");
         _.extend(aux.intermediateThrowEvent, templateEvento(nodo.sentencia.evento));
       }else{
-        aux = {"intermediateCatchEvent":{ "_id":"_"+nodo.id} }
+        aux = {"intermediateCatchEvent":{ "_id":templateId(nodo.id)} }
         _.extend(aux.intermediateCatchEvent, templateEvento(nodo.sentencia.evento));
       }
       templateEventoPool(nodo.sentencia.evento, nodo.id)
 
     }
     if(nodo.tipo =="cierro"){
-      aux = {"exclusiveGateway": {"_id":"_"+nodo.id} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id)} }
       if(nodo.tag == "and"){
-        aux = {"parallelGateway": {"_id":"_"+nodo.id} }
+        aux = {"parallelGateway": {"_id":templateId(nodo.id)} }
       } else if(nodo.tag == "loop"){
-        aux = {"exclusiveGateway": {"_id":"_"+nodo.id, "_default":templateIdFlujo(nodo.id, nodo.default)} }
+        aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
       }
     }
     return aux;
@@ -334,7 +334,7 @@ function agregarPrpiedad(nodo, campo){
         if(!startInsertado){
           var idStart = "idStart";
           losFlujos.push(
-            {"sequenceFlow": {"_id":idStart+"_"+"_"+nodo.id, "_sourceRef":idStart, "_targetRef":"_"+nodo.id }}
+            {"sequenceFlow": {"_id":idStart+"_"+templateId(nodo.id), "_sourceRef":idStart, "_targetRef":templateId(nodo.id) }}
           );
           losNodos.push({"startEvent":{"_id":idStart , "_name":"StartEvent"}});
           startInsertado = true;
