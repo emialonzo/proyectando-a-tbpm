@@ -30,9 +30,16 @@ function makeAllNivel(lista){
 };
 
 var path = __dirname + "/ejemplos/";;
-var nombreArchivo = "simpleSubproceso";
+var nombreArchivo = "eventos";
 var textosPruebas = fs.readFileSync(path + nombreArchivo).toString();
 
 var modelo = procesamientoModelo.textToModel(textosPruebas);
 modelo = intermedio.procesarModelo(modelo);
 procesamientoModelo.modelToXML(modelo,nombreArchivo);
+
+//var arreglo = [0,1,2,3,4,5]
+//console.log("################### ARREGLO ANTES ###################")
+//console.log(arreglo)
+//arreglo.splice(2,1)
+//console.log("################### ARREGLO DESPUES ###################")
+//console.log(arreglo)

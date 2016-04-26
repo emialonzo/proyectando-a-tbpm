@@ -37,17 +37,11 @@
     <userTask id='_12' name='ofrece serivicio Y'></userTask>
     <userTask id='_14' name='ofrece serivicio Z'></userTask>
     <userTask id='_16' name='ofrece servicio generico'></userTask>
-    <manualTask/>
-    <serviceTask/>
     <exclusiveGateway id='_8' default='8_16'></exclusiveGateway>
     <exclusiveGateway id='_18'></exclusiveGateway>
     <parallelGateway id='_3'></parallelGateway>
     <parallelGateway id='_17'></parallelGateway>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
-    <boundaryEvent/>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
     <sequenceFlow id='_3_5' sourceRef='_3' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_3_7' sourceRef='_3' targetRef='_7'></sequenceFlow>
     <sequenceFlow id='_5_17' sourceRef='_5' targetRef='_17'></sequenceFlow>

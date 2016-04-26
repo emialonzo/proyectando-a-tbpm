@@ -27,16 +27,9 @@
     <userTask id='_6' name='ofrece serivicio X'></userTask>
     <userTask id='_8' name='ofrece serivicio Y'></userTask>
     <userTask id='_10' name='ofrece servicio generico'></userTask>
-    <manualTask/>
-    <serviceTask/>
     <exclusiveGateway id='_4' default='4_10'></exclusiveGateway>
     <exclusiveGateway id='_11'></exclusiveGateway>
-    <parallelGateway/>
-    <intermediateCatchEvent/>
-    <intermediateThrowEvent/>
-    <boundaryEvent/>
     <endEvent id='_EndEvent_1'/>
-    <subProcess/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6' name='servicioEsX'></sequenceFlow>
     <sequenceFlow id='_4_8' sourceRef='_4' targetRef='_8' name='servicioEsY'></sequenceFlow>
