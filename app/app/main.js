@@ -112,8 +112,8 @@ function conversion(){
 
     try {
       if(conYaoqiang){
-        // var bpmn = procesar.modelToXML(modeloInt, nombre);
-        var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
+        var bpmn = procesar.modelToXML(modeloInt, nombre);
+        //var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         $("#id-xml-code").text(bpmn);
         $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
 

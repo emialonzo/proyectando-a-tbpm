@@ -7,11 +7,11 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id_compuertasConExpresiones' name='PoolProcess' processRef='id_compuertasConExpresiones'/>
+    <participant id='pool_id_compuertasConExpresiones' name='Pool_compuertasConExpresiones' processRef='id_compuertasConExpresiones'></participant>
   </collaboration>
   <process id='id_compuertasConExpresiones' isExecutable='true' name='compuertasConExpresiones'>
-    <laneSet>
-      <lane id='Lane_asistente' name='asistente'>
+    <laneSet id='laneSet_id_compuertasConExpresiones'>
+      <lane id='Lane_marketing' name='marketing'>
         <flowNodeRef>_3</flowNodeRef>
         <flowNodeRef>_4</flowNodeRef>
         <flowNodeRef>_6</flowNodeRef>
@@ -27,7 +27,7 @@
     <userTask id='_6' name='ofrece serivicio X'></userTask>
     <userTask id='_8' name='ofrece serivicio Y'></userTask>
     <userTask id='_10' name='ofrece servicio generico'></userTask>
-    <exclusiveGateway id='_4' default='4_10'></exclusiveGateway>
+    <exclusiveGateway id='_4' default='_4_10'></exclusiveGateway>
     <exclusiveGateway id='_11'></exclusiveGateway>
     <endEvent id='_EndEvent_1'/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>

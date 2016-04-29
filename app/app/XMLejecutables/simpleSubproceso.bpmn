@@ -7,10 +7,10 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id_simpleSubproceso' name='PoolProcess' processRef='id_simpleSubproceso'/>
+    <participant id='pool_id_simpleSubproceso' name='Pool_simpleSubproceso' processRef='id_simpleSubproceso'></participant>
   </collaboration>
   <process id='id_simpleSubproceso' isExecutable='true' name='simpleSubproceso'>
-    <laneSet>
+    <laneSet id='laneSet_id_simpleSubproceso'>
       <lane id='Lane_usuario' name='usuario'>
         <flowNodeRef>_3</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
@@ -22,15 +22,15 @@
     <subProcess id='_3' name='compuertasConExpresiones'>
       <startEvent id='compuertasConExpresiones_StartEvent_1'/>
       <endEvent id='compuertasConExpresiones_EndEvent_1'/>
-      <userTask id='compuertasConExpresiones_3' name='elije servicio' activiti:candidateGroups='asistente'>
+      <userTask id='compuertasConExpresiones_3' name='elije servicio' activiti:candidateGroups='marketing'>
         <extensionElements>
-          <activiti:formProperty id='tipoServicio' name='tipoServicio' type='texto' required='true'/>
+          <activiti:formProperty id='tipoServicio' name='tipoServicio' type='string' required='true'/>
         </extensionElements>
       </userTask>
-      <userTask id='compuertasConExpresiones_6' name='ofrece serivicio X'></userTask>
-      <userTask id='compuertasConExpresiones_8' name='ofrece serivicio Y'></userTask>
-      <userTask id='compuertasConExpresiones_10' name='ofrece servicio generico'></userTask>
-      <exclusiveGateway id='compuertasConExpresiones_4' default='4_10'></exclusiveGateway>
+      <userTask id='compuertasConExpresiones_6' name='ofrece serivicio X' activiti:candidateGroups='marketing'></userTask>
+      <userTask id='compuertasConExpresiones_8' name='ofrece serivicio Y' activiti:candidateGroups='marketing'></userTask>
+      <userTask id='compuertasConExpresiones_10' name='ofrece servicio generico' activiti:candidateGroups='marketing'></userTask>
+      <exclusiveGateway id='compuertasConExpresiones_4' default='compuertasConExpresiones_4_10'></exclusiveGateway>
       <exclusiveGateway id='compuertasConExpresiones_11'></exclusiveGateway>
       <sequenceFlow id='compuertasConExpresiones_3_4' sourceRef='compuertasConExpresiones_3' targetRef='compuertasConExpresiones_4'></sequenceFlow>
       <sequenceFlow id='compuertasConExpresiones_4_6' sourceRef='compuertasConExpresiones_4' targetRef='compuertasConExpresiones_6' name='servicioEsX'>

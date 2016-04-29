@@ -5,7 +5,6 @@ var x2js = require('x2js');
 var subproceso = require('./subproceso');
 var env = require('./env');
 var fs = require('fs');
-var conSubproceso = env.conSubproceso;
 
 var proceso = {
   collaboration : {
@@ -490,7 +489,7 @@ var conectarEndEvent = function(modelo) {
 var agregarSubprocesos = function(modelo, proceso) {
   for (var i=0; i<modelo.sentencia.length; i++) {
     var elem = modelo.sentencia[i];
-    if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
+    if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && env.conSubproceso) {
       var subProcessPos = 0;
       for (var i=0; i< proceso.process.subProcess.length; i++) {
         if (proceso.process.subProcess[i]._id == elem.id) {
@@ -556,7 +555,7 @@ var agregarTemplateElementos = function(elem) {
         }
       }
       //FIXME hay que ver si agregan algo para ejecutarla
-  } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && conSubproceso) {
+  } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && env.conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
       if (proceso.process.subProcess[i]._id == "_"+elem.id) {
@@ -624,42 +623,42 @@ var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
   proceso.process.serviceTask.push(mailTask.serviceTask);
   proceso.process.intermediateThrowEvent.splice(eventPos,1);
   if (proceso.process.intermediateThrowEvent.length == 0) {
-    delete proceso.process.intermediateThrowEvent;
+    delete(proceso.process.intermediateThrowEvent);
   }
 }
 
 var agregarTemplatesEventoMensajeCatch = function(elem, eventPos) {
-  var task = {"userTask":{"_id":"_"+elem.id, "_name":"espero mensaje de "+ elem.sentencia.evento.pool}};
+  var task = {"userTask":{"_id":"_"+elem.id, "_name":"espero mensaje de "+ elem.sentencia.evento.pool, "_activiti:candidateGroups":elem.sentencia.actor}};
   if (!proceso.process.userTask) {
     proceso.process.userTask = [];
   }
   proceso.process.userTask.push(task.userTask);
   proceso.process.intermediateCatchEvent.splice(eventPos,1);
   if (proceso.process.intermediateCatchEvent.length == 0) {
-    console.log("BORRE EL ULTIMO");
-    delete proceso.process.intermediateThrowEvent;
+    delete proceso.process.intermediateCatchEvent;
   }
 }
 
 var templateCampos = function(nodo, taskPos) {
+  aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
   if(nodo.sentencia.campos){
-    aux = {"userTask":{"_id":"_"+nodo.id , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
     aux.userTask['extensionElements'] = {
       'formProperty' : []
     }
     for (var i = 0; i < nodo.sentencia.campos.length; i++) {
       var campo = nodo.sentencia.campos[i];
-      var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":campo.tipo, "_required":campo.obligatorio};
+      var formProperty = {"__prefix":"activiti", "_id":campo.nombre, "_name":campo.nombre, "_type":"string", "_required":campo.obligatorio};
       aux.userTask.extensionElements.formProperty.push(formProperty);
     }
-    proceso.process.userTask[taskPos] = aux.userTask;
   }
+  proceso.process.userTask[taskPos] = aux.userTask;
 }
 
 var templateServiceTask = function(elem, taskPos) {
   //FIXME si se quisiera cambiar la implementacion del web service hay que cambiar el nombre de la clase
-  var nombreClaseJava = "ImplementacionWebService";
-  aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":"org.activiti." + nombreClaseJava}}
+  var classpath = "org.proyecto.";
+  var nombreClase = "Servicetask";
+  aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":classpath + nombreClase}}
   proceso.process.serviceTask[taskPos] = aux.serviceTask;
 }
 
@@ -772,6 +771,9 @@ var ajustarIDs = function(proceso, subproceso) {
   // EXCLUSIVE GATEWAYS
   if (proceso.exclusiveGateway) {
     for (var i=0; i< proceso.exclusiveGateway.length; i++) {
+      if (proceso.exclusiveGateway[i]._default) {
+        proceso.exclusiveGateway[i]._default = prefix + proceso.exclusiveGateway[i]._default;
+      }
       proceso.exclusiveGateway[i]._id = prefix + proceso.exclusiveGateway[i]._id;
     }
   }
@@ -884,7 +886,7 @@ var modelToXML = function (modelo, nombreProceso) {
   var path = __dirname + "/XMLbasicos/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  generarXMLejecutable(modelo, proceso, nombreProceso);
+  bpmn = generarXMLejecutable(modelo, proceso, nombreProceso);
   //console.log("############################# XML basico ###########################")
   //console.log(pd.xml(bpmn));
   //console.log("####################################################################")
@@ -901,6 +903,7 @@ var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
+  return bpmn
   //console.log("############################# XML ejecutable ###########################")
   //console.log(pd.xml(bpmn));
   //console.log("########################################################################")
@@ -917,3 +920,10 @@ module.exports = {
   generarXMLejecutable : generarXMLejecutable,
   xml2json : xml2json,
 }
+
+/*
+//FIXME LOOP PARA EL SUBPROCESO
+<multiInstanceLoopCharacteristics isSequential="false">
+  <loopCardinality>2</loopCardinality>
+</multiInstanceLoopCharacteristics>
+*/
