@@ -50,12 +50,10 @@ var yaoqiang = function(bpmn,callback, generarXml){
       var jsonBpmn = conv.xml_str2json( bpmn );
       var jsonYao = conv.xml_str2json( xml );
       //ajustando pools
-      console.log(jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape);
       var listaShapes = jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape
       for (var i = 0; i < listaShapes.length; i++) {
         var shape = listaShapes[i]
         if(shape.Bounds._width<0){
-          console.log("chingale!!");
           shape.Bounds._width = 200;
           shape.Bounds._height = shape.BPMNLabel.Bounds._height
           // shape.isExpanded="true"
@@ -63,10 +61,11 @@ var yaoqiang = function(bpmn,callback, generarXml){
         listaShapes[i] = shape
       }
       //ajustando condiciones
-      jsonYao.definitions.process.sequenceFlow = jsonBpmn.definitions.process.sequenceFlow
+      // jsonYao.definitions.process.sequenceFlow = jsonBpmn.definitions.process.sequenceFlow
+      jsonBpmn.definitions.BPMNDiagram = jsonYao.definitions.BPMNDiagram;
 
       // callback(xml);
-      callback(conv.json2xml_str(jsonYao))
+      callback(conv.json2xml_str(jsonBpmn))
     }else{
       var base64Image = fs.readFileSync(filePathPng).toString('base64');
       callback(base64Image);
