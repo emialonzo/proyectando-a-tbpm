@@ -8,6 +8,10 @@ var fs = require('fs');
 var conSubproceso = env.conSubproceso;
 
 var proceso = {
+  collaboration : {
+    participant : [],
+    messageFlow : []
+  },
   process : {
     laneSet : {
       lane : []
@@ -40,6 +44,10 @@ var options = {
 //Inicializo estructuras
 var start = function(model) {
   proceso = {
+    collaboration : {
+      participant : [],
+      messageFlow : []
+    },
     process : {
       laneSet : {
         lane : []
@@ -154,6 +162,20 @@ var extensionEvento = function(elem, evento) {
   _.extend(elem, extensionEvento);
 }
 
+var generarPool = function(evento, idEvento) {
+  var prefix = "pool_id_"
+  var idPool = prefix + evento.pool;
+  if (!_.find(proceso.collaboration.participant, function(val){return val._id == idPool})) {
+    proceso.collaboration.participant.push({"_id": idPool, "_name":evento.pool});
+  }
+  var idMensaje = "mensaje_" + idEvento;
+  if (evento.throw) {
+    proceso.collaboration.messageFlow.push({"_id":idMensaje, "_sourceRef":"_"+idEvento , "_targetRef":idPool})
+  } else {
+    proceso.collaboration.messageFlow.push({"_id":idMensaje, "_sourceRef":idPool , "_targetRef":"_"+idEvento})
+  }
+}
+
 //Segunda iteracion de procesamiento del modelo
 //Generlo los elementos XML correspondientes a
 //las tareas, eventos y compuertas
@@ -182,10 +204,12 @@ var obtenerTareas = function(elem) {
         var intermediateThrowEvent = {"_id":elem.id};
         extensionEvento(intermediateThrowEvent, elem.sentencia.evento);
         proceso.process.intermediateThrowEvent.push(intermediateThrowEvent);
+        generarPool(elem.sentencia.evento, elem.id)
       } else {
         var intermediateCatchEvent = {"_id":elem.id};
         extensionEvento(intermediateCatchEvent, elem.sentencia.evento);
         proceso.process.intermediateCatchEvent.push(intermediateCatchEvent);
+        generarPool(elem.sentencia.evento, elem.id)
       }
     }
   } else if (elem.tipo == "xor") {
@@ -493,10 +517,12 @@ function agregarTemplates(proceso, nombreProceso){
     "_expressionLanguage":"http://www.w3.org/1999/XPath",
     "_targetNamespace":"http://sourceforge.net/bpmn/definitions/_1459655886338",
   }
-  bpmn.definitions["collaboration"] = []
+
   var idPool = "pool_" + idProceso;
-  bpmn.definitions.collaboration.push({"participant":{"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso}});
+  proceso.collaboration.participant.push({"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso});
+
   proceso.process.laneSet._id = "laneSet_"+idProceso;
+  bpmn.definitions.collaboration = proceso.collaboration;
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
@@ -819,8 +845,15 @@ var limpiarProceso = function(proceso) {
   if (proceso.process.subProcess.length == 0) {
     delete(proceso.process.subProcess);
   }
-
+  if (proceso.collaboration.messageFlow.length == 0) {
+    delete(proceso.collaboration.messageFlow);
+  }
   return proceso;
+}
+
+var limpiarProcesoEjecutable = function(proceso) {
+  delete(proceso.collaboration.messageFlow)
+  proceso.collaboration.participant = [];
 }
 
 var textToModel = function(texto) {
@@ -862,6 +895,7 @@ var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     agregarTemplateElementos(modelo.sentencia[i]);
   }
+  limpiarProcesoEjecutable(proceso);
   var bpmn = agregarTemplates(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLejecutables/";
