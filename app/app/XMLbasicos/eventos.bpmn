@@ -10,61 +10,43 @@
     <participant id='pool_id_administracion' name='administracion'></participant>
     <participant id='pool_id_urbanizacion' name='urbanizacion'></participant>
     <participant id='pool_id_eventos' name='Pool_eventos' processRef='id_eventos'></participant>
-    <messageFlow id='mensaje_5' sourceRef='_5' targetRef='pool_id_administracion'></messageFlow>
-    <messageFlow id='mensaje_6' sourceRef='pool_id_administracion' targetRef='_6'></messageFlow>
-    <messageFlow id='mensaje_7' sourceRef='_7' targetRef='pool_id_urbanizacion'></messageFlow>
-    <messageFlow id='mensaje_8' sourceRef='pool_id_urbanizacion' targetRef='_8'></messageFlow>
+    <messageFlow id='mensaje_4' sourceRef='_4' targetRef='pool_id_administracion'></messageFlow>
+    <messageFlow id='mensaje_5' sourceRef='pool_id_administracion' targetRef='_5'></messageFlow>
+    <messageFlow id='mensaje_6' sourceRef='_6' targetRef='pool_id_urbanizacion'></messageFlow>
+    <messageFlow id='mensaje_7' sourceRef='pool_id_urbanizacion' targetRef='_7'></messageFlow>
   </collaboration>
   <process id='id_eventos' isExecutable='true' name='eventos'>
     <laneSet id='laneSet_id_eventos'>
-      <lane id='Lane_A' name='A'>
+      <lane id='Lane_marketing' name='marketing'>
         <flowNodeRef>_3</flowNodeRef>
         <flowNodeRef>_4</flowNodeRef>
         <flowNodeRef>_5</flowNodeRef>
         <flowNodeRef>_6</flowNodeRef>
         <flowNodeRef>_7</flowNodeRef>
-        <flowNodeRef>_8</flowNodeRef>
-        <flowNodeRef>_11</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
         <flowNodeRef>_EndEvent_1</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id='_StartEvent_1'/>
-    <userTask id='_3' name='X'></userTask>
-    <userTask id='_11' name='L'></userTask>
-    <exclusiveGateway id='_12'></exclusiveGateway>
-    <intermediateCatchEvent id='_4'>
-      <timerEventDefinition>
-        <timeDuration>PT20S</timeDuration>
-      </timerEventDefinition>
-    </intermediateCatchEvent>
-    <intermediateCatchEvent id='_6'>
+    <userTask id='_3' name='comienza el proceso'></userTask>
+    <intermediateCatchEvent id='_5'>
       <messageEventDefinition messageRef='administracion'/>
     </intermediateCatchEvent>
-    <intermediateCatchEvent id='_8'>
+    <intermediateCatchEvent id='_7'>
       <messageEventDefinition messageRef='urbanizacion'/>
     </intermediateCatchEvent>
-    <intermediateThrowEvent id='_5'>
+    <intermediateThrowEvent id='_4'>
       <messageEventDefinition messageRef='administracion'/>
     </intermediateThrowEvent>
-    <intermediateThrowEvent id='_7'>
+    <intermediateThrowEvent id='_6'>
       <messageEventDefinition messageRef='urbanizacion'/>
     </intermediateThrowEvent>
-    <boundaryEvent id='_9' attachedToRef='_3' cancelActivity='true'>
-      <timerEventDefinition>
-        <timeDuration>PT20S</timeDuration>
-      </timerEventDefinition>
-    </boundaryEvent>
     <endEvent id='_EndEvent_1'/>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
     <sequenceFlow id='_6_7' sourceRef='_6' targetRef='_7'></sequenceFlow>
-    <sequenceFlow id='_7_8' sourceRef='_7' targetRef='_8'></sequenceFlow>
-    <sequenceFlow id='_8_12' sourceRef='_8' targetRef='_12'></sequenceFlow>
-    <sequenceFlow id='_9_11' sourceRef='_9' targetRef='_11'></sequenceFlow>
-    <sequenceFlow id='_11_12' sourceRef='_11' targetRef='_12'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
-    <sequenceFlow id='_12_EndEvent_1' sourceRef='_12' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_7_EndEvent_1' sourceRef='_7' targetRef='_EndEvent_1'></sequenceFlow>
   </process>
 </definitions>
