@@ -117,9 +117,13 @@ function conversion(){
         $("#id-xml-code").text(bpmn);
         $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
 
-        var dot2 = makeDot2.toDot(bpmn);
-        $("#id-dot").html(dot2);
-        makeDot.executeDot(dot2, callbackDot)
+        try{
+          var dot2 = makeDot2.toDot(bpmn);
+          $("#id-dot").html(dot2);
+          makeDot.executeDot(dot2, callbackDot)
+        } catch(e){
+          $("#id-dot").html("error!!");
+        }
 
         yaoqiang.generarImagen(bpmn, callbackYaoqiang);
         yaoqiang.generarXml(bpmn, callbackXml);
