@@ -357,11 +357,6 @@ var asociarElementosLanes = function(elem) {
 //Cuarta iteracion de procesamiento del modelo
 //Genero los elementos XML necesarios para los flujos
 var procesarFlujos = function(elem) {
-  console.log("########################## ELEM ############################")
-  console.log(elem.sig.length)
-  console.log("############################################################")
-  console.log(pd.json(elem))
-  console.log("############################################################")
   for (var i = 0; i < elem.sig.length; i++) {
     if (elem.sig[i] != "F") {
       var idFlujo = elem.id + "_" + elem.sig[i];
@@ -378,7 +373,10 @@ var procesarFlujos = function(elem) {
           var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
           gw._default = idFlujo;
         } else {
-          flujo._name = "elem.expresion";
+          console.log("########################## EXPRESION ############################")
+          console.log(elem.expresion)
+          console.log("############################################################")
+          flujo._name = elem.expresion;
         }
       }
       proceso.process.sequenceFlow.push(flujo);
