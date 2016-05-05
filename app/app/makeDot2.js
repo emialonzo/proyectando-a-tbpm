@@ -50,7 +50,14 @@ function processXml(xml){
   if(proceso.sequenceFlow){
     for (var i = 0; i < proceso.sequenceFlow.length; i++) {
       var sec = proceso.sequenceFlow[i]
-      flujodot.push(sec._sourceRef + " -> " + sec._targetRef)
+      var cond = ""
+      if(sec.conditionExpression){
+        console.log("----->");
+        console.log(sec.conditionExpression.__cdata.replace(/\"/g, "\\\""));
+        console.log("<-----");
+         cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
+      }
+      flujodot.push(sec._sourceRef + " -> " + sec._targetRef + cond)
     }
   }
   //armando tareas
