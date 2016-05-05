@@ -15,7 +15,7 @@ var proceso = {
     laneSet : {
       lane : []
     },
-    startEvent : {},
+    startEvent : [],
     userTask : [],
     manualTask : [],
     serviceTask : [],
@@ -24,13 +24,28 @@ var proceso = {
     intermediateCatchEvent : [],
     intermediateThrowEvent : [],
     boundaryEvent : [],
-    endEvent : {},
+    endEvent : [],
     subProcess : [],
     sequenceFlow : []
   }
 };
 
-var conv = new x2js();
+var conv = new x2js({
+  arrayAccessFormPaths : [
+    "definitions.process.startEvent" ,
+    "definitions.process.userTask" ,
+    "definitions.process.manualTask" ,
+    "definitions.process.serviceTask" ,
+    "definitions.process.exclusiveGateway" ,
+    "definitions.process.parallelGateway" ,
+    "definitions.process.intermediateCatchEvent" ,
+    "definitions.process.intermediateThrowEvent" ,
+    "definitions.process.boundaryEvent" ,
+    "definitions.process.endEvent" ,
+    "definitions.process.subProcess" ,
+    "definitions.process.sequenceFlow"
+  ]
+});
 var SequenceFlow_GlobalID = 1;
 var path = __dirname;
 
@@ -51,7 +66,7 @@ var start = function(model) {
       laneSet : {
         lane : []
       },
-      startEvent : {},
+      startEvent : [],
       userTask : [],
       manualTask : [],
       serviceTask : [],
@@ -60,17 +75,17 @@ var start = function(model) {
       intermediateCatchEvent : [],
       intermediateThrowEvent : [],
       boundaryEvent : [],
-      endEvent : {},
+      endEvent : [],
       subProcess : [],
       sequenceFlow : []
     }
   };
-  proceso.process.startEvent = {
+  proceso.process.startEvent.push({
     "_id":"StartEvent_1"
-  };
-  proceso.process.endEvent = {
+  });
+  proceso.process.endEvent.push({
     "_id":"EndEvent_1"
-  }
+  });
 }
 
 //Primera iteracion de procesamieno del modelo
@@ -80,13 +95,13 @@ var obtenerLanes = function(elem) {
   if (elem.tipo == "task") {
     if (_.find(proceso.process.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
       proceso.process.laneSet.lane.push(
-        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
+        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor.replace(/\s/g,'_'),
          "_name": elem.sentencia.actor});
     }
   } else if (elem.tipo == "evento") {
     if (_.find(proceso.process.laneSet.lane, function(val){ return val._name == elem.sentencia.actor}) == null) {
       proceso.process.laneSet.lane.push(
-        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor,
+        {"flowNodeRef": [],"_id" : "Lane_"+elem.sentencia.actor.replace(/\s/g,'_'),
          "_name": elem.sentencia.actor});
     }
   } else if (elem.tipo == "xor") {
@@ -328,6 +343,8 @@ var asociarElementosLanes = function(elem) {
       cierra = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
       var nodeRef = {"__text":cierra._id}
       lane.flowNodeRef.push(nodeRef);
+    } else if (elem.sentencia == "adjunto") {
+
     }
   } else if (elem.tipo == "adjunto") {
     for (var i=0; i < elem.sentencia.length; i++) {
@@ -340,6 +357,11 @@ var asociarElementosLanes = function(elem) {
 //Cuarta iteracion de procesamiento del modelo
 //Genero los elementos XML necesarios para los flujos
 var procesarFlujos = function(elem) {
+  console.log("########################## ELEM ############################")
+  console.log(elem.sig.length)
+  console.log("############################################################")
+  console.log(pd.json(elem))
+  console.log("############################################################")
   for (var i = 0; i < elem.sig.length; i++) {
     if (elem.sig[i] != "F") {
       var idFlujo = elem.id + "_" + elem.sig[i];
@@ -355,6 +377,8 @@ var procesarFlujos = function(elem) {
         if (elem.sig[i] != elem.ref) {
           var gw = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == elem.id});
           gw._default = idFlujo;
+        } else {
+          flujo._name = "elem.expresion";
         }
       }
       proceso.process.sequenceFlow.push(flujo);
@@ -393,7 +417,7 @@ var generarFlujos = function(modelo) {
 
 var conectarStartEvent = function(modelo) {
   var primero = modelo[0];
-  var flujoStartEvent = {"_id":"", "_sourceRef":proceso.process.startEvent._id, "_targetRef": ""};
+  var flujoStartEvent = {"_id":"", "_sourceRef":proceso.process.startEvent[0]._id, "_targetRef": ""};
   if (primero.tipo == "task") {
     var task;
     if (primero.sentencia.task == "service") {
@@ -405,19 +429,19 @@ var conectarStartEvent = function(modelo) {
     } else if (primero.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == primero.id});
     }
-    flujoStartEvent._id = proceso.process.startEvent._id + "_" + task._id;
+    flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + task._id;
     flujoStartEvent._targetRef = task._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (primero.tipo == "and") {
     var andGW = _.find(proceso.process.parallelGateway, function(val) {return val._id == primero.id});
-    flujoStartEvent._id = proceso.process.startEvent._id + "_" + andGW._id;
+    flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + andGW._id;
     flujoStartEvent._targetRef = andGW._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   } else if (primero.tipo == "xor") {
     var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == primero.id});
-    flujoStartEvent._id = proceso.process.startEvent._id + "_" + xorGW._id;
+    flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + xorGW._id;
     flujoStartEvent._targetRef = xorGW._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
@@ -425,9 +449,13 @@ var conectarStartEvent = function(modelo) {
     var loopGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == primero.id});
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.lane});
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
-  } else if (ultimo.tipo == "evento") {
-    var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == ultimo.id});
+    flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + loopGW._id;
+    flujoStartEvent._targetRef = loopGW._id;
+  } else if (primero.tipo == "evento") {
+    var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == primero.id});
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
+    flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + evento._id;
+    flujoStartEvent._targetRef = evento._id;
     lane.flowNodeRef.push({"__text":"StartEvent_1"});
   }
   proceso.process.sequenceFlow.push(flujoStartEvent);
@@ -435,7 +463,7 @@ var conectarStartEvent = function(modelo) {
 
 var conectarEndEvent = function(modelo) {
   var ultimo = modelo[modelo.length-1];
-  var flujo = {"_id":"", "_sourceRef":"", "_targetRef": proceso.process.endEvent._id};
+  var flujo = {"_id":"", "_sourceRef":"", "_targetRef": proceso.process.endEvent[0]._id};
   if (ultimo.tipo == "task") {
     var task;
     if (ultimo.sentencia.task == "service") {
@@ -474,7 +502,8 @@ var conectarEndEvent = function(modelo) {
     } else if (ultimo.tag == "loop") {
       var loopGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
       flujo._id = loopGW._id + "_EndEvent_1"
-      flujo._sourceRef = loopGW._id
+      flujo._sourceRef = loopGW._id;
+      loopGW._default = flujo._id;
     } else if (ultimo.tag == "adjunto") {
       var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
       flujo._id = xorGW._id + "_EndEvent_1"
@@ -687,37 +716,39 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable) {
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
   jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process,elem.sentencia.accion)
   var auxSubProceso = {"subprocess":{"_id":"_"+elem.id,"_name":elem.sentencia.accion}};
-  auxSubProceso.subprocess.startEvent = jsonSubProceso.definitions.process.startEvent;
-  auxSubProceso.subprocess.endEvent = jsonSubProceso.definitions.process.endEvent;
+  auxSubProceso.subprocess.startEvent = [];
+  auxSubProceso.subprocess.startEvent.push(jsonSubProceso.definitions.process.startEvent[0]);
+  auxSubProceso.subprocess.endEvent = [];
+  auxSubProceso.subprocess.endEvent.push(jsonSubProceso.definitions.process.endEvent[0]);
   if (jsonSubProceso.definitions.process.userTask && jsonSubProceso.definitions.process.userTask.length > 0) {
-     auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
+    auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
   }
   if (jsonSubProceso.definitions.process.serviceTask && jsonSubProceso.definitions.process.serviceTask.length > 0) {
-     auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
+    auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
   }
   if (jsonSubProceso.definitions.process.manualTask && jsonSubProceso.definitions.process.manualTask.length > 0) {
-     auxSubProceso.subprocess.manualTask = jsonSubProceso.definitions.process.manualTask;
+    auxSubProceso.subprocess.manualTask = jsonSubProceso.definitions.process.manualTask;
   }
   if (jsonSubProceso.definitions.process.exclusiveGateway && jsonSubProceso.definitions.process.exclusiveGateway.length > 0) {
-     auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
+    auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
   }
   if (jsonSubProceso.definitions.process.parallelGateway && jsonSubProceso.definitions.process.parallelGateway.length > 0) {
-     auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
+    auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
   }
   if (jsonSubProceso.definitions.process.intermediateCatchEvent && jsonSubProceso.definitions.process.intermediateCatchEvent.length > 0) {
-     auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
+    auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
   }
   if (jsonSubProceso.definitions.process.intermediateThrowEvent && jsonSubProceso.definitions.process.intermediateThrowEvent.length > 0) {
-     auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
+    auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
   }
   if (jsonSubProceso.definitions.process.boundaryEvent && jsonSubProceso.definitions.process.boundaryEvent.length > 0) {
-     auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
+    auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
   }
   if (jsonSubProceso.definitions.process.subProcess && jsonSubProceso.definitions.process.subProcess.length > 0) {
-     auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
+    auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
   }
   if (jsonSubProceso.definitions.process.sequenceFlow && jsonSubProceso.definitions.process.sequenceFlow.length > 0) {
-     auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
+    auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
   }
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
@@ -740,8 +771,16 @@ var ajustarIDs = function(proceso, subproceso) {
   } else {
     prefix = subproceso;
   }
-  proceso.startEvent._id = prefix + proceso.startEvent._id;
-  proceso.endEvent._id = prefix + proceso.endEvent._id;
+  if (proceso.startEvent) {
+    for (var i=0; i< proceso.startEvent.length; i++) {
+      proceso.startEvent[i]._id = prefix + proceso.startEvent[i]._id;
+    }
+  }
+  if (proceso.endEvent) {
+    for (var i=0; i< proceso.endEvent.length; i++) {
+      proceso.endEvent[i]._id = prefix + proceso.endEvent[i]._id;
+    }
+  }
   // LANES
   if (subproceso == "") {
     for (var i=0; i< proceso.laneSet.lane.length; i++) {
@@ -887,9 +926,6 @@ var modelToXML = function (modelo, nombreProceso) {
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
   bpmn = generarXMLejecutable(modelo, proceso, nombreProceso);
-  //console.log("############################# XML basico ###########################")
-  //console.log(pd.xml(bpmn));
-  //console.log("####################################################################")
   return pd.xml(bpmn);
 }
 
@@ -903,10 +939,7 @@ var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  return bpmn
-  //console.log("############################# XML ejecutable ###########################")
-  //console.log(pd.xml(bpmn));
-  //console.log("########################################################################")
+  return bpmn;
 }
 
 var xml2json = function(bpmn){

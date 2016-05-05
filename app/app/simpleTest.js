@@ -30,7 +30,7 @@ function makeAllNivel(lista){
 };
 
 var path = __dirname + "/ejemplos/";;
-var nombreArchivo = "eventos";
+var nombreArchivo = "biblioteca";
 var textosPruebas = fs.readFileSync(path + nombreArchivo).toString();
 
 var modelo = procesamientoModelo.textToModel(textosPruebas);

@@ -65,13 +65,14 @@ tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "añ
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 
 
-servicio_id = "ejecuta el servicio"
+servicio_id = "utiliza el servicio"
+subproceso_id = "utiliza el subproceso"
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "realiza la tarea manual" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "manual"};}
-              /ws actor:actor ws "ejecuta el servicio" ws accion:accion ws punto
+              /ws actor:actor ws servicio_id ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "service"};}
-              / ws actor:actor ws "ejecuta el subproceso" ws accion:accion ws punto
+              / ws actor:actor ws subproceso_id ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "subproceso"};}
               / ws actor:actor ws accion:accion ws punto ws (campos:sent_campos?)
               { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
