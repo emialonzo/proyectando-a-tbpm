@@ -50,7 +50,14 @@ function processXml(xml){
   if(proceso.sequenceFlow){
     for (var i = 0; i < proceso.sequenceFlow.length; i++) {
       var sec = proceso.sequenceFlow[i]
-      flujodot.push(sec._sourceRef + " -> " + sec._targetRef)
+      var cond = ""
+      if(sec.conditionExpression){
+        console.log("----->");
+        console.log(sec.conditionExpression.__cdata.replace(/\"/g, "\\\""));
+        console.log("<-----");
+         cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
+      }
+      flujodot.push(sec._sourceRef + " -> " + sec._targetRef + cond)
     }
   }
   //armando tareas
@@ -60,6 +67,28 @@ function processXml(xml){
       flujodot.push(templateTarea(tarea._id, "TareaUsuario:" + saltoLinea + tarea._name, "seagreen1"))
     }
   }
+
+  if(proceso.manualTask){
+    for (var i = 0; i < proceso.manualTask.length; i++) {
+      var tarea = proceso.manualTask[i]
+      flujodot.push(templateTarea(tarea._id, "manualTask:" + saltoLinea + tarea._name, "seagreen2"))
+    }
+  }
+
+  if(proceso.subProcess){
+    for (var i = 0; i < proceso.subProcess.length; i++) {
+      var tarea = proceso.subProcess[i]
+      flujodot.push(templateTarea(tarea._id, "subProcess:" + saltoLinea + tarea._name, "seagreen3"))
+    }
+  }
+
+  if(proceso.serviceTask){
+    for (var i = 0; i < proceso.serviceTask.length; i++) {
+      var tarea = proceso.serviceTask[i]
+      flujodot.push(templateTarea(tarea._id, "serviceTask:" + saltoLinea + tarea._name, "seagreen4"))
+    }
+  }
+
 
   templateCapturaEvento(proceso)
 

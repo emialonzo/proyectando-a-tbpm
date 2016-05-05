@@ -27,6 +27,9 @@ var cierrogw = function (elem){
     "ref": elem.id,
     "id": globalId++
   }
+  if(elem.expresion){
+    nodo.expresion = elem.expresion
+  }
   dicccionarioId[nodo.id] = nodo;
   return nodo;
 }
@@ -93,6 +96,10 @@ function recursivoFlujo(nodox, ant, sig){
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
     nodo.default = nodo.sig[0];
+
+    nodo.condiciones = {}
+    nodo.condiciones[nodo.ref] = nodo.expresion
+    
     nodo.sig.push(nodo.ref);
     //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
@@ -200,6 +207,7 @@ function recursivoBalance(modelo){
     } else if((elem.tipo == "adjunto") && elem.interrumpible){
       modelo.unshift(cierrogw(elem));
     }
+
     if(elem.sentencia instanceof Array){
       elem.sentencia = recursivoBalance(elem.sentencia);
     }
@@ -347,28 +355,22 @@ var asociarExpresiones = function(modelo, expresiones) {
         nodo.condiciones = {}
         for (var i=0; i < nodo.sentencia.length; i++) {
           if (nodo.sentencia[i].condicion != "defecto") {
-            nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = nodo.sentencia[i].expresion; //FIXME MUY desprolijo
-            // for (var j=0; j < expresiones.length; j++) {
-            //   if (expresiones[j].condicion == nodo.sentencia[i].condicion) {
-            //     // nodo.sentencia[i].expresion = expresiones[i].expresion;
-            //     nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = nodo.sentencia[i].expresion; //FIXME MUY desprolijo
-            //     // nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = expresiones[i].expresion; //FIXME MUY desprolijo
-            //     break;
-            //   }
-            // }
-
+            nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = nodo.sentencia[i].expresion;
           }
           else{
             nodo.default = nodo.sentencia[i].sentencia[0].id;
           }
         }
-      } else {
+      }
+      // else if(nodo.tipo == "loop") {
+      //
+      // } //else {
         if(nodo.sentencia instanceof Array){
           for (var i = nodo.sentencia.length-1; i >= 0; i--) {
             stack.push(nodo.sentencia[i]);
           }
         }
-      }
+      //}
     }
   }
 }

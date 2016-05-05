@@ -1,3 +1,3 @@
-mientras hayaAlgoQueHacer,
-el usuario hace algo.
+mientras comando no es "salir",
+el sales lee comando. lee comando, es un formulario con los campos: comando que es un texto obligatorio.
 fin
