@@ -61,6 +61,28 @@ function processXml(xml){
     }
   }
 
+  if(proceso.manualTask){
+    for (var i = 0; i < proceso.manualTask.length; i++) {
+      var tarea = proceso.manualTask[i]
+      flujodot.push(templateTarea(tarea._id, "manualTask:" + saltoLinea + tarea._name, "seagreen2"))
+    }
+  }
+
+  if(proceso.subProcess){
+    for (var i = 0; i < proceso.subProcess.length; i++) {
+      var tarea = proceso.subProcess[i]
+      flujodot.push(templateTarea(tarea._id, "subProcess:" + saltoLinea + tarea._name, "seagreen3"))
+    }
+  }
+
+  if(proceso.serviceTask){
+    for (var i = 0; i < proceso.serviceTask.length; i++) {
+      var tarea = proceso.serviceTask[i]
+      flujodot.push(templateTarea(tarea._id, "serviceTask:" + saltoLinea + tarea._name, "seagreen4"))
+    }
+  }
+
+
   templateCapturaEvento(proceso)
 
   if(proceso.boundaryEvent){
