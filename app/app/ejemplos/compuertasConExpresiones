@@ -1,9 +1,6 @@
 el asistente elije servicio. elije servicio, es un formulario con los siguientes campos: tipoServicio que es un texto obligatorio.
 si se cumple,
-servicioEsX entonces el asistente ofrece serivicio X.
-servicioEsY entonces el asistente ofrece serivicio Y.
+tipoServicio es "X" entonces el asistente ofrece serivicio X.
+tipoServicio es "Y" entonces el asistente ofrece serivicio Y.
 si no el asistente ofrece servicio generico.
 fin
-
-La expresion de la condicion servicioEsX, es tipoServicio == "X".
-La expresion de la condicion servicioEsY, es tipoServicio == "Y".

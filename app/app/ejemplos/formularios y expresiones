@@ -10,8 +10,8 @@ al mismo tiempo,
 1 la Usuario realiza tarea I. la Usuario realiza tarea II.
 2 la Usuario realiza tarea J.
 si se cumple,
-condi entonces la Usuario realiza tarea K. la Usuario realiza tarea KK.
-condii entonces el Usuario realiza tarea L.
+variable es "valori" entonces la Usuario realiza tarea K. la Usuario realiza tarea KK.
+variable es "valorii" entonces el Usuario realiza tarea L.
 si no la Usuario realiza tarea U. la Usuario realiza tarea UU.
 fin
 la Usuario realiza tarea JJ.
@@ -20,5 +20,3 @@ realizaTareaZ
 es un formulario con los siguientes campos:
 titulo que es un texto obligatorio,
 ejemplar que es un texto obligatorio.
-La expresion de la condicion condi, es variable == valori.
-La expresion de la condicion condii, es variable == valorii.

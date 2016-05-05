@@ -5,10 +5,10 @@ alternativa de realiza tarea X, si transcurre 20 segundos la Usuario realiza tar
 al mismo tiempo,
             1 la Usuario realiza tarea I. la Usuario realiza tarea II. la Usuario realiza tarea III.
             2 la Usuario realiza tarea J. si se cumple,
-                                     condi  entonces la Usuario realiza tarea K. la Usuario realiza tarea KK.
-                                     condii entonces el Usuario realiza tarea L.
-                                    condiii entonces la Usuario realiza tarea T.
-                                      si no la Usuario realiza tarea U. la Usuario realiza tarea UU.
+                                     condicion  entonces la Usuario realiza tarea K. la Usuario realiza tarea KK.
+                                     variable no es "mucho" entonces el Usuario realiza tarea L.
+                                     cantidad mayor que 20 entonces la Usuario realiza tarea T.
+                                    si no la Usuario realiza tarea U. la Usuario realiza tarea UU.
                    fin
              la Usuario realiza tarea JJ.
        fin
