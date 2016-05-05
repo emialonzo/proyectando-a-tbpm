@@ -57,7 +57,7 @@ function asignarElFlujo(nodo){
     var condicion ;
     for (var i = 0; i < nodo.sig.length; i++) {
       // console.log("nodo:" + nodo.id + "  condiciones?" + nodo.condiciones[nodo.sig[i]]);
-      if(nodo.condiciones[nodo.sig[i]]){
+      if(nodo.condiciones && nodo.condiciones[nodo.sig[i]]){
         if(condicionesActiviti){
           condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
         }else{ //para activiti
