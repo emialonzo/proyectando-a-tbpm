@@ -157,7 +157,7 @@ function templateEventoPool(evento, idEvento){
 
     if(nodo.tipo =="task"){
       if(nodo.sentencia.task == "human"){
-        aux = {"userTask":{"_id":templateId(nodo.id) , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":nodo.sentencia.actor}}
+        aux = {"userTask":{"_id":templateId(nodo.id) , "_name":nodo.sentencia.accion, "_activiti:candidateGroups":quitarEspacios(nodo.sentencia.actor)}}
         aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
@@ -204,7 +204,13 @@ function templateEventoPool(evento, idEvento){
   }
 
   function templateId(id){
-    return "_" + id
+    var aux = "_" + id
+    return aux.replace(/\s/g, "_")
+  }
+
+  //sustituye espacios por _
+  function quitarEspacios(id){
+    return id.replace(/\s/g, "_")
   }
 
   function getIdCampo(nodo, nombreCampo){
@@ -438,21 +444,21 @@ function agregarPrpiedad(nodo, campo){
     }
 
     // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
-    // process.laneSet = {};
-    // process.laneSet._id = "wertyujcfghjv"
-    // process.laneSet.lane = [];
-    // var keys = _.keys(laneSetX);
-    // for (var i = 0; i < keys.length; i++) {
-    //   lane = keys[i];
-    //   var aux = {}
-    //   aux.flowNodeRef = []
-    //   aux["_id"] = templateId(lane);
-    //   aux["_name"] = "nombre_"+lane
-    //   for (var j = 0; j < laneSetX[lane].length; j++) {
-    //     aux.flowNodeRef.push(laneSetX[lane][j]);
-    //   }
-    //   process.laneSet.lane.push(aux);
-    // }
+    process.laneSet = {};
+    process.laneSet._id = "wertyujcfghjv"
+    process.laneSet.lane = [];
+    var keys = _.keys(laneSetX);
+    for (var i = 0; i < keys.length; i++) {
+      lane = keys[i];
+      var aux = {}
+      aux.flowNodeRef = []
+      aux["_id"] = templateId(lane);
+      aux["_name"] = "nombre_"+lane.replace(/\s/g, "_")
+      for (var j = 0; j < laneSetX[lane].length; j++) {
+        aux.flowNodeRef.push(laneSetX[lane][j]);
+      }
+      process.laneSet.lane.push(aux);
+    }
 
 
     process["_id"] = idProceso;
