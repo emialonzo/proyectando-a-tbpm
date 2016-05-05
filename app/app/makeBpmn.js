@@ -52,7 +52,7 @@ var propiedadesProceso = {}
 
 var losFlujos = [];
 function asignarElFlujo(nodo){
-  if(nodo.tipo == "xor"){
+  if((nodo.tipo == "xor") || ((nodo.tipo == "cierro") && (nodo.tag == "loop") && nodo.expresion)){
     // console.debug(nodo.condiciones);
     var condicion ;
     for (var i = 0; i < nodo.sig.length; i++) {
@@ -64,7 +64,6 @@ function asignarElFlujo(nodo){
           condicion = nodo.condiciones[nodo.sig[i]]
         }
       }  else{
-        console.log("he loco booo");
         condicion =""
       }
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
@@ -74,13 +73,26 @@ function asignarElFlujo(nodo){
         );
       }
       else{
-        console.log("he loco booo");
         losFlujos.push(
           {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "_name":"defecto"}}
         );
       }
     }
-  }else{
+  }
+  //  else if(nodo.tipo == "cierro" && nodo.expresion){
+  //   for (var i = 0; i < nodo.sig.length; i++) {
+  //     if(){
+  //       losFlujos.push(
+  //         {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
+  //       );
+  //     } else{
+  //       losFlujos.push(
+  //         {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
+  //       );
+  //     }
+  //   }
+  // }
+  else{
     for (var i = 0; i < nodo.sig.length; i++) {
       losFlujos.push(
         {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
