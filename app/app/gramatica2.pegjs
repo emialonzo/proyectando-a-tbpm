@@ -46,7 +46,9 @@ sentencia =
       sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
       sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
       sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia, "interrumpible":sentAdj.interrumpible };} /
-      sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM} }
+      sentM:sent_mientras {return {"tipo":"loop", "expresion":sentM.expresion , "sentencia":[sentM.sentencia]  } }
+
+      /*sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM } }*/
 
 
 actor = articulo ws nombre:(n:[a-z ]i+ ws { return n.join("")}) "," ws { return nombre}/
@@ -111,9 +113,11 @@ sent_adj = ws adj_id ws p:palabras ws separador ws inte:"se interrumpe"? ws cond
 
 id_mientras = "mientras"
 sent_mientras = ws id_mientras
-				ws condicion separador sent:secuencia
+				ws con:condicion separador sent:secuencia
 				ws fin
-				{return [sent]}
+        {return {"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc, "sentencia":sent}}
+        /*{return [collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sent)]}*/
+				/*{return [sent]}*/
 
 campos = campo+
 tipo = "texto" / "numero" / "fecha" / "booleano"
