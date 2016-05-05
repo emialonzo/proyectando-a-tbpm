@@ -56,13 +56,17 @@ function asignarElFlujo(nodo){
     // console.debug(nodo.condiciones);
     var condicion ;
     for (var i = 0; i < nodo.sig.length; i++) {
-      if(nodo.condiciones){
+      // console.log("nodo:" + nodo.id + "  condiciones?" + nodo.condiciones[nodo.sig[i]]);
+      if(nodo.condiciones[nodo.sig[i]]){
         if(condicionesActiviti){
           condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
         }else{ //para activiti
           condicion = nodo.condiciones[nodo.sig[i]]
         }
-      }  else{condicion=""}
+      }  else{
+        console.log("he loco booo");
+        condicion =""
+      }
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       if(condicion){
         losFlujos.push(
@@ -70,8 +74,9 @@ function asignarElFlujo(nodo){
         );
       }
       else{
+        console.log("he loco booo");
         losFlujos.push(
-          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression}}
+          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "_name":"defecto"}}
         );
       }
     }
@@ -173,7 +178,6 @@ function templateEventoPool(evento, idEvento){
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
-      console.log("el evento mira!!!");
       if(nodo.sentencia.evento.throw){
         aux = {"intermediateThrowEvent":{ "_id":templateId(nodo.id)} }
         _.extend(aux.intermediateThrowEvent, templateEvento(nodo.sentencia.evento));
@@ -192,7 +196,6 @@ function templateEventoPool(evento, idEvento){
         aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
       }
     }
-    console.log("AUX ES: "+ JSON.stringify(aux));
     return aux;
   }
 

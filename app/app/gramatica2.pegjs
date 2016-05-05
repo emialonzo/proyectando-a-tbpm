@@ -13,6 +13,14 @@ function getCampos(obj) {
     return null;
   }
 }
+function ToString(list){
+  var ret = ""
+  for (var i = 0; i < list.length; i++) {
+    if(list[i]){
+      ret+=list[i]
+    }
+  }
+}
 }
 
 start = s:secuencia ws sentC:(sent_campos*) ws sentExpr:(sent_expresiones*) {return {"proceso":s, "campos":sentC, "expresiones":sentExpr};}
@@ -83,12 +91,14 @@ sent_y = ws id_y separador
 
 id_o = "si se cumple"
 defecto = "si no"
-condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");}
+condicion = exp:ex {return {expresion:exp, doc:text() }}
+ /*/  cond:[a-z]i+ ws { return cond.join("");}*/
+/*condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");}*/
 
 condicion_entonces = "entonces"
 sent_o = ws id_o separador
-         ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})
-         resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con}, sen)})*
+         ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})
+         resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})*
          final:(ws defecto ws sen:secuencia {return collect({"condicion":"defecto"}, sen)})
          ws fin
          {return [primero].concat(resto.concat(final));}
@@ -97,8 +107,7 @@ sent_o = ws id_o separador
 adj_id = "alternativa de"
 adj_cond = "transcurre" / "llega" ws mensaje
 condicional = "si"
-sent_adj = ws adj_id ws p:palabras ws separador ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":false}} /
-  ws "se interrumpe" ws p:palabras ws separador ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":true}}
+sent_adj = ws adj_id ws p:palabras ws separador ws inte:"se interrumpe"? ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":inte?true:false}}
 
 id_mientras = "mientras"
 sent_mientras = ws id_mientras
@@ -122,3 +131,12 @@ sent_expresiones = "La expresion de la condicion" ws
         cond:palabras ws separador ws
         "es" ws expre:expresion punto ws
         {return {"condicion": cond, "expresion" : expre};}
+
+
+/*prep = "que" / "a"*/
+ex = t1:termino X:(o:operador t2:termino {return [o,t2].join("")})? {return t1 + (X?X:"")}
+operador = "no es" {return "!="}
+  / "es mayor que"  {return ">"}
+  / "es menor que"  {return "<"}
+  / "es" {return "=="}
+termino = ws t:[a-zA-Z0-9"]+ ws {return t.join("").replace("\\", "")}

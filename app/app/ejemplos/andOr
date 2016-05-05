@@ -1,12 +1,10 @@
+el marketing hace A. hace A, es un formulario con los siguientes campos: servicio que es un texto obligatorio.
 al mismo tiempo,
-            1 el administrador asigna tareas.
-            2 el encargadoDeServicios ofrece servicios. si se cumple,
-                            servicioEsX entonces el asistenteDeServicios ofrece serivicio X.
-                            servicioEsY entonces el asistenteDeServicios ofrece serivicio Y.
-                            servicioEsZ entonces el asistenteDeServicios ofrece serivicio Z.
-                            si no el asistenteDeServicios ofrece servicio generico.
+            1 el marketing asigna tareas.
+            2 el sales ofrece servicios. si se cumple,
+                            servicio es "x" entonces el sales ofrece serivicio X.
+                            servicio es "y" entonces el sales ofrece serivicio Y.
+                            servicio es "z" entonces el sales ofrece serivicio Z.
+                            si no el sales ofrece servicio generico.
                    fin
        fin
-La expresion de la condicion servicioEsX, es tipoServicio == "X".
-La expresion de la condicion servicioEsY, es tipoServicio == "Y".
-La expresion de la condicion servicioEsZ, es tipoServicio == "Z".
