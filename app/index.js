@@ -36,6 +36,7 @@ app.on('ready', function() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  mainWindow.setMenu(null)
 
 
   // console.log(dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}));
