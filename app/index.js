@@ -8,6 +8,7 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 const appIndex = 'file://' + __dirname +  '/app/index.html';
 const motorIndex = 'file://' + __dirname +  '/motor/index.html';
 
+
 // Report crashes to our server.
 electron.crashReporter.start();
 
@@ -36,7 +37,7 @@ app.on('ready', function() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  mainWindow.setMenu(null)
+  // mainWindow.setMenu(null)
 
 
   // console.log(dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}));
@@ -51,10 +52,14 @@ app.on('ready', function() {
 
 });
 
-ipcMain.on('abrir-motor', function(){
+ipcMain.on('abrir-motor', function(event, xml){
   mainWindow.hide();
   engineWindow = new BrowserWindow({width: 800, height: 600});
   engineWindow.loadURL(motorIndex);
+
+
+  
+
   engineWindow.on('closed', function() {
     engineWindow = null;
     mainWindow.show();
