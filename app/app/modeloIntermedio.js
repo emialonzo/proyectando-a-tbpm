@@ -204,7 +204,7 @@ function recursivoBalance(modelo){
     var elem = modelo.shift();
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
-    } else if((elem.tipo == "adjunto") && elem.interrumpible){
+    } else if((elem.tipo == "adjunto") && elem.interrumpible && !elem.unica){
       modelo.unshift(cierrogw(elem));
     }
 
@@ -317,11 +317,10 @@ function procesarEventosAdjuntos(){
   for (var key in dicccionarioId) {
     if (dicccionarioId.hasOwnProperty(key)) {
       if(dicccionarioId[key].tipo == "adjunto" && dicccionarioId[key].unica == true){
-        console.log("aparecio una unica");
         var idAdjuntoA = dicccionarioId[key].adjunto_a_id
         var tarea = findById(idAdjuntoA)
         if(tarea.sig[0]!="F"){
-          throw "Modelo mal formado!! No deben especificarse tareas siguientes a " + dicccionarioId[key].adjunto_a + " dado que tiene una única salida por el evento adjunto."
+          throw "Modelo mal formado!! No debieron tareas siguientes a \"" + dicccionarioId[key].adjunto_a + "\" dado que tiene una única salida por el evento adjunto."
         }else{
           tarea.sig = []
         }
