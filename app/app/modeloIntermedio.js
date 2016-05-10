@@ -99,7 +99,7 @@ function recursivoFlujo(nodox, ant, sig){
 
     nodo.condiciones = {}
     nodo.condiciones[nodo.ref] = nodo.expresion
-    
+
     nodo.sig.push(nodo.ref);
     //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
   // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
@@ -303,18 +303,32 @@ var procesarModelo = function(model){
   //corregir flujo
   corregirFlujoSecuencia(modelo);
 
-
-  //console.log("############## ANTES ####################")
-  //console.log(pd.json(modelo));
   modelo = asociarCampos(modelo, model.campos);
-  //console.log("############# DESPUES ###################")
-  //console.log(pd.json(modelo));
-  //console.log("#########################################")
-
   modelo = asociarExpresiones(modelo, model.expresiones);
+
+  //elimina el flujo de salida de una tarea que tenga un evento adjunto con UNICA en true
+  procesarEventosAdjuntos();
 
   modelo = dicccionarioId[aux.id];
   return modelo;
+}
+
+function procesarEventosAdjuntos(){
+  for (var key in dicccionarioId) {
+    if (dicccionarioId.hasOwnProperty(key)) {
+      if(dicccionarioId[key].tipo == "adjunto" && dicccionarioId[key].unica == true){
+        console.log("aparecio una unica");
+        var idAdjuntoA = dicccionarioId[key].adjunto_a_id
+        var tarea = findById(idAdjuntoA)
+        if(tarea.sig[0]!="F"){
+          throw "Modelo mal formado!! No deben especificarse tareas siguientes a " + dicccionarioId[key].adjunto_a + " dado que tiene una única salida por el evento adjunto."
+        }else{
+          tarea.sig = []
+        }
+        updateNodoById(idAdjuntoA, tarea)
+      }
+    }
+  }
 }
 
 var asociarCampos = function(modelo, campos) {

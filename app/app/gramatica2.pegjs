@@ -45,7 +45,7 @@ sentencia =
 			task:sent_accion {return {"tipo":"task", "sentencia":task, "doc": text()};} /
       sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
       sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
-      sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia, "interrumpible":sentAdj.interrumpible };} /
+      sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia, "interrumpible":sentAdj.interrumpible, "unica":sentAdj.unica };} /
       sentM:sent_mientras {return {"tipo":"loop", "expresion":sentM.expresion , "sentencia":[sentM.sentencia]  } }
 
       /*sentM:sent_mientras {return {"tipo":"loop", "sentencia":sentM } }*/
@@ -110,7 +110,7 @@ sent_o = ws id_o separador
 adj_id = "alternativa de"
 adj_cond = "transcurre" / "llega" ws mensaje
 condicional = "si"
-sent_adj = ws adj_id ws p:palabras ws separador ws inte:"se interrumpe"? ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":inte?true:false}}
+sent_adj = ws unica:"unica"? ws adj_id ws p:palabras ws separador ws inte:"se interrumpe"? ws condicional ws adj_cond ws evento:tipo_evento ws sec:secuencia ws fin {return {"adjunto_a":p, "evento":evento, "sentencia":[sec], "interrumpible":inte?true:false, "unica":unica?true:false}}
 
 id_mientras = "mientras"
 sent_mientras = ws id_mientras
