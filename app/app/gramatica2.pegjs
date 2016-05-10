@@ -66,16 +66,18 @@ mensaje = "mensaje" / "mail"
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 
-
 servicio_id = "utiliza el servicio"
 subproceso_id = "utiliza el subproceso"
+subproceso_loop = "Se utiliza" / "Es utilizado"
+subproceso_loop_aux = "vez" / "veces"
 accion = ([a-z]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "realiza la tarea manual" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "manual"};}
               /ws actor:actor ws servicio_id ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "service"};}
-              / ws actor:actor ws subproceso_id ws accion:accion ws punto
-              { return {"actor": actor , "accion" : accion , "task": "subproceso"};}
+              / ws actor:actor ws subproceso_id ws accion:accion ws punto ws
+              cant:(subproceso_loop ws cant:digito ws subproceso_loop_aux ws punto {return cant})?
+              { return {"actor": actor , "accion" : accion , "task": "subproceso", "cant":cant}}
               / ws actor:actor ws accion:accion ws punto ws (campos:sent_campos?)
               { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
 
