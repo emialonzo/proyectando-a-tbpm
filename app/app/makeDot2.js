@@ -52,13 +52,34 @@ function processXml(xml){
       var sec = proceso.sequenceFlow[i]
       var cond = ""
       if(sec.conditionExpression){
-        console.log("----->");
-        console.log(sec.conditionExpression.__cdata.replace(/\"/g, "\\\""));
-        console.log("<-----");
          cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
       }
       flujodot.push(sec._sourceRef + " -> " + sec._targetRef + cond)
     }
+  }
+  if(proceso.exclusiveGateway){
+    for (var i = 0; i < proceso.exclusiveGateway.length; i++) {
+      var exclusivo = proceso.exclusiveGateway[i]
+      console.log("****");
+      console.log(exclusivo);
+      console.log("****");
+      if(exclusivo._default){
+        var defecto = exclusivo._default; // _num__num
+        defecto = defecto.replace("__", " -> _")
+        console.log("::::" + defecto);
+        // defecto.replace("_", "")
+        for (var i = 0; i < flujodot.length; i++) {
+          var flujo = flujodot[i]
+          console.log("::::" + flujo);
+          if(flujo == defecto){
+            flujodot[i] += " [arrowtail=rcrowlvee]"
+            // sec._sourceRef + " -> " + sec._targetRef + [arrowtail=rcrowlvee]
+          }
+        }
+      }
+      flujodot.push(templateTarea(exclusivo._id, "XOR:" + saltoLinea + exclusivo._name, "paleturquoise2"))
+    }
+
   }
   //armando tareas
   if(proceso.userTask){
@@ -111,14 +132,6 @@ function processXml(xml){
       var paralelo = proceso.parallelGateway[i]
       flujodot.push(templateTarea(paralelo._id, "AND:"  + saltoLinea + paralelo._name, "paleturquoise1"))
     }
-  }
-
-  if(proceso.exclusiveGateway){
-    for (var i = 0; i < proceso.exclusiveGateway.length; i++) {
-      var exclusivo = proceso.exclusiveGateway[i]
-      flujodot.push(templateTarea(exclusivo._id, "XOR:" + saltoLinea + exclusivo._name, "paleturquoise2"))
-    }
-
   }
 
   if(proceso.startEvent){
