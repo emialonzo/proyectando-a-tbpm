@@ -587,7 +587,7 @@ var ajustarIDs = function(proceso, subproceso) {
     prefix = subproceso;
   }
   if (proceso.startEvent) {
-    console.log("Hay startEvent, en total son:" + proceso.startEvent.length);
+    // console.log("Hay startEvent, en total son:" + proceso.startEvent.length);
     for (var i=0; i< proceso.startEvent.length; i++) {
       proceso.startEvent[i]._id = prefix + proceso.startEvent[i]._id;
     }
