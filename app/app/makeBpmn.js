@@ -209,7 +209,7 @@ function templateEventoPool(evento, idEvento){
       aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_name":"xor"+templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
-      aux = {"boundaryEvent":{"_id":templateId(nodo.id), "_attachedToRef": "_"+nodo.adjunto_a_id } }
+      aux = {"boundaryEvent":{"_id":templateId(nodo.id), "_attachedToRef": "_"+nodo.adjunto_a_id, "_cancelActivity":nodo.interrumpible} }
       _.extend(aux.boundaryEvent,templateEvento(nodo.evento));
     }
     if(nodo.tipo =="evento"){
