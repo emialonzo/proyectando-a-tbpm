@@ -15,8 +15,7 @@ electron.crashReporter.start();
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
 var engineWindow = null;
-
-// Quit when all windows are closed.
+4// Quit when all windows are closed.
 app.on('window-all-closed', function() {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
@@ -36,7 +35,7 @@ app.on('ready', function() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  mainWindow.setMenu(null)
+  //mainWindow.setMenu(null)
 
 
   // console.log(dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}));

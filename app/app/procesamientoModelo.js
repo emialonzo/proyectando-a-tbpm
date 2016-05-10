@@ -690,8 +690,7 @@ var templateServiceTask = function(elem, taskPos) {
 }
 
 var templateExpresiones = function(nodo) {
-  //FIXME aca es donde se deberia generar la tarea de usuario
-  //donde se decide que flujo de salida se debe tomar en el XOR
+  //FIXME revisar como agregar la expresion para el loop
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
       var condicion = nodo.sentencia[i];
