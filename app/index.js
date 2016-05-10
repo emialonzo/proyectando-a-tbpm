@@ -8,7 +8,6 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 const appIndex = 'file://' + __dirname +  '/app/index.html';
 const motorIndex = 'file://' + __dirname +  '/motor/index.html';
 
-
 // Report crashes to our server.
 electron.crashReporter.start();
 
