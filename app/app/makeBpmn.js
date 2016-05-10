@@ -8,7 +8,22 @@ var prettyjson = require('prettyjson');
 var env = require('./env');
 
 var x2js = require('x2js'); //new X2JS();
-var conv = new x2js();
+var conv = new x2js({
+  arrayAccessFormPaths : [
+    "definitions.process.startEvent" ,
+    "definitions.process.userTask" ,
+    "definitions.process.manualTask" ,
+    "definitions.process.serviceTask" ,
+    "definitions.process.exclusiveGateway" ,
+    "definitions.process.parallelGateway" ,
+    "definitions.process.intermediateCatchEvent" ,
+    "definitions.process.intermediateThrowEvent" ,
+    "definitions.process.boundaryEvent" ,
+    "definitions.process.endEvent" ,
+    "definitions.process.subProcess" ,
+    "definitions.process.sequenceFlow"
+  ]
+});
 
 var conYaoqiang = env.conYaoqiang;
 var condicionesActiviti = true;
@@ -173,17 +188,25 @@ function templateEventoPool(evento, idEvento){
         aux = templatesCampos(nodo, aux);
       }
       if(nodo.sentencia.task == "service"){
-        aux = {"serviceTask":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
+        // aux = {"serviceTask":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
+        aux = templateServiceTask(nodo)
+      }
+      if(nodo.sentencia.task == "manual"){
+        aux = {"manualTask":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
+      }
+      if(nodo.sentencia.task == "subproceso"){
+        aux = {"subProcess":{ "_id":templateId(nodo.id) , "_name":nodo.sentencia.accion}}
+        aux = templateSubproceso(nodo, false)
       }
     }
     if(nodo.tipo =="and"){
-      aux = {"parallelGateway":{ "_id":templateId(nodo.id)} }
+      aux = {"parallelGateway":{ "_id":templateId(nodo.id), "_name":"and"+templateId(nodo.id)} }
     }
     if((nodo.tipo =="xor") || (nodo.tipo =="loop")){
       if(!nodo.default){
         nodo.default = nodo.sig[0];
       }
-      aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_name":"xor"+templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
     }
     if(nodo.tipo =="adjunto"){
       aux = {"boundaryEvent":{"_id":templateId(nodo.id), "_attachedToRef": "_"+nodo.adjunto_a_id } }
@@ -201,13 +224,14 @@ function templateEventoPool(evento, idEvento){
 
     }
     if(nodo.tipo =="cierro"){
-      aux = {"exclusiveGateway": {"_id":templateId(nodo.id)} }
+      aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_name":"cierro_xor"+templateId(nodo.id)} }
       if(nodo.tag == "and"){
-        aux = {"parallelGateway": {"_id":templateId(nodo.id)} }
+        aux = {"parallelGateway": {"_id":templateId(nodo.id), "_name":"cierro_and"+templateId(nodo.id)} }
       } else if(nodo.tag == "loop"){
-        aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default)} }
+        aux = {"exclusiveGateway": {"_id":templateId(nodo.id), "_default":templateIdFlujo(nodo.id, nodo.default), "_name":"cierro_loop"+templateId(nodo.id)} }
       }
     }
+    // console.log(aux);
     return aux;
   }
 
@@ -455,22 +479,22 @@ function agregarPrpiedad(nodo, campo){
       }
     }
 
-    // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
-    process.laneSet = {};
-    process.laneSet._id = "wertyujcfghjv"
-    process.laneSet.lane = [];
-    var keys = _.keys(laneSetX);
-    for (var i = 0; i < keys.length; i++) {
-      lane = keys[i];
-      var aux = {}
-      aux.flowNodeRef = []
-      aux["_id"] = templateId(lane);
-      aux["_name"] = "nombre_"+lane.replace(/\s/g, "_")
-      for (var j = 0; j < laneSetX[lane].length; j++) {
-        aux.flowNodeRef.push(laneSetX[lane][j]);
-      }
-      process.laneSet.lane.push(aux);
-    }
+    // // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
+    // process.laneSet = {};
+    // process.laneSet._id = "wertyujcfghjv"
+    // process.laneSet.lane = [];
+    // var keys = _.keys(laneSetX);
+    // for (var i = 0; i < keys.length; i++) {
+    //   lane = keys[i];
+    //   var aux = {}
+    //   aux.flowNodeRef = []
+    //   aux["_id"] = templateId(lane);
+    //   aux["_name"] = "nombre_"+lane.replace(/\s/g, "_")
+    //   for (var j = 0; j < laneSetX[lane].length; j++) {
+    //     aux.flowNodeRef.push(laneSetX[lane][j]);
+    //   }
+    //   process.laneSet.lane.push(aux);
+    // }
 
 
     process["_id"] = idProceso;
@@ -495,6 +519,7 @@ function agregarPrpiedad(nodo, campo){
 
 
     bpmn.definitions.process = process;
+    // console.log(pd.json(process));
 
     // console.log("*******************");
     // console.log(pd.json(losNodos));
@@ -523,50 +548,140 @@ function agregarPrpiedad(nodo, campo){
 
 
 
-//inicializo algunos valores necesarios
-// evento de inicio, evento de fin ....
-var start = function(model) {
-  proceso.startEvent = {
-    "outgoing": {
-      "__prefix":"bpmn",
-      "__text":"SequenceFlow_"+SequenceFlow_GlobalID++
-    },
-    "__prefix":"bpmn",
-    "_id":"StartEvent_1"
-  };
-  proceso.sequenceFlow.push({
-      "_id":proceso.startEvent.outgoing.__text,
-      "_sourceRef":proceso.startEvent._id,
-      "_targetRef":"",
-      "__prefix":"bpmn"});
-  proceso.endEvent = {
-    "incoming": {},
-    "__prefix":"bpmn",
-    "_id":"EndEvent_1"
+
+
+var templateSubproceso = function(elem, ejecutable) {
+  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
+  var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
+  jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process, elem.sentencia.accion)
+
+  var aux = {"subProcess":{"_id":"_SUBP"+elem.id,"_name":elem.sentencia.accion}};
+  for (var variable in jsonSubProceso.definitions.process) {
+    if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
+        aux.subProcess[variable] = jsonSubProceso.definitions.process[variable]
+    }
   }
+  aux.subProcess._id = templateId(elem.id)
+  aux.subProcess._name = elem.sentencia.accion
+  delete aux.subProcess["_isExecutable"]
+
+  return aux;
 }
 
-var options = {
-  keysColor: 'blue',
-  dashColor: 'white',
-  stringColor: 'green'
-};
-
-var generarXML = function (modelo) {
-  start();
-  //_.map(modelo, function(elem){ console.log(prettyjson.render(elem, options)); });
-  _.map(modelo, function(elem){ obtenerLanes(elem); });
-  _.map(modelo, function(elem){ obtenerTareas(elem); });
-
-  var j=0;
-  for (var i=0 ; i<modelo.length-1 ; i++) {
-    generarFlujo(modelo[j], modelo[++j]);
+var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
+  var archivo = __dirname;
+  if (ejecutable) {
+    archivo = archivo + "/XMLejecutables/" + nombreArchivo + ".bpmn";
+  } else {
+    archivo = archivo + "/XMLbasicos/" + nombreArchivo + ".bpmn";
   }
-  conectarStartEvent(modelo);
-  conectarEndEvent(modelo);
-  //_.map(proceso, function(elem){ console.log(prettyjson.render(elem, options)); })
-  console.log(pd.xml(conv.json2xml_str(proceso)));
+  var subproceso = fs.readFileSync(archivo).toString();
+  return subproceso;
 }
+
+var ajustarIDs = function(proceso, subproceso) {
+  var prefix;
+  if (subproceso == "") {
+    prefix = "_";
+  } else {
+    prefix = subproceso;
+  }
+  if (proceso.startEvent) {
+    console.log("Hay startEvent, en total son:" + proceso.startEvent.length);
+    for (var i=0; i< proceso.startEvent.length; i++) {
+      proceso.startEvent[i]._id = prefix + proceso.startEvent[i]._id;
+    }
+  }
+  if (proceso.endEvent) {
+    for (var i=0; i< proceso.endEvent.length; i++) {
+      proceso.endEvent[i]._id = prefix + proceso.endEvent[i]._id;
+    }
+  }
+  // LANES
+  if (subproceso == "") {
+    for (var i=0; i< proceso.laneSet.lane.length; i++) {
+      for (var j=0; j< proceso.laneSet.lane[i].flowNodeRef.length; j++) {
+        proceso.laneSet.lane[i].flowNodeRef[j].__text = prefix + proceso.laneSet.lane[i].flowNodeRef[j].__text
+      }
+    }
+  }
+  // USER TASKS
+  if (proceso.userTask) {
+    for (var i=0; i< proceso.userTask.length; i++) {
+      proceso.userTask[i]._id = prefix + proceso.userTask[i]._id;
+    }
+  }
+  // SERVICE TASKS
+  if (proceso.serviceTask) {
+    for (var i=0; i< proceso.serviceTask.length; i++) {
+      proceso.serviceTask[i]._id = prefix + proceso.serviceTask[i]._id;
+    }
+  }
+  // MANUAL TASKS
+  if (proceso.manualTask) {
+    for (var i=0; i< proceso.manualTask.length; i++) {
+      proceso.manualTask[i]._id = prefix + proceso.manualTask[i]._id;
+    }
+  }
+  // EXCLUSIVE GATEWAYS
+  if (proceso.exclusiveGateway) {
+    for (var i=0; i< proceso.exclusiveGateway.length; i++) {
+      if (proceso.exclusiveGateway[i]._default) {
+        proceso.exclusiveGateway[i]._default = prefix + proceso.exclusiveGateway[i]._default;
+      }
+      proceso.exclusiveGateway[i]._id = prefix + proceso.exclusiveGateway[i]._id;
+    }
+  }
+  // PARALLEL GATEWAYS
+  if (proceso.parallelGateway) {
+    for (var i=0; i< proceso.parallelGateway.length; i++) {
+      proceso.parallelGateway[i]._id = prefix + proceso.parallelGateway[i]._id;
+    }
+  }
+  // INTERMEDIATE CATCH EVENTS
+  if (proceso.intermediateCatchEvent) {
+    for (var i=0; i< proceso.intermediateCatchEvent.length; i++) {
+      proceso.intermediateCatchEvent[i]._id = prefix + proceso.intermediateCatchEvent[i]._id;
+    }
+  }
+  // INTERMEDIATE THROW EVENTS
+  if (proceso.intermediateThrowEvent) {
+    for (var i=0; i< proceso.intermediateThrowEvent.length; i++) {
+      proceso.intermediateThrowEvent[i]._id = prefix + proceso.intermediateThrowEvent[i]._id;
+    }
+  }
+  // BOUNDARY EVENTS
+  if (proceso.boundaryEvent) {
+    for (var i=0; i< proceso.boundaryEvent.length; i++) {
+      proceso.boundaryEvent[i]._id = prefix + proceso.boundaryEvent[i]._id;
+      proceso.boundaryEvent[i]._attachedToRef = prefix + proceso.boundaryEvent[i]._attachedToRef;
+    }
+  }
+  // SUBPROCESS
+  if (proceso.subProcess) {
+    for (var i=0; i< proceso.subProcess.length; i++) {
+      proceso.subProcess[i]._id = prefix + proceso.subProcess[i]._id;
+    }
+  }
+  // SEQUENCE FLOWS
+  if (proceso.sequenceFlow) {
+    for (var i=0; i< proceso.sequenceFlow.length; i++) {
+      proceso.sequenceFlow[i]._id = prefix + proceso.sequenceFlow[i]._id;
+      proceso.sequenceFlow[i]._sourceRef = prefix + proceso.sequenceFlow[i]._sourceRef;
+      proceso.sequenceFlow[i]._targetRef = prefix + proceso.sequenceFlow[i]._targetRef;
+    }
+  }
+  return proceso;
+}
+
+var templateServiceTask = function(elem) {
+  //FIXME si se quisiera cambiar la implementacion del web service hay que cambiar el nombre de la clase
+  var classpath = "org.proyecto.";
+  var nombreClase = "Servicetask";
+  return {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":classpath + nombreClase}}
+
+}
+
 
 module.exports = {
   makeBpmn: makeBpmn,

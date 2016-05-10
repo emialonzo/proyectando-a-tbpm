@@ -60,20 +60,13 @@ function processXml(xml){
   if(proceso.exclusiveGateway){
     for (var i = 0; i < proceso.exclusiveGateway.length; i++) {
       var exclusivo = proceso.exclusiveGateway[i]
-      console.log("****");
-      console.log(exclusivo);
-      console.log("****");
       if(exclusivo._default){
         var defecto = exclusivo._default; // _num__num
         defecto = defecto.replace("__", " -> _")
-        console.log("::::" + defecto);
-        // defecto.replace("_", "")
-        for (var i = 0; i < flujodot.length; i++) {
-          var flujo = flujodot[i]
-          console.log("::::" + flujo);
+        for (var j = 0; j < flujodot.length; j++) {
+          var flujo = flujodot[j]
           if(flujo == defecto){
-            flujodot[i] += " [arrowtail=rcrowlvee]"
-            // sec._sourceRef + " -> " + sec._targetRef + [arrowtail=rcrowlvee]
+            flujodot[j] += " [arrowtail=rcrowlvee]"
           }
         }
       }
