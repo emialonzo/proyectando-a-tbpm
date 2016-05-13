@@ -66,6 +66,13 @@ function esSerializable(nodo){
 var propiedadesProceso = {}
 
 var losFlujos = [];
+
+var lasVariables = {}
+function buscarVariables(condicion){
+  var variable = condicion.replace(/(\w*).*/,'$1')
+  lasVariables[variable] = true
+}
+
 function asignarElFlujo(nodo){
   if((nodo.tipo == "xor") || ((nodo.tipo == "cierro") && (nodo.tag == "loop") && nodo.expresion)){
     // console.debug(nodo.condiciones);
@@ -73,6 +80,7 @@ function asignarElFlujo(nodo){
     for (var i = 0; i < nodo.sig.length; i++) {
       // console.log("nodo:" + nodo.id + "  condiciones?" + nodo.condiciones[nodo.sig[i]]);
       if(nodo.condiciones && nodo.condiciones[nodo.sig[i]]){
+        buscarVariables(nodo.condiciones[nodo.sig[i]])
         if(condicionesActiviti){
           condicion = "${"+nodo.condiciones[nodo.sig[i]]+"}"
         }else{ //para activiti
@@ -374,6 +382,7 @@ function agregarPrpiedad(nodo, campo){
     laneSetX = {};
     losNodos = [];
     losFlujos = [];
+    lasVariables = {}
     propiedadesProceso = {};
     losPools={}
     losMensajes=[]
@@ -418,6 +427,7 @@ function agregarPrpiedad(nodo, campo){
     //   {"sequenceFlow": {"_id":endNodo.id+":"+idEnd, "_sourceRef":endNodo.id, "_targetRef":idEnd }}
     // );
     losNodos.push({"endEvent":{"_id":"_F" , "_name":"EndEvent"}});
+    console.debug("Variiables"+pd.json(lasVariables))
     return armarJson();
   }
 
@@ -517,9 +527,17 @@ function agregarPrpiedad(nodo, campo){
     }
 
 
+    process.startEvent[0].extensionElements = {}
+    process.startEvent[0].extensionElements.formProperty = []
+    for (var variable in lasVariables) {
+      if (lasVariables.hasOwnProperty(variable)) {
+        console.log("variable:"+variable);
+        process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+      }
+    }
 
     bpmn.definitions.process = process;
-    // console.log(pd.json(process));
+    console.log(pd.json(process));
 
     // console.log("*******************");
     // console.log(pd.json(losNodos));
@@ -555,12 +573,17 @@ var templateSubproceso = function(elem, ejecutable) {
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
   jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process, elem.sentencia.accion)
 
+
+  // var aux = {"subProcess":{"_id":"_SUBP"+elem.id,"_name":elem.sentencia.accion}};
+  // for (var variable in jsonSubProceso.definitions.process) {
+  //   if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
+  //       aux.subProcess[variable] = jsonSubProceso.definitions.process[variable]
+  //     }
+  //   }
+
   var aux = {"subProcess":{"_id":"_SUBP"+elem.id,"_name":elem.sentencia.accion}};
-  for (var variable in jsonSubProceso.definitions.process) {
-    if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
-        aux.subProcess[variable] = jsonSubProceso.definitions.process[variable]
-    }
-  }
+  aux.subProcess = jsonSubProceso.definitions.process
+
   aux.subProcess._id = templateId(elem.id)
   aux.subProcess._name = elem.sentencia.accion
   delete aux.subProcess["_isExecutable"]
