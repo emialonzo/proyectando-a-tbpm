@@ -181,7 +181,7 @@ var generarPool = function(evento, idEvento) {
   var prefix = "pool_id_"
   var idPool = prefix + evento.pool;
   if (!_.find(proceso.collaboration.participant, function(val){return val._id == idPool})) {
-    proceso.collaboration.participant.push({"_id": idPool, "_name":evento.pool});
+    proceso.collaboration.participant.push({"_id": idPool, "_name":"pool_"+evento.pool});
   }
   var idMensaje = "mensaje_" + idEvento;
   if (evento.throw) {
@@ -688,7 +688,12 @@ var templateServiceTask = function(elem, taskPos) {
 }
 
 var templateExpresiones = function(nodo) {
+  //########################################################################
+  //########################################################################
   //FIXME revisar como agregar la expresion para el loop
+  //TODO agregar la variable de la condicion al evento de inicio
+  //########################################################################
+  //########################################################################
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
       var condicion = nodo.sentencia[i];

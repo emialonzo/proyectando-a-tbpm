@@ -62,7 +62,7 @@ tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiemp
 		/ mensaje_evento
 
 mensaje_evento = mensaje ws "de" ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p, "pool":p, "throw":false};}
-mensaje = "mensaje" / "mail"
+mensaje = "mensaje" / "mail" / "respuesta"
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"
 

@@ -1,0 +1,6 @@
+el marketing utiliza el servicio obtener expediente.
+el marketing envia el expediente. envia el expediente, es un formulario con los siguientes campos:
+numero que es un numero obligatorio,
+descripcion que es un texto.
+el sales confirma expediente. confirma expediente, muestra los campos: numero, descripcion.
+el sales realiza la tarea manual quemar papeles.
