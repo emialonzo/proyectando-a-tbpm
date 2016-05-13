@@ -1,6 +1,0 @@
-mientras noTieneLibro,
-el usuario pide libro.
-el bibliotecario chequea disponibilidad.
-si se cumple, libroDisponible entonces el bibliotecario entrega el libro. el usuario se retira.
-si no el usuario espera por 1 semana. fin
-fin
