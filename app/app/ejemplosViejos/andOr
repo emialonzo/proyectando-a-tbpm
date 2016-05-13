@@ -1,0 +1,10 @@
+el marketing hace A. hace A, es un formulario con los siguientes campos: servicio que es un texto obligatorio.
+al mismo tiempo,
+            1 el marketing asigna tareas.
+            2 el sales ofrece servicios. si se cumple,
+                            servicio es "x" entonces el sales ofrece serivicio X.
+                            servicio es "y" entonces el sales ofrece serivicio Y.
+                            servicio es "z" entonces el sales ofrece serivicio Z.
+                            si no el sales ofrece servicio generico.
+                   fin
+       fin
