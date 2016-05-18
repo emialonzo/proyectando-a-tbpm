@@ -30,7 +30,7 @@ function makeAllNivel(lista){
 };
 
 var path = __dirname + "/ejemplos/";;
-var nombreArchivo = "biblioteca";
+var nombreArchivo = "adjuntoInterrumpible";
 var textosPruebas = fs.readFileSync(path + nombreArchivo).toString();
 
 var modelo = procesamientoModelo.textToModel(textosPruebas);
