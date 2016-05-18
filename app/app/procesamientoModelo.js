@@ -687,6 +687,11 @@ var templateServiceTask = function(elem, taskPos) {
   proceso.process.serviceTask[taskPos] = aux.serviceTask;
 }
 
+function buscarVariables(condicion){
+  var variable = condicion.replace(/(\w+).*/,'$1')
+  return variable;
+}
+
 var templateExpresiones = function(nodo) {
   //########################################################################
   //########################################################################
@@ -701,6 +706,18 @@ var templateExpresiones = function(nodo) {
       for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
         flujo = proceso.process.sequenceFlow[j];
         if (flujo._name && flujo._name == condicion.condicion) {
+          var variable = buscarVariables(condicion.expresion)
+          //// se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
+          // if(Object.keys(lasVariables).length){
+          //   process.startEvent[0].extensionElements = {}
+          //   process.startEvent[0].extensionElements.formProperty = []
+          //   for (var variable in lasVariables) {
+          //     if (lasVariables.hasOwnProperty(variable)) {
+          //       console.log("variable:"+variable);
+          //       process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+          //     }
+          //   }
+          // }
           var condicion = "${"+condicion.expresion+"}"
           var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
           flujo.conditionExpression = conditionExpression;
