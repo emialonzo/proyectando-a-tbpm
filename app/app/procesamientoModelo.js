@@ -692,6 +692,28 @@ function buscarVariables(condicion){
   return variable;
 }
 
+var yaAgregueVariable = function(variable) {
+  var result = false;
+  console.log("################## FORM PROP ##########################")
+  console.log(pd.json(proceso.process.startEvent[0].extensionElements.formProperty))
+  console.log("############################################")
+  for (var i=0; i<proceso.process.startEvent[0].extensionElements.formProperty.length;i++) {
+    var elem = proceso.process.startEvent[0].extensionElements.formProperty[i];
+    console.log("################## ELEM ##########################")
+    console.log(pd.json(elem))
+    console.log("################### CONDICION ######################")
+    console.log(proceso.process.startEvent[0].extensionElements.formProperty.hasOwnProperty(elem))
+    console.log("############################################")
+    if (elem._id == variable) {
+      return true;
+    }
+  }
+  console.log("############ RESULTADO ############")
+  console.log(result)
+  console.log("############################################")
+  return result;
+}
+
 var templateExpresiones = function(nodo) {
   //########################################################################
   //########################################################################
@@ -707,17 +729,14 @@ var templateExpresiones = function(nodo) {
         flujo = proceso.process.sequenceFlow[j];
         if (flujo._name && flujo._name == condicion.condicion) {
           var variable = buscarVariables(condicion.expresion)
-          //// se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
-          // if(Object.keys(lasVariables).length){
-          //   process.startEvent[0].extensionElements = {}
-          //   process.startEvent[0].extensionElements.formProperty = []
-          //   for (var variable in lasVariables) {
-          //     if (lasVariables.hasOwnProperty(variable)) {
-          //       console.log("variable:"+variable);
-          //       process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
-          //     }
-          //   }
-          // }
+          // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
+          if (!proceso.process.startEvent[0].extensionElements) {
+            proceso.process.startEvent[0].extensionElements = {}
+            proceso.process.startEvent[0].extensionElements.formProperty = []
+          }
+          if (!yaAgregueVariable(variable)) {
+            proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+          }
           var condicion = "${"+condicion.expresion+"}"
           var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
           flujo.conditionExpression = conditionExpression;

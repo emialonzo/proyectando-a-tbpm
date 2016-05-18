@@ -7,9 +7,9 @@
   xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
   <collaboration>
-    <participant id='pool_id_compuertasOr' name='Pool_compuertasOr' processRef='id_compuertasOr'></participant>
+    <participant id='pool_id_compuertaOr' name='Pool_compuertaOr' processRef='id_compuertaOr'></participant>
   </collaboration>
-  <process id='id_compuertasOr' isExecutable='true' name='compuertasOr'>
+  <process id='id_compuertaOr' isExecutable='true' name='compuertaOr'>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_3' name='ingresa datos'></userTask>
     <userTask id='_6' name='hace una cosa'></userTask>
