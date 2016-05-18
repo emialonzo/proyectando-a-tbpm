@@ -181,7 +181,7 @@ var generarPool = function(evento, idEvento) {
   var prefix = "pool_id_"
   var idPool = prefix + evento.pool;
   if (!_.find(proceso.collaboration.participant, function(val){return val._id == idPool})) {
-    proceso.collaboration.participant.push({"_id": idPool, "_name":evento.pool});
+    proceso.collaboration.participant.push({"_id": idPool, "_name":"pool_"+evento.pool});
   }
   var idMensaje = "mensaje_" + idEvento;
   if (evento.throw) {
@@ -359,7 +359,7 @@ var asociarElementosLanes = function(elem) {
 //Genero los elementos XML necesarios para los flujos
 var procesarFlujos = function(elem) {
   for (var i = 0; i < elem.sig.length; i++) {
-    if (elem.sig[i] != "F") {
+    //if (elem.sig[i] != "F") {
       var idFlujo = elem.id + "_" + elem.sig[i];
       var flujo = {"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]};
       if (elem.tipo == "xor") {
@@ -378,7 +378,7 @@ var procesarFlujos = function(elem) {
         }
       }
       proceso.process.sequenceFlow.push(flujo);
-    }
+    //}
   }
 }
 
@@ -545,7 +545,7 @@ function agregarTemplates(proceso, nombreProceso){
   var idPool = "pool_" + idProceso;
   proceso.collaboration.participant.push({"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso});
 
-  proceso.process.laneSet._id = "laneSet_"+idProceso;
+  //proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.collaboration = proceso.collaboration;
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
@@ -688,7 +688,12 @@ var templateServiceTask = function(elem, taskPos) {
 }
 
 var templateExpresiones = function(nodo) {
+  //########################################################################
+  //########################################################################
   //FIXME revisar como agregar la expresion para el loop
+  //TODO agregar la variable de la condicion al evento de inicio
+  //########################################################################
+  //########################################################################
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
       var condicion = nodo.sentencia[i];
@@ -790,13 +795,13 @@ var ajustarIDs = function(procesoJson, subproceso) {
     }
   }
   // LANES
-  if (subproceso == "") {
-    for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
-      for (var j=0; j< procesoJson.laneSet.lane[i].flowNodeRef.length; j++) {
-        procesoJson.laneSet.lane[i].flowNodeRef[j].__text = prefix + procesoJson.laneSet.lane[i].flowNodeRef[j].__text
-      }
-    }
-  }
+  //if (subproceso == "") {
+  //  for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
+  //    for (var j=0; j< procesoJson.laneSet.lane[i].flowNodeRef.length; j++) {
+  //      procesoJson.laneSet.lane[i].flowNodeRef[j].__text = prefix + procesoJson.laneSet.lane[i].flowNodeRef[j].__text
+  //    }
+  //  }
+  //}
   // USER TASKS
   if (procesoJson.userTask) {
     for (var i=0; i< procesoJson.userTask.length; i++) {
@@ -867,6 +872,7 @@ var ajustarIDs = function(procesoJson, subproceso) {
 }
 
 var limpiarProceso = function(proceso) {
+  delete(proceso.process.laneSet)
   if (proceso.process.userTask.length == 0) {
     delete(proceso.process.userTask);
   }
@@ -924,7 +930,7 @@ var modelToXML = function (modelo, nombreProceso) {
   }
   generarFlujos(modelo);
   conectarStartEvent(modelo.sentencia);
-  conectarEndEvent(modelo.sentencia);
+  //conectarEndEvent(modelo.sentencia);
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
   proceso.process = ajustarIDs(proceso.process, "");

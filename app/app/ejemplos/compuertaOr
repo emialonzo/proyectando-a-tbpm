@@ -1,0 +1,7 @@
+el marketing ingresa datos. ingresa datos, es un formulario con los siguientes campos:
+dato que es un texto obligatorio.
+si se cumple,
+dato es "menor" entonces el marketing hace una cosa.
+dato es "mayor" entonces el marketing hace otra cosa.
+si no el marketing no hace nada.
+fin

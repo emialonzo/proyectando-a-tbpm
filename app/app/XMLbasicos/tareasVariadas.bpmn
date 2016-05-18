@@ -1,0 +1,25 @@
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id_tareasVariadas' name='Pool_tareasVariadas' processRef='id_tareasVariadas'></participant>
+  </collaboration>
+  <process id='id_tareasVariadas' isExecutable='true' name='tareasVariadas'>
+    <startEvent id='_StartEvent_1'></startEvent>
+    <userTask id='_4' name='envia el expediente'></userTask>
+    <userTask id='_5' name='confirma expediente'></userTask>
+    <manualTask id='_6' name='quemar papeles'></manualTask>
+    <serviceTask id='_3' name='obtener expediente'></serviceTask>
+    <endEvent id='_EndEvent_1'></endEvent>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
+    <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
+    <sequenceFlow id='_6_F' sourceRef='_6' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+  </process>
+</definitions>

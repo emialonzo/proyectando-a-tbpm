@@ -11,7 +11,7 @@ al mismo tiempo,
                                         variable es "y" entonces el sales ofrece tarea Y.
                                         variable es "z" entonces el sales ofrece tarea Z.
                                         si no el sales ofrece tarea generico.
-                               fin
+                               fin.
                  fin
 
        fin
