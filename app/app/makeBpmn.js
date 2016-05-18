@@ -69,7 +69,7 @@ var losFlujos = [];
 
 var lasVariables = {}
 function buscarVariables(condicion){
-  var variable = condicion.replace(/(\w*).*/,'$1')
+  var variable = condicion.replace(/(\w+).*/,'$1')
   lasVariables[variable] = true
 }
 
@@ -427,7 +427,7 @@ function agregarPrpiedad(nodo, campo){
     //   {"sequenceFlow": {"_id":endNodo.id+":"+idEnd, "_sourceRef":endNodo.id, "_targetRef":idEnd }}
     // );
     losNodos.push({"endEvent":{"_id":"_F" , "_name":"EndEvent"}});
-    console.debug("Variiables"+pd.json(lasVariables))
+    // console.debug("Variiables"+pd.json(lasVariables))
     return armarJson();
   }
 
@@ -527,17 +527,19 @@ function agregarPrpiedad(nodo, campo){
     }
 
 
-    process.startEvent[0].extensionElements = {}
-    process.startEvent[0].extensionElements.formProperty = []
-    for (var variable in lasVariables) {
-      if (lasVariables.hasOwnProperty(variable)) {
-        console.log("variable:"+variable);
-        process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+    if(Object.keys(lasVariables).length){
+      process.startEvent[0].extensionElements = {}
+      process.startEvent[0].extensionElements.formProperty = []
+      for (var variable in lasVariables) {
+        if (lasVariables.hasOwnProperty(variable)) {
+          console.log("variable:"+variable);
+          process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+        }
       }
     }
 
     bpmn.definitions.process = process;
-    console.log(pd.json(process));
+    // console.log(pd.json(process));
 
     // console.log("*******************");
     // console.log(pd.json(losNodos));
@@ -546,7 +548,7 @@ function agregarPrpiedad(nodo, campo){
     // console.log("*******************");
     // console.log(pd.json(losFlujos));
     // console.log("*******************");
-    // console.log(pd.json(bpmn));
+    console.log(pd.json(bpmn));
     // console.log("*******************");
     return bpmn;
   }
