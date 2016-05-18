@@ -579,7 +579,6 @@ var agregarTemplateElementos = function(elem) {
           taskPos = i;
         }
       }
-      //FIXME hay que ver si agregan algo para ejecutarla
   } else if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && env.conSubproceso) {
     var subProcessPos = 0;
     for (var i=0; i< proceso.process.subProcess.length; i++) {
@@ -609,7 +608,7 @@ var agregarTemplateElementos = function(elem) {
       }
     }
   } else if (elem.tipo == "xor") {
-    templateExpresiones(elem);
+    templateExpresionesXOR(elem);
     for (var i=0; i < elem.sentencia.length; i++) {
       agregarTemplateElementos(elem.sentencia[i]);
     }
@@ -625,7 +624,9 @@ var agregarTemplateElementos = function(elem) {
     for (var i=0; i < elem.sentencia.length; i++) {
       agregarTemplateElementos(elem.sentencia[i]);
     }
-  } else if (elem.tipo == "cierro") {
+  } else if (elem.tipo == "cierro" && elem.tag == "loop") {
+    //FIXME seguir revisando esto
+    //templateExpresionesLOOP(elem);
   } else if (elem.tipo == "adjunto") {
     for (var i=0; i < elem.sentencia.length; i++) {
       agregarTemplateElementos(elem.sentencia[i]);
@@ -680,7 +681,6 @@ var templateCampos = function(nodo, taskPos) {
 }
 
 var templateServiceTask = function(elem, taskPos) {
-  //FIXME si se quisiera cambiar la implementacion del web service hay que cambiar el nombre de la clase
   var classpath = "org.proyecto.";
   var nombreClase = "Servicetask";
   aux = {"serviceTask":{"_id":"_"+elem.id , "_name":elem.sentencia.accion, "_activiti:class":classpath + nombreClase}}
@@ -694,33 +694,16 @@ function buscarVariables(condicion){
 
 var yaAgregueVariable = function(variable) {
   var result = false;
-  console.log("################## FORM PROP ##########################")
-  console.log(pd.json(proceso.process.startEvent[0].extensionElements.formProperty))
-  console.log("############################################")
   for (var i=0; i<proceso.process.startEvent[0].extensionElements.formProperty.length;i++) {
     var elem = proceso.process.startEvent[0].extensionElements.formProperty[i];
-    console.log("################## ELEM ##########################")
-    console.log(pd.json(elem))
-    console.log("################### CONDICION ######################")
-    console.log(proceso.process.startEvent[0].extensionElements.formProperty.hasOwnProperty(elem))
-    console.log("############################################")
     if (elem._id == variable) {
       return true;
     }
   }
-  console.log("############ RESULTADO ############")
-  console.log(result)
-  console.log("############################################")
   return result;
 }
 
-var templateExpresiones = function(nodo) {
-  //########################################################################
-  //########################################################################
-  //FIXME revisar como agregar la expresion para el loop
-  //TODO agregar la variable de la condicion al evento de inicio
-  //########################################################################
-  //########################################################################
+var templateExpresionesXOR = function(nodo) {
   for (var i=0; i < nodo.sentencia.length; i++) {
     if (nodo.sentencia[i].condicion != "defecto") {
       var condicion = nodo.sentencia[i];
@@ -745,6 +728,32 @@ var templateExpresiones = function(nodo) {
       }
     }
   }
+}
+
+var templateExpresionesLOOP = function(elem) {
+  console.log("############## ELEM ###################")
+  console.log(pd.json(elem))
+  console.log("#####################################")
+  var flujo;
+  for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
+    flujo = proceso.process.sequenceFlow[j];
+    if (flujo._name && flujo._name == elem.expresion) {
+      var variable = buscarVariables(condicion.expresion)
+      // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
+      if (!proceso.process.startEvent[0].extensionElements) {
+        proceso.process.startEvent[0].extensionElements = {}
+        proceso.process.startEvent[0].extensionElements.formProperty = []
+      }
+      if (!yaAgregueVariable(variable)) {
+        proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
+      }
+      var condicion = "${"+condicion.expresion+"}"
+      var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
+      flujo.conditionExpression = conditionExpression;
+      proceso.process.sequenceFlow[j] = flujo;
+    }
+  }
+
 }
 
 var templateSubproceso = function(elem, subProcessPos, ejecutable) {
