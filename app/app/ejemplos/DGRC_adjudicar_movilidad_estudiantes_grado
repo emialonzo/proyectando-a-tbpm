@@ -1,0 +1,20 @@
+el DGRC recibir postulaciones.
+unica alternativa de recibir postulaciones, si transcurre 1 mes
+  el DGRC controlar documentacion.
+  si se cumple,
+    analizarDisponibilidad es "si" entonces el DGRC analizar disponibilidad.
+    si no el DGRC no hace nada. fin
+  si se cumple,
+    evaluacionExterna es "si" entonces el DGRC evaluacion externa.
+    si no el DGRC no hace nada dos. fin
+  si se cumple,
+    realizarPriorizacion es "si" entonces el DGRC realizar priorizacion.
+    si no el DGRC no hace nada tres. fin
+
+  si se cumple,
+    necesitaNegociarCupos es "si" entonces el DGRC negociar cupos.
+    si no el DGRC no hace nada cuatro. fin
+
+  si se cumple,
+    esxistenMovilidadesAAsignar es "si" entonces el DGRC utiliza el subproceso DGRC_adjudicar_movilidad.
+    si no el DGRC no hace nada cinco. fin
