@@ -13,8 +13,17 @@ var filePathPng = __dirname + '/' + nombreArchivo + '.png';
 var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
 // console.log(filePath);
 
+var laneSet ;
+
 var yaoqiang = function(bpmn,callback, generarXml){
   // var generarXml = generarXml || true;
+
+  //borramos laneSet por bug en yaoqiang
+  var jsonBpmn = conv.xml_str2json( bpmn );
+  laneSet = jsonBpmn.definitions.process.laneSet;
+  delete jsonBpmn.definitions.process.laneSet;
+
+
   fs.writeFile(nombreArchivo+".bpmn", bpmn, function(err) {
     if(err) {
         return console.log(err);
@@ -45,14 +54,7 @@ var yaoqiang = function(bpmn,callback, generarXml){
     if(generarXml){
       //leo archivo xml
       var xml = fs.readFileSync(filePathBpmndi).toString();
-      //FIXME revisar esto que seria para sacarle los lanes, generar el xml con el bpmndi y con lanes
-      /*  lo paso a json
-      var bpmnYaoqiang = conv.xml_str2json(bpmn);
-      le saco los lanes
-      delete bpmnYaoqiang.definitions.process.laneSet;
-      lo paso a xml
-      bpmn = conv.json2xml_str(bpmnYaoqiang);
-      */
+
       //inicializando ajuste de archivo generado
       var jsonBpmn = conv.xml_str2json( bpmn );
       var jsonYao = conv.xml_str2json( xml );
@@ -70,6 +72,7 @@ var yaoqiang = function(bpmn,callback, generarXml){
       //ajustando condiciones
       // jsonYao.definitions.process.sequenceFlow = jsonBpmn.definitions.process.sequenceFlow
       jsonBpmn.definitions.BPMNDiagram = jsonYao.definitions.BPMNDiagram;
+      jsonBpmn.definitions.process.laneSet = laneSet;
 
       // callback(xml);
       callback(conv.json2xml_str(jsonBpmn))
