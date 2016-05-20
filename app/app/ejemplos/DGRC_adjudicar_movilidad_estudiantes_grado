@@ -18,3 +18,4 @@ unica alternativa de recibir postulaciones, si transcurre 1 mes
   si se cumple,
     esxistenMovilidadesAAsignar es "si" entonces el DGRC utiliza el subproceso DGRC_adjudicar_movilidad.
     si no el DGRC no hace nada cinco. fin
+  fin
