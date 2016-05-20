@@ -625,8 +625,6 @@ var templateElementos = function(elem) {
       templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "cierro" && elem.tag == "loop") {
-    console.log("#################### ENCONTRE UN CIERRO LOOP ####################")
-    //FIXME seguir revisando esto
     templateExpresionesLOOP(elem);
   } else if (elem.tipo == "adjunto") {
     for (var i=0; i < elem.sentencia.length; i++) {
@@ -718,9 +716,6 @@ var templateExpresionesXOR = function(nodo) {
             proceso.process.startEvent[0].extensionElements.formProperty = []
           }
           if (!yaAgregueVariable(variable)) {
-            console.log("############## ELEM ###################")
-            console.log(pd.json(nodo))
-            console.log("#####################################")
             proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
           }
           var condicion = "${"+condicion.expresion+"}"
@@ -734,16 +729,10 @@ var templateExpresionesXOR = function(nodo) {
 }
 
 var templateExpresionesLOOP = function(elem) {
-  console.log("############## ELEM ###################")
-  console.log(pd.json(elem))
-  console.log("#####################################")
   var flujo;
   for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
     flujo = proceso.process.sequenceFlow[j];
     if (flujo._name && flujo._name == elem.expresion) {
-      console.log("############## FLUJO ###################")
-      console.log(pd.json(flujo))
-      console.log("#####################################")
       var variable = buscarVariables(elem.expresion)
       if (!proceso.process.startEvent[0].extensionElements) {
         proceso.process.startEvent[0].extensionElements = {}
