@@ -22,6 +22,8 @@ var yaoqiang = function(bpmn,callback, generarXml){
   var jsonBpmn = conv.xml_str2json( bpmn );
   laneSet = jsonBpmn.definitions.process.laneSet;
   delete jsonBpmn.definitions.process.laneSet;
+  bpmn = conv.json2xml_str(jsonBpmn)
+
 
 
   fs.writeFile(nombreArchivo+".bpmn", bpmn, function(err) {
