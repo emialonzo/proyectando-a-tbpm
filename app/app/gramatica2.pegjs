@@ -70,7 +70,7 @@ servicio_id = "utiliza el servicio"
 subproceso_id = "utiliza el subproceso"
 subproceso_loop = "Se utiliza" / "Es utilizado"
 subproceso_loop_aux = "vez" / "veces"
-accion = ([a-z]i+ ws)* { return text()}
+accion = ([a-z_]i+ ws)* { return text()}
 sent_accion =  ws actor:actor ws "realiza la tarea manual" ws accion:accion ws punto
               { return {"actor": actor , "accion" : accion , "task": "manual"};}
               /ws actor:actor ws servicio_id ws accion:accion ws punto
