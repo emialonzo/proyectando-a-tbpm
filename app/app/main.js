@@ -28,7 +28,10 @@ var conYaoqiang = env.conYaoqiang;
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
-function ejecutarProceso(){
+var ejecutar = false;
+function ejecutarProceso(xml){
+  var xml = $("#id-xml-ejecutar").text() || xml || ""
+  fs.writeFileSync(__dirname + "/../motor/" + "motor.bpmn", pd.xml(xml));
   ipcRenderer.send('abrir-motor');
 }
 
@@ -72,9 +75,10 @@ function conversion(){
       //parsea texto
       modelo = parser.parse(text);
     } catch (e) {
-      console.error(e);
-      console.error(pd.json(e));
+      // console.error(e);
+      // console.error(pd.json(e));
       console.error("Error al obtener modelo intermedio desde texto!");
+      mostrarError("Ha ocurrido un error al realizar el parser del texto, puede no esté escribiendo el texto acorde a la gramática.")
       errorParser(e);
       return;
     }
@@ -95,20 +99,9 @@ function conversion(){
     }catch (e) {
       console.error(e);
       console.error("Error al procesar modelo!");
+      mostrarError("Ha ocurrido un error interno mientras se aplicaban transformaciones al modelo generado.")
       return;
     }
-
-    try {
-      // var dot = makeDot.toDot(modeloInt);
-      // $("#id-dot").html(dot);
-      // makeDot.executeDot(dot, callbackDot)
-
-    } catch (e) {
-      console.error("error al obtener graphviz");
-      console.error(e);
-      return;
-    }
-
 
     try {
       if(conYaoqiang){
@@ -123,6 +116,7 @@ function conversion(){
           makeDot.executeDot(dot2, callbackDot)
         } catch(e){
           $("#id-dot").html("error!!");
+          mostrarError("Ha ocurrido un error interno mientras se generaba el gráfico de flujo con la herramienta Graphviz")
         }
 
         yaoqiang.generarImagen(bpmn, callbackYaoqiang);
@@ -155,12 +149,14 @@ function conversion(){
     } catch (e) {
       console.error(e);
       console.error("error al pasar a xml");
+      mostrarError("Ha ocurrido un error interno mientras se generaba el archivo BPMN")
       return;
     }
 
   } catch (e) {
     console.error(pd.json(e));
     console.error(e);
+    mostrarError("Ha ocurrido un error interno inesperado.")
     return;
     // console.log(e.message);
   }
@@ -285,13 +281,25 @@ function errorParser(pegError){
   // success info warning danger
   var tipo = "danger";
 
+  var strError = pegError.toString()
+  strError = strError.replace("SyntaxError: Expected", "Error de sintaxis. Se esperaba por:");
+  strError = strError.replace("but", "pero se encontró");
+  strError = strError.replace("end of input", "fin del texto");
+  strError = strError.replace("found", "");
+
+
   var str = `<div class="alert alert-`+ tipo +` alert-dismissible" role="alert">
   <button type="button" class="close"
   data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  ` + pegError + `</div>`
+  ` + strError + `</div>`
+
   $("div#id-texto-container div#div-error").prepend(str);
   var pos = posPegError(pegError);
   $('#id-modelo-texto').get(0).setSelectionRange(pos[0], pos[1]);
+}
+
+function mostrarError(error){
+  alert(error)
 }
 
 function limpiarMensajesError(){
@@ -303,6 +311,9 @@ $(function() {
     var idContainer = $(this).data('target');
     var xml = $(idContainer).text();
     ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
+    if(ejecutar){
+      ejecutarProceso(xml)
+    }
     // console.log(xml);
 
 
