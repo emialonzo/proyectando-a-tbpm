@@ -10,6 +10,15 @@
     <participant id='pool_id_adjuntoUnicaAlternativa' name='Pool_adjuntoUnicaAlternativa' processRef='id_adjuntoUnicaAlternativa'></participant>
   </collaboration>
   <process id='id_adjuntoUnicaAlternativa' isExecutable='true' name='adjuntoUnicaAlternativa'>
+    <laneSet id='laneSet_id_adjuntoUnicaAlternativa'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+      <lane id='Lane_usuario' name='usuario'>
+        <flowNodeRef>_6</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_3' name='hace algo' activiti:candidateGroups='marketing'></userTask>
     <userTask id='_6' name='no hace nada' activiti:candidateGroups='usuario'></userTask>

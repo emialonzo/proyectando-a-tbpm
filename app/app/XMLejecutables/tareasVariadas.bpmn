@@ -10,6 +10,17 @@
     <participant id='pool_id_tareasVariadas' name='Pool_tareasVariadas' processRef='id_tareasVariadas'></participant>
   </collaboration>
   <process id='id_tareasVariadas' isExecutable='true' name='tareasVariadas'>
+    <laneSet id='laneSet_id_tareasVariadas'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+      <lane id='Lane_sales' name='sales'>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_4' name='envia el expediente' activiti:candidateGroups='marketing'>
       <extensionElements>

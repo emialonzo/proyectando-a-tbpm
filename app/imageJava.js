@@ -45,7 +45,14 @@ var yaoqiang = function(bpmn,callback, generarXml){
     if(generarXml){
       //leo archivo xml
       var xml = fs.readFileSync(filePathBpmndi).toString();
-
+      //FIXME revisar esto que seria para sacarle los lanes, generar el xml con el bpmndi y con lanes
+      /*  lo paso a json
+      var bpmnYaoqiang = conv.xml_str2json(bpmn);
+      le saco los lanes
+      delete bpmnYaoqiang.definitions.process.laneSet;
+      lo paso a xml
+      bpmn = conv.json2xml_str(bpmnYaoqiang);
+      */
       //inicializando ajuste de archivo generado
       var jsonBpmn = conv.xml_str2json( bpmn );
       var jsonYao = conv.xml_str2json( xml );

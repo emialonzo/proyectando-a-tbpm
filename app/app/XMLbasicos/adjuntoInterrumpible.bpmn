@@ -10,6 +10,13 @@
     <participant id='pool_id_adjuntoInterrumpible' name='Pool_adjuntoInterrumpible' processRef='id_adjuntoInterrumpible'></participant>
   </collaboration>
   <process id='id_adjuntoInterrumpible' isExecutable='true' name='adjuntoInterrumpible'>
+    <laneSet id='laneSet_id_adjuntoInterrumpible'>
+      <lane id='Lane_sales' name='sales'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_3' name='hace algo'></userTask>
     <userTask id='_6' name='no hace nada'></userTask>

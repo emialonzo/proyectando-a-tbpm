@@ -13,6 +13,16 @@
     <messageFlow id='mensaje_6' sourceRef='pool_id_urbanizacion' targetRef='_6'></messageFlow>
   </collaboration>
   <process id='id_eventosIntermedios' isExecutable='true' name='eventosIntermedios'>
+    <laneSet id='laneSet_id_eventosIntermedios'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_7</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_3' name='comienza el proceso'></userTask>
     <userTask id='_7' name='finaliza el proceso'></userTask>
