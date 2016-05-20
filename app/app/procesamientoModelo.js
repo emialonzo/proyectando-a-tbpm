@@ -526,7 +526,7 @@ var agregarSubprocesos = function(modelo, proceso) {
   }
 }
 
-function agregarTemplates(proceso, nombreProceso){
+function templatesProceso(proceso, nombreProceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
   var idProceso = "id_" + nombreProceso;
@@ -554,7 +554,7 @@ function agregarTemplates(proceso, nombreProceso){
   return bpmn;
 }
 
-var agregarTemplateElementos = function(elem) {
+var templateElementos = function(elem) {
 
   if (elem.tipo == "task" && elem.sentencia.task == "human") {
     var taskPos = 0;
@@ -596,7 +596,7 @@ var agregarTemplateElementos = function(elem) {
             break;
           }
         }
-        agregarTemplatesEventoMensajeThrow(elem, eventPos);
+        templatesEventoMensajeThrow(elem, eventPos);
       } else {
         for (var i=0; i< proceso.process.intermediateCatchEvent.length; i++) {
           if (proceso.process.intermediateCatchEvent[i]._id == "_"+elem.id ) {
@@ -604,37 +604,38 @@ var agregarTemplateElementos = function(elem) {
             break;
           }
         }
-        agregarTemplatesEventoMensajeCatch(elem, eventPos);
+        templatesEventoMensajeCatch(elem, eventPos);
       }
     }
   } else if (elem.tipo == "xor") {
     templateExpresionesXOR(elem);
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "and") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "loop") {
     for (var i = 0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i])
+      templateElementos(elem.sentencia[i])
     }
   } else if (elem.tipo == "secuencia") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "cierro" && elem.tag == "loop") {
+    console.log("#################### ENCONTRE UN CIERRO LOOP ####################")
     //FIXME seguir revisando esto
-    //templateExpresionesLOOP(elem);
+    templateExpresionesLOOP(elem);
   } else if (elem.tipo == "adjunto") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   }
 }
 
-var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
+var templatesEventoMensajeThrow = function(elem, eventPos) {
   var mailTask = {"serviceTask":{"_id":"_"+elem.id, "_name":"mensaje para "+ elem.sentencia.evento.pool, "_activiti:type":"mail"}};
   mailTask.serviceTask['extensionElements'] = {
     'activiti:field':[
@@ -653,7 +654,7 @@ var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
   }
 }
 
-var agregarTemplatesEventoMensajeCatch = function(elem, eventPos) {
+var templatesEventoMensajeCatch = function(elem, eventPos) {
   var task = {"userTask":{"_id":"_"+elem.id, "_name":"espero mensaje de "+ elem.sentencia.evento.pool, "_activiti:candidateGroups":elem.sentencia.actor}};
   if (!proceso.process.userTask) {
     proceso.process.userTask = [];
@@ -712,12 +713,14 @@ var templateExpresionesXOR = function(nodo) {
         flujo = proceso.process.sequenceFlow[j];
         if (flujo._name && flujo._name == condicion.condicion) {
           var variable = buscarVariables(condicion.expresion)
-          // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
           if (!proceso.process.startEvent[0].extensionElements) {
             proceso.process.startEvent[0].extensionElements = {}
             proceso.process.startEvent[0].extensionElements.formProperty = []
           }
           if (!yaAgregueVariable(variable)) {
+            console.log("############## ELEM ###################")
+            console.log(pd.json(nodo))
+            console.log("#####################################")
             proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
           }
           var condicion = "${"+condicion.expresion+"}"
@@ -738,8 +741,10 @@ var templateExpresionesLOOP = function(elem) {
   for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
     flujo = proceso.process.sequenceFlow[j];
     if (flujo._name && flujo._name == elem.expresion) {
-      var variable = buscarVariables(condicion.expresion)
-      // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
+      console.log("############## FLUJO ###################")
+      console.log(pd.json(flujo))
+      console.log("#####################################")
+      var variable = buscarVariables(elem.expresion)
       if (!proceso.process.startEvent[0].extensionElements) {
         proceso.process.startEvent[0].extensionElements = {}
         proceso.process.startEvent[0].extensionElements.formProperty = []
@@ -747,13 +752,12 @@ var templateExpresionesLOOP = function(elem) {
       if (!yaAgregueVariable(variable)) {
         proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
       }
-      var condicion = "${"+condicion.expresion+"}"
+      var condicion = "${"+elem.expresion+"}"
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       flujo.conditionExpression = conditionExpression;
       proceso.process.sequenceFlow[j] = flujo;
     }
   }
-
 }
 
 var templateSubproceso = function(elem, subProcessPos, ejecutable) {
@@ -979,7 +983,7 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
   proceso.process = ajustarIDs(proceso.process, "");
-  var bpmn = agregarTemplates(proceso, nombreProceso);
+  var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLbasicos/";
   var nombreArchivo = nombreProceso + ".bpmn";
@@ -990,10 +994,10 @@ var modelToXML = function (modelo, nombreProceso) {
 
 var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
-    agregarTemplateElementos(modelo.sentencia[i]);
+    templateElementos(modelo.sentencia[i]);
   }
   limpiarProcesoEjecutable(proceso);
-  var bpmn = agregarTemplates(proceso, nombreProceso);
+  var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";

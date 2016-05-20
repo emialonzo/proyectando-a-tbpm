@@ -10,7 +10,11 @@
     <participant id='pool_id_loop' name='Pool_loop' processRef='id_loop'></participant>
   </collaboration>
   <process id='id_loop' isExecutable='true' name='loop'>
-    <startEvent id='_StartEvent_1'></startEvent>
+    <startEvent id='_StartEvent_1'>
+      <extensionElements>
+        <activiti:formProperty id='comando'></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
     <userTask id='_5' name='lee comando' activiti:candidateGroups='marketing'>
       <extensionElements>
         <activiti:formProperty id='comando' name='comando' type='string' required='true'></activiti:formProperty>
@@ -22,7 +26,11 @@
     <sequenceFlow id='_3_5' sourceRef='_3' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
     <sequenceFlow id='_6_F' sourceRef='_6' targetRef='_EndEvent_1'></sequenceFlow>
-    <sequenceFlow id='_6_3' sourceRef='_6' targetRef='_3' name='comando!=&quot;salir&quot;'></sequenceFlow>
+    <sequenceFlow id='_6_3' sourceRef='_6' targetRef='_3' name='comando!=&quot;salir&quot;'>
+      <conditionExpression xsi:type='tFormalExpression'>
+        <![CDATA[${comando!="salir"}]]>
+      </conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
   </process>
 </definitions>
