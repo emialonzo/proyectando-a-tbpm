@@ -526,7 +526,7 @@ var agregarSubprocesos = function(modelo, proceso) {
   }
 }
 
-function agregarTemplates(proceso, nombreProceso){
+function templatesProceso(proceso, nombreProceso){
   //FIXME revisar los campos que son asignados estaticamente
   var bpmn = {};
   var idProceso = "id_" + nombreProceso;
@@ -545,7 +545,7 @@ function agregarTemplates(proceso, nombreProceso){
   var idPool = "pool_" + idProceso;
   proceso.collaboration.participant.push({"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso});
 
-  //proceso.process.laneSet._id = "laneSet_"+idProceso;
+  proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.collaboration = proceso.collaboration;
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
@@ -554,7 +554,7 @@ function agregarTemplates(proceso, nombreProceso){
   return bpmn;
 }
 
-var agregarTemplateElementos = function(elem) {
+var templateElementos = function(elem) {
 
   if (elem.tipo == "task" && elem.sentencia.task == "human") {
     var taskPos = 0;
@@ -596,7 +596,7 @@ var agregarTemplateElementos = function(elem) {
             break;
           }
         }
-        agregarTemplatesEventoMensajeThrow(elem, eventPos);
+        templatesEventoMensajeThrow(elem, eventPos);
       } else {
         for (var i=0; i< proceso.process.intermediateCatchEvent.length; i++) {
           if (proceso.process.intermediateCatchEvent[i]._id == "_"+elem.id ) {
@@ -604,37 +604,36 @@ var agregarTemplateElementos = function(elem) {
             break;
           }
         }
-        agregarTemplatesEventoMensajeCatch(elem, eventPos);
+        templatesEventoMensajeCatch(elem, eventPos);
       }
     }
   } else if (elem.tipo == "xor") {
     templateExpresionesXOR(elem);
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "and") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "loop") {
     for (var i = 0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i])
+      templateElementos(elem.sentencia[i])
     }
   } else if (elem.tipo == "secuencia") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   } else if (elem.tipo == "cierro" && elem.tag == "loop") {
-    //FIXME seguir revisando esto
-    //templateExpresionesLOOP(elem);
+    templateExpresionesLOOP(elem);
   } else if (elem.tipo == "adjunto") {
     for (var i=0; i < elem.sentencia.length; i++) {
-      agregarTemplateElementos(elem.sentencia[i]);
+      templateElementos(elem.sentencia[i]);
     }
   }
 }
 
-var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
+var templatesEventoMensajeThrow = function(elem, eventPos) {
   var mailTask = {"serviceTask":{"_id":"_"+elem.id, "_name":"mensaje para "+ elem.sentencia.evento.pool, "_activiti:type":"mail"}};
   mailTask.serviceTask['extensionElements'] = {
     'activiti:field':[
@@ -653,7 +652,7 @@ var agregarTemplatesEventoMensajeThrow = function(elem, eventPos) {
   }
 }
 
-var agregarTemplatesEventoMensajeCatch = function(elem, eventPos) {
+var templatesEventoMensajeCatch = function(elem, eventPos) {
   var task = {"userTask":{"_id":"_"+elem.id, "_name":"espero mensaje de "+ elem.sentencia.evento.pool, "_activiti:candidateGroups":elem.sentencia.actor}};
   if (!proceso.process.userTask) {
     proceso.process.userTask = [];
@@ -712,7 +711,6 @@ var templateExpresionesXOR = function(nodo) {
         flujo = proceso.process.sequenceFlow[j];
         if (flujo._name && flujo._name == condicion.condicion) {
           var variable = buscarVariables(condicion.expresion)
-          // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
           if (!proceso.process.startEvent[0].extensionElements) {
             proceso.process.startEvent[0].extensionElements = {}
             proceso.process.startEvent[0].extensionElements.formProperty = []
@@ -731,15 +729,11 @@ var templateExpresionesXOR = function(nodo) {
 }
 
 var templateExpresionesLOOP = function(elem) {
-  console.log("############## ELEM ###################")
-  console.log(pd.json(elem))
-  console.log("#####################################")
   var flujo;
   for (var j=0; j< proceso.process.sequenceFlow.length; j++) {
     flujo = proceso.process.sequenceFlow[j];
     if (flujo._name && flujo._name == elem.expresion) {
-      var variable = buscarVariables(condicion.expresion)
-      // se la meto asi al startEvent done lasVariables tiene como clave a todas las variables
+      var variable = buscarVariables(elem.expresion)
       if (!proceso.process.startEvent[0].extensionElements) {
         proceso.process.startEvent[0].extensionElements = {}
         proceso.process.startEvent[0].extensionElements.formProperty = []
@@ -747,13 +741,12 @@ var templateExpresionesLOOP = function(elem) {
       if (!yaAgregueVariable(variable)) {
         proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable})
       }
-      var condicion = "${"+condicion.expresion+"}"
+      var condicion = "${"+elem.expresion+"}"
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       flujo.conditionExpression = conditionExpression;
       proceso.process.sequenceFlow[j] = flujo;
     }
   }
-
 }
 
 var templateSubproceso = function(elem, subProcessPos, ejecutable) {
@@ -763,8 +756,8 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable) {
   }
   var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
-  jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process,elem.sentencia.accion)
-  var auxSubProceso = {"subprocess":{"_id":prefix+elem.id,"_name":elem.sentencia.accion}};
+  jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process,elem.sentencia.accion);
+  var auxSubProceso = {"subprocess":{"_id":"","_name":elem.sentencia.accion}};
   if (elem.sentencia.cant) {
     if (ejecutable) {
       auxSubProceso.subprocess['multiInstanceLoopCharacteristics'] = {};
@@ -774,40 +767,14 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable) {
       auxSubProceso.subprocess['standardLoopCharacteristics'] = {};
     }
   }
-  auxSubProceso.subprocess.startEvent = [];
-  auxSubProceso.subprocess.startEvent.push(jsonSubProceso.definitions.process.startEvent[0]);
-  auxSubProceso.subprocess.endEvent = [];
-  auxSubProceso.subprocess.endEvent.push(jsonSubProceso.definitions.process.endEvent[0]);
-  if (jsonSubProceso.definitions.process.userTask && jsonSubProceso.definitions.process.userTask.length > 0) {
-    auxSubProceso.subprocess.userTask = jsonSubProceso.definitions.process.userTask;
+  for (var variable in jsonSubProceso.definitions.process) {
+    if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
+      auxSubProceso.subprocess[variable] = jsonSubProceso.definitions.process[variable];
+    }
   }
-  if (jsonSubProceso.definitions.process.serviceTask && jsonSubProceso.definitions.process.serviceTask.length > 0) {
-    auxSubProceso.subprocess.serviceTask = jsonSubProceso.definitions.process.serviceTask;
-  }
-  if (jsonSubProceso.definitions.process.manualTask && jsonSubProceso.definitions.process.manualTask.length > 0) {
-    auxSubProceso.subprocess.manualTask = jsonSubProceso.definitions.process.manualTask;
-  }
-  if (jsonSubProceso.definitions.process.exclusiveGateway && jsonSubProceso.definitions.process.exclusiveGateway.length > 0) {
-    auxSubProceso.subprocess.exclusiveGateway = jsonSubProceso.definitions.process.exclusiveGateway;
-  }
-  if (jsonSubProceso.definitions.process.parallelGateway && jsonSubProceso.definitions.process.parallelGateway.length > 0) {
-    auxSubProceso.subprocess.parallelGateway = jsonSubProceso.definitions.process.parallelGateway;
-  }
-  if (jsonSubProceso.definitions.process.intermediateCatchEvent && jsonSubProceso.definitions.process.intermediateCatchEvent.length > 0) {
-    auxSubProceso.subprocess.intermediateCatchEvent = jsonSubProceso.definitions.process.intermediateCatchEvent;
-  }
-  if (jsonSubProceso.definitions.process.intermediateThrowEvent && jsonSubProceso.definitions.process.intermediateThrowEvent.length > 0) {
-    auxSubProceso.subprocess.intermediateThrowEvent = jsonSubProceso.definitions.process.intermediateThrowEvent;
-  }
-  if (jsonSubProceso.definitions.process.boundaryEvent && jsonSubProceso.definitions.process.boundaryEvent.length > 0) {
-    auxSubProceso.subprocess.boundaryEvent = jsonSubProceso.definitions.process.boundaryEvent;
-  }
-  if (jsonSubProceso.definitions.process.subProcess && jsonSubProceso.definitions.process.subProcess.length > 0) {
-    auxSubProceso.subprocess.subProcess = jsonSubProceso.definitions.process.subProcess;
-  }
-  if (jsonSubProceso.definitions.process.sequenceFlow && jsonSubProceso.definitions.process.sequenceFlow.length > 0) {
-    auxSubProceso.subprocess.sequenceFlow = jsonSubProceso.definitions.process.sequenceFlow;
-  }
+  auxSubProceso.subprocess._id = prefix+elem.id;
+  delete auxSubProceso.subprocess.laneSet;
+  delete auxSubProceso.subprocess["_isExecutable"];
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
 
@@ -840,13 +807,13 @@ var ajustarIDs = function(procesoJson, subproceso) {
     }
   }
   // LANES
-  //if (subproceso == "") {
-  //  for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
-  //    for (var j=0; j< procesoJson.laneSet.lane[i].flowNodeRef.length; j++) {
-  //      procesoJson.laneSet.lane[i].flowNodeRef[j].__text = prefix + procesoJson.laneSet.lane[i].flowNodeRef[j].__text
-  //    }
-  //  }
-  //}
+  if (subproceso == "") {
+    for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
+      for (var j=0; j< procesoJson.laneSet.lane[i].flowNodeRef.length; j++) {
+        procesoJson.laneSet.lane[i].flowNodeRef[j].__text = prefix + procesoJson.laneSet.lane[i].flowNodeRef[j].__text
+      }
+    }
+  }
   // USER TASKS
   if (procesoJson.userTask) {
     for (var i=0; i< procesoJson.userTask.length; i++) {
@@ -917,7 +884,7 @@ var ajustarIDs = function(procesoJson, subproceso) {
 }
 
 var limpiarProceso = function(proceso) {
-  delete(proceso.process.laneSet)
+  //delete(proceso.process.laneSet)
   if (proceso.process.userTask.length == 0) {
     delete(proceso.process.userTask);
   }
@@ -979,7 +946,7 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
   proceso.process = ajustarIDs(proceso.process, "");
-  var bpmn = agregarTemplates(proceso, nombreProceso);
+  var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLbasicos/";
   var nombreArchivo = nombreProceso + ".bpmn";
@@ -990,10 +957,10 @@ var modelToXML = function (modelo, nombreProceso) {
 
 var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
-    agregarTemplateElementos(modelo.sentencia[i]);
+    templateElementos(modelo.sentencia[i]);
   }
   limpiarProcesoEjecutable(proceso);
-  var bpmn = agregarTemplates(proceso, nombreProceso);
+  var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";

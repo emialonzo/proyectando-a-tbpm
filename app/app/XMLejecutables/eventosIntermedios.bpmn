@@ -10,11 +10,21 @@
     <participant id='pool_id_eventosIntermedios' name='Pool_eventosIntermedios' processRef='id_eventosIntermedios'></participant>
   </collaboration>
   <process id='id_eventosIntermedios' isExecutable='true' name='eventosIntermedios'>
+    <laneSet id='laneSet_id_eventosIntermedios'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_7</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_3' name='comienza el proceso' activiti:candidateGroups='marketing'></userTask>
     <userTask id='_7' name='finaliza el proceso' activiti:candidateGroups='marketing'></userTask>
-    <userTask id='_5' name='espero mensaje de urbanizacion' activiti:candidateGroups='marketing'></userTask>
-    <intermediateCatchEvent id='_6'>
+    <userTask id='_6' name='espero mensaje de urbanizacion' activiti:candidateGroups='marketing'></userTask>
+    <intermediateCatchEvent id='_5'>
       <timerEventDefinition>
         <timeDuration>PT1M</timeDuration>
       </timerEventDefinition>
@@ -26,13 +36,13 @@
     <sequenceFlow id='_6_7' sourceRef='_6' targetRef='_7'></sequenceFlow>
     <sequenceFlow id='_7_F' sourceRef='_7' targetRef='_EndEvent_1'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
-    <serviceTask id='_4' name='mensaje para administracion' activiti:type='mail'>
+    <serviceTask id='_4' name='mensaje para urbanizacion' activiti:type='mail'>
       <extensionElements>
         <activiti:field name='to'>
           <activiti:string>proyectotbpm@gmail.com</activiti:string>
         </activiti:field>
         <activiti:field name='subject'>
-          <activiti:string>mensaje para administracion</activiti:string>
+          <activiti:string>mensaje para urbanizacion</activiti:string>
         </activiti:field>
         <activiti:field name='html'>
           <activiti:string>Se ejecuto el evento.</activiti:string>

@@ -10,6 +10,14 @@
     <participant id='pool_id_loop' name='Pool_loop' processRef='id_loop'></participant>
   </collaboration>
   <process id='id_loop' isExecutable='true' name='loop'>
+    <laneSet id='laneSet_id_loop'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'></startEvent>
     <userTask id='_5' name='lee comando'></userTask>
     <exclusiveGateway id='_3'></exclusiveGateway>

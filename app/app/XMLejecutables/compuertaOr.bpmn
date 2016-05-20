@@ -10,6 +10,17 @@
     <participant id='pool_id_compuertaOr' name='Pool_compuertaOr' processRef='id_compuertaOr'></participant>
   </collaboration>
   <process id='id_compuertaOr' isExecutable='true' name='compuertaOr'>
+    <laneSet id='laneSet_id_compuertaOr'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_8</flowNodeRef>
+        <flowNodeRef>_10</flowNodeRef>
+        <flowNodeRef>_11</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
     <startEvent id='_StartEvent_1'>
       <extensionElements>
         <activiti:formProperty id='dato'></activiti:formProperty>
