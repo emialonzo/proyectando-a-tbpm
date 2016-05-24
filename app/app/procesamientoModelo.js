@@ -516,12 +516,28 @@ var agregarSubprocesos = function(modelo, proceso) {
     var elem = modelo.sentencia[i];
     if (elem.tipo == "task" && elem.sentencia.task == "subproceso" && env.conSubproceso) {
       var subProcessPos = 0;
-      for (var i=0; i< proceso.process.subProcess.length; i++) {
-        if (proceso.process.subProcess[i]._id == elem.id) {
-          subProcessPos = i;
+      for (var j=0; j< proceso.process.subProcess.length; j++) {
+        if (proceso.process.subProcess[j]._id == elem.id) {
+          subProcessPos = j;
         }
       }
       templateSubproceso(elem, subProcessPos, false);
+    } else if (elem.tipo == "adjunto") {
+      for (var j=0; j<elem.sentencia.length; j++) {
+        agregarSubprocesos(elem.sentencia[j], proceso);
+      }
+    } else if (elem.tipo == "and") {
+      for (var j=0; j<elem.sentencia.length; j++) {
+        agregarSubprocesos(elem.sentencia[j], proceso);
+      }
+    } else if (elem.tipo == "xor") {
+      for (var j=0; j<elem.sentencia.length; j++) {
+        agregarSubprocesos(elem.sentencia[j], proceso);
+      }
+    } else if (elem.tipo == "loop") {
+      for (var j=0; j<elem.sentencia.length; j++) {
+        agregarSubprocesos(elem.sentencia[j], proceso);
+      }
     }
   }
 }
@@ -946,16 +962,17 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
   proceso.process = ajustarIDs(proceso.process, "");
+  console.log("################templates#######################")
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLbasicos/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  bpmn = generarXMLejecutable(modelo, proceso, nombreProceso);
-  return pd.xml(bpmn);
+  var result = {"xml":pd.xml(bpmn), "modelo":modelo, "proceso":proceso, "nombreProceso":nombreProceso}
+  return result;
 }
 
-var generarXMLejecutable = function(modelo, proceso, nombreProceso){
+var modelToXMLactiviti = function(modelo, proceso, nombreProceso){
   for (var i=0; i<modelo.sentencia.length; i++) {
     templateElementos(modelo.sentencia[i]);
   }
@@ -965,7 +982,8 @@ var generarXMLejecutable = function(modelo, proceso, nombreProceso){
   var path = __dirname + "/XMLejecutables/";
   var nombreArchivo = nombreProceso + ".bpmn";
   fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
-  return bpmn;
+  var result = {"xml":pd.xml(bpmn), "modelo":modelo, "proceso":proceso, "nombreProceso":nombreProceso}
+  return result;
 }
 
 var xml2json = function(bpmn){
@@ -976,6 +994,6 @@ var xml2json = function(bpmn){
 module.exports = {
   textToModel : textToModel,
   modelToXML : modelToXML,
-  generarXMLejecutable : generarXMLejecutable,
+  modelToXMLactiviti : modelToXMLactiviti,
   xml2json : xml2json,
 }

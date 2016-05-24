@@ -105,11 +105,15 @@ function conversion(){
 
     try {
       if(conYaoqiang){
-        var bpmn = procesar.modelToXML(modeloInt, nombre);
+        var result = procesar.modelToXML(modeloInt, nombre);
+        var bpmn = result.xml;
+        var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso)
+        var bpmnActiviti = resultActiviti.xml;
+
         //var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         $("#id-xml-code").text(bpmn);
         $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
-
+        $("#id-xml-activiti").text(bpmnActiviti);
         try{
           var dot2 = makeDot2.toDot(bpmn);
           $("#id-dot").html(dot2);
