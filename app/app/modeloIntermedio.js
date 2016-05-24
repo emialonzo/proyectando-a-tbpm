@@ -91,6 +91,9 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[largo_secuencia-1]
         = recursivoFlujo(nodo.sentencia[largo_secuencia-1], [nodo.sentencia[largo_secuencia-2].id], sig);
     } else if(largo_secuencia>0){
+      if(nodo.sentencia[0].finaliza){
+        sig = ["F"];
+      }
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
     } else{
@@ -154,6 +157,9 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sig.push(nodo.sentencia[i].id);
       nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.id], sig);
     }
+  }
+  if(nodo.finaliza){
+    nodo.sig = ["F"]
   }
   updateNodo(nodo);
   return nodo;

@@ -40,9 +40,12 @@ palabras "palabras" = ([a-z]i+ ws?)+ { return text()}
 
 secuencia = sec:(ws sent:sentencia {return sent;})+ {  return {"tipo":"secuencia", "sentencia":sec}}
 
+
+finaliza = "y finaliza"
+
 sentencia =
       sentEv:sent_ev {return {"tipo":"evento", "sentencia":sentEv};} /
-			task:sent_accion {return {"tipo":"task", "sentencia":task, "doc": text()};} /
+			task:sent_accion finaliza:finaliza? {return {"tipo":"task", "sentencia":task, "doc": text(), "finaliza":finaliza?true:false};} /
       sentY:sent_y {return {"tipo":"and", "sentencia":sentY};} /
       sentO:sent_o {return {"tipo":"xor", "sentencia":sentO};} /
       sentAdj:sent_adj {return {"tipo":"adjunto", "evento":sentAdj.evento, "adjunto_a":sentAdj.adjunto_a, "sentencia":sentAdj.sentencia, "interrumpible":sentAdj.interrumpible, "unica":sentAdj.unica };} /
