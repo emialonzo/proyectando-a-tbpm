@@ -55,23 +55,23 @@ function updateNodo(nodo){
   return dicccionarioId[nodo.id] = nodo;
 }
 
-//recursivoFlujo
+// recursivoFlujo
 // PRE: los nodos deben tener id
 // PRE: las gw deben estar balanceadas
 // return: a cada nodo le agrega un flujo
 function asignarFlujo(modelo){
-  // var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
   var aux =  recursivoFlujo(modelo, ["S"], ["F"]);
-  // aux = corregirFlujoSecuencia(aux);
-return aux;
+  return aux;
 }
+
 function recursivoFlujo(nodox, ant, sig){
   if(_.isUndefined(nodox)){
     return ;
   }
   var nodo = findById(nodox.id);
-
   try {
+    //se le asigna al nodo el siguiente y el anterior
+    //luego dependiendo del tipo se le hacen correcciones
     nodo.sig = sig;
     nodo.ant = ant;
   } catch (e) {
@@ -81,36 +81,41 @@ function recursivoFlujo(nodox, ant, sig){
   }
 
   if(nodo.tipo == "secuencia"){
+    //si es una secuencia, hay que asignar sig y ant de todas las tareas internas
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
       nodo.sentencia[0] = recursivoFlujo(nodo.sentencia[0], ant, [nodo.sentencia[1].id]);
-      // console.log("se atiende primero ", nodo.sentencia[0], " ant:", ant,);
       for (var i = 1; i < largo_secuencia - 1; i++) {
         nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.sentencia[i-1].id], [nodo.sentencia[i+1].id]);
       }
       nodo.sentencia[largo_secuencia-1]
         = recursivoFlujo(nodo.sentencia[largo_secuencia-1], [nodo.sentencia[largo_secuencia-2].id], sig);
-    } else{
+    } else if(largo_secuencia>0){
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
+    } else{
+      console.log("Yepa!! ta vacioooo sin tilde");
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
+    //si es el cierro (compuerta de balance) de un loop  se asigna flujo defecto
     nodo.default = nodo.sig[0];
 
+    //FIXME es un parche, la responsabilidad de asignar condiciones deberia estar en otra funcion
     nodo.condiciones = {}
     nodo.condiciones[nodo.ref] = nodo.expresion
 
+    //asigna un flujo siguiente al
     nodo.sig.push(nodo.ref);
-    //console.log("El nodo ", nodo, ", de etiqueta ", nodo.tag , ", tiene en siguiente ", nodo.sig , "." );
-  // } else if((nodo.tipo == "adjunto") && (nodo.tag == "loop")){
   } else if(nodo.tipo == "adjunto"){
-    // var aux = recursivoFlujo({"tipo":"secuencia", "sentencia":nodo.sentencia}, nodo.id, sig);
     //obtengo flujo de la secuencia interna de la ejecucion del evento adjunto
     var aux
     if(nodo.interrumpible){
-      //console.log("Era una tarea interrumpible... deberia ajustar el siguiente");
+      //si es interrumpible, el siguiente de un adjunto es el
       aux = recursivoFlujo(nodo.sentencia[0], nodo.id, sig);
     } else{
+      //si la tarea a la cual se adjunta no se interrumpe
+      //entonces lo que sale como alternativa debe estar conectado a un evento de fin
+      //TODO que sea un evento de fin distinto
       aux = recursivoFlujo(nodo.sentencia[0], nodo.id, "F");
     }
     nodo.sentencia = [aux];
@@ -121,13 +126,15 @@ function recursivoFlujo(nodox, ant, sig){
     var aux_tarea = findById(aux_id);
     if(!aux_tarea){
       console.error(pd.json(nodo));
-      // throw "error procesando el nodo adjunto al asignar flujo"
       throw "Tarea '" + nodo.adjunto_a + "' no existe"
     }
     //la siguiente tarea del evento adjunto es la primera de la secuencia
     nodo.sig = [nodo.sentencia[0].sentencia[0].id];
-    //la anterior no tiene, pero le pongo la de la tarea a ser adjuntada
-    nodo.ant = [aux_tarea.id];
+
+    //no tiene tarea anteriror
+    nodo.ant = [];
+    // nodo.ant = [aux_tarea.id]; //la anterior no tiene, pero le pongo la de la tarea a ser adjuntada
+
     //seteo lane
     nodo.lane = aux_tarea.sentencia.actor;
     //seteo la tarea anterior para el fin de la adjunta
@@ -141,6 +148,7 @@ function recursivoFlujo(nodox, ant, sig){
     aux_tarea_ant.sig[pos_max] = sig[0];
   }
   else if ( isGateway(nodo.tipo) ){
+    //si es un compuerta entonces se debe asingar el flujo a todos sus elementos internos
     nodo.sig = [];
     for (var i = 0; i < nodo.sentencia.length ; i++) {
       nodo.sig.push(nodo.sentencia[i].id);
@@ -368,27 +376,34 @@ var asociarExpresiones = function(modelo, expresiones) {
         nodo.condiciones = {}
         for (var i=0; i < nodo.sentencia.length; i++) {
           if (nodo.sentencia[i].condicion != "defecto") {
-            nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = nodo.sentencia[i].expresion;
+            if(nodo.sentencia[i].sentencia[0]){
+              nodo.condiciones[nodo.sentencia[i].sentencia[0].id] = nodo.sentencia[i].expresion;
+            }else{
+              nodo.condiciones[nodo.sentencia[i].sig[0]] = nodo.sentencia[i].expresion;
+            }
           }
           else{
-            nodo.default = nodo.sentencia[i].sentencia[0].id;
+            // nodo.default = nodo.sentencia[i].sentencia[0].id;
+            if(nodo.sentencia[i].sentencia[0]){
+              nodo.default = nodo.sentencia[i].sentencia[0].id;
+            }else{
+              //permite secuencias vacias
+              nodo.default =  nodo.sentencia[i].sig[0];
+            }
           }
         }
       }
-      // else if(nodo.tipo == "loop") {
-      //
-      // } //else {
+
         if(nodo.sentencia instanceof Array){
           for (var i = nodo.sentencia.length-1; i >= 0; i--) {
             stack.push(nodo.sentencia[i]);
           }
         }
-      //}
     }
   }
 }
 
-
+//recorre el modelo y para coda nodo corrije el flujo del siguiente si corresponde
 function corregirFlujoSecuencia(modelo) {
   var stack =[];
   var nodo;
@@ -405,24 +420,33 @@ function corregirFlujoSecuencia(modelo) {
   return findById(modelo.id)
 }
 
+//corrije el flujo de la siguiente manera:
+//en caso de que el siguiente nodo sea una secuencia se le asigna el primero de la secuencia
+//si la secuencia es vacia, entonces el siguiente sera el siguiente de la secuencia
 function corregirSiguiente(nodo) {
-  var ret = [];
+  var siguientes_nuevos = [];
   for (var i = 0; i < nodo.sig.length; i++) {
     var id_sig = nodo.sig[i];
     if((id_sig == "S")||(id_sig == "F")){
-      ret.push(id_sig);
+      siguientes_nuevos.push(id_sig);
     }else{
       var nodo_siguiente = findById(id_sig);
       if(nodo_siguiente.tipo == "secuencia"){
-        ret.push(nodo_siguiente.sentencia[0].id);
+        if(nodo_siguiente.sentencia[0]){
+          siguientes_nuevos.push(nodo_siguiente.sentencia[0].id);
+        }else{
+          siguientes_nuevos.push(nodo_siguiente.sig[0]);
+          // siguientes_nuevos = nodo_siguiente.sig;
+        }
       }else{
-        ret.push(id_sig);
+        siguientes_nuevos.push(id_sig);
       }
     }
   }
-  nodo.sig = ret;
+  nodo.sig = siguientes_nuevos;
   updateNodo(nodo);
 }
+
 
 
 module.exports = {
