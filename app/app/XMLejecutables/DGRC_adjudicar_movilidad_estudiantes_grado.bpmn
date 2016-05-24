@@ -16,24 +16,19 @@
         <flowNodeRef>_6</flowNodeRef>
         <flowNodeRef>_7</flowNodeRef>
         <flowNodeRef>_9</flowNodeRef>
+        <flowNodeRef>_27</flowNodeRef>
         <flowNodeRef>_11</flowNodeRef>
-        <flowNodeRef>_32</flowNodeRef>
-        <flowNodeRef>_12</flowNodeRef>
-        <flowNodeRef>_14</flowNodeRef>
-        <flowNodeRef>_16</flowNodeRef>
-        <flowNodeRef>_33</flowNodeRef>
+        <flowNodeRef>_13</flowNodeRef>
+        <flowNodeRef>_28</flowNodeRef>
+        <flowNodeRef>_15</flowNodeRef>
         <flowNodeRef>_17</flowNodeRef>
+        <flowNodeRef>_29</flowNodeRef>
         <flowNodeRef>_19</flowNodeRef>
         <flowNodeRef>_21</flowNodeRef>
-        <flowNodeRef>_34</flowNodeRef>
-        <flowNodeRef>_22</flowNodeRef>
-        <flowNodeRef>_24</flowNodeRef>
-        <flowNodeRef>_26</flowNodeRef>
-        <flowNodeRef>_35</flowNodeRef>
-        <flowNodeRef>_27</flowNodeRef>
-        <flowNodeRef>_29</flowNodeRef>
+        <flowNodeRef>_30</flowNodeRef>
+        <flowNodeRef>_23</flowNodeRef>
+        <flowNodeRef>_25</flowNodeRef>
         <flowNodeRef>_31</flowNodeRef>
-        <flowNodeRef>_36</flowNodeRef>
         <flowNodeRef>_StartEvent_1</flowNodeRef>
       </lane>
     </laneSet>
@@ -49,31 +44,26 @@
     <userTask id='_3' name='recibir postulaciones' activiti:candidateGroups='DGRC'></userTask>
     <userTask id='_6' name='controlar documentacion' activiti:candidateGroups='DGRC'></userTask>
     <userTask id='_9' name='analizar disponibilidad' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_11' name='no hace nada' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_14' name='evaluacion externa' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_16' name='no hace nada dos' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_19' name='realizar priorizacion' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_21' name='no hace nada tres' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_24' name='negociar cupos' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_26' name='no hace nada cuatro' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_31' name='no hace nada cinco' activiti:candidateGroups='DGRC'></userTask>
-    <exclusiveGateway id='_7' default='_7_11'></exclusiveGateway>
-    <exclusiveGateway id='_32'></exclusiveGateway>
-    <exclusiveGateway id='_12' default='_12_16'></exclusiveGateway>
-    <exclusiveGateway id='_33'></exclusiveGateway>
-    <exclusiveGateway id='_17' default='_17_21'></exclusiveGateway>
-    <exclusiveGateway id='_34'></exclusiveGateway>
-    <exclusiveGateway id='_22' default='_22_26'></exclusiveGateway>
-    <exclusiveGateway id='_35'></exclusiveGateway>
-    <exclusiveGateway id='_27' default='_27_31'></exclusiveGateway>
-    <exclusiveGateway id='_36'></exclusiveGateway>
+    <userTask id='_13' name='evaluacion externa' activiti:candidateGroups='DGRC'></userTask>
+    <userTask id='_17' name='realizar priorizacion' activiti:candidateGroups='DGRC'></userTask>
+    <userTask id='_21' name='negociar cupos' activiti:candidateGroups='DGRC'></userTask>
+    <exclusiveGateway id='_7' default='_7_27'></exclusiveGateway>
+    <exclusiveGateway id='_27'></exclusiveGateway>
+    <exclusiveGateway id='_11' default='_11_28'></exclusiveGateway>
+    <exclusiveGateway id='_28'></exclusiveGateway>
+    <exclusiveGateway id='_15' default='_15_29'></exclusiveGateway>
+    <exclusiveGateway id='_29'></exclusiveGateway>
+    <exclusiveGateway id='_19' default='_19_30'></exclusiveGateway>
+    <exclusiveGateway id='_30'></exclusiveGateway>
+    <exclusiveGateway id='_23' default='_23_31'></exclusiveGateway>
+    <exclusiveGateway id='_31'></exclusiveGateway>
     <boundaryEvent id='_4' attachedToRef='_3' cancelActivity='false'>
       <timerEventDefinition>
         <timeDuration>P1M</timeDuration>
       </timerEventDefinition>
     </boundaryEvent>
     <endEvent id='_EndEvent_1'></endEvent>
-    <subProcess id='_29' name='DGRC_adjudicar_movilidad'>
+    <subProcess id='_25' name='DGRC_adjudicar_movilidad'>
       <startEvent id='DGRC_adjudicar_movilidad_StartEvent_1'>
         <extensionElements>
           <activiti:formProperty id='confirmaInteres'></activiti:formProperty>
@@ -116,46 +106,41 @@
         <![CDATA[${analizarDisponibilidad=="si"}]]>
       </conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id='_7_11' sourceRef='_7' targetRef='_11'></sequenceFlow>
-    <sequenceFlow id='_9_32' sourceRef='_9' targetRef='_32'></sequenceFlow>
-    <sequenceFlow id='_11_32' sourceRef='_11' targetRef='_32'></sequenceFlow>
-    <sequenceFlow id='_32_12' sourceRef='_32' targetRef='_12'></sequenceFlow>
-    <sequenceFlow id='_12_14' sourceRef='_12' targetRef='_14' name='evaluacionExterna==&quot;si&quot;'>
+    <sequenceFlow id='_7_27' sourceRef='_7' targetRef='_27'></sequenceFlow>
+    <sequenceFlow id='_9_27' sourceRef='_9' targetRef='_27'></sequenceFlow>
+    <sequenceFlow id='_27_11' sourceRef='_27' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_11_13' sourceRef='_11' targetRef='_13' name='evaluacionExterna==&quot;si&quot;'>
       <conditionExpression xsi:type='tFormalExpression'>
         <![CDATA[${evaluacionExterna=="si"}]]>
       </conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id='_12_16' sourceRef='_12' targetRef='_16'></sequenceFlow>
-    <sequenceFlow id='_14_33' sourceRef='_14' targetRef='_33'></sequenceFlow>
-    <sequenceFlow id='_16_33' sourceRef='_16' targetRef='_33'></sequenceFlow>
-    <sequenceFlow id='_33_17' sourceRef='_33' targetRef='_17'></sequenceFlow>
-    <sequenceFlow id='_17_19' sourceRef='_17' targetRef='_19' name='realizarPriorizacion==&quot;si&quot;'>
+    <sequenceFlow id='_11_28' sourceRef='_11' targetRef='_28'></sequenceFlow>
+    <sequenceFlow id='_13_28' sourceRef='_13' targetRef='_28'></sequenceFlow>
+    <sequenceFlow id='_28_15' sourceRef='_28' targetRef='_15'></sequenceFlow>
+    <sequenceFlow id='_15_17' sourceRef='_15' targetRef='_17' name='realizarPriorizacion==&quot;si&quot;'>
       <conditionExpression xsi:type='tFormalExpression'>
         <![CDATA[${realizarPriorizacion=="si"}]]>
       </conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id='_17_21' sourceRef='_17' targetRef='_21'></sequenceFlow>
-    <sequenceFlow id='_19_34' sourceRef='_19' targetRef='_34'></sequenceFlow>
-    <sequenceFlow id='_21_34' sourceRef='_21' targetRef='_34'></sequenceFlow>
-    <sequenceFlow id='_34_22' sourceRef='_34' targetRef='_22'></sequenceFlow>
-    <sequenceFlow id='_22_24' sourceRef='_22' targetRef='_24' name='necesitaNegociarCupos==&quot;si&quot;'>
+    <sequenceFlow id='_15_29' sourceRef='_15' targetRef='_29'></sequenceFlow>
+    <sequenceFlow id='_17_29' sourceRef='_17' targetRef='_29'></sequenceFlow>
+    <sequenceFlow id='_29_19' sourceRef='_29' targetRef='_19'></sequenceFlow>
+    <sequenceFlow id='_19_21' sourceRef='_19' targetRef='_21' name='necesitaNegociarCupos==&quot;si&quot;'>
       <conditionExpression xsi:type='tFormalExpression'>
         <![CDATA[${necesitaNegociarCupos=="si"}]]>
       </conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id='_22_26' sourceRef='_22' targetRef='_26'></sequenceFlow>
-    <sequenceFlow id='_24_35' sourceRef='_24' targetRef='_35'></sequenceFlow>
-    <sequenceFlow id='_26_35' sourceRef='_26' targetRef='_35'></sequenceFlow>
-    <sequenceFlow id='_35_27' sourceRef='_35' targetRef='_27'></sequenceFlow>
-    <sequenceFlow id='_27_29' sourceRef='_27' targetRef='_29' name='esxistenMovilidadesAAsignar==&quot;si&quot;'>
+    <sequenceFlow id='_19_30' sourceRef='_19' targetRef='_30'></sequenceFlow>
+    <sequenceFlow id='_21_30' sourceRef='_21' targetRef='_30'></sequenceFlow>
+    <sequenceFlow id='_30_23' sourceRef='_30' targetRef='_23'></sequenceFlow>
+    <sequenceFlow id='_23_25' sourceRef='_23' targetRef='_25' name='esxistenMovilidadesAAsignar==&quot;si&quot;'>
       <conditionExpression xsi:type='tFormalExpression'>
         <![CDATA[${esxistenMovilidadesAAsignar=="si"}]]>
       </conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id='_27_31' sourceRef='_27' targetRef='_31'></sequenceFlow>
-    <sequenceFlow id='_29_36' sourceRef='_29' targetRef='_36'></sequenceFlow>
-    <sequenceFlow id='_31_36' sourceRef='_31' targetRef='_36'></sequenceFlow>
-    <sequenceFlow id='_36_F' sourceRef='_36' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_23_31' sourceRef='_23' targetRef='_31'></sequenceFlow>
+    <sequenceFlow id='_25_31' sourceRef='_25' targetRef='_31'></sequenceFlow>
+    <sequenceFlow id='_31_F' sourceRef='_31' targetRef='_EndEvent_1'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
   </process>
 </definitions>

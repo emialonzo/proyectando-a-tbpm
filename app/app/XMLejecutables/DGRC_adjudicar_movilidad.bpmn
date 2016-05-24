@@ -30,7 +30,7 @@
       </extensionElements>
     </startEvent>
     <userTask id='_5' name='comunica adjudicacion de movilidad' activiti:candidateGroups='DGRC'></userTask>
-    <userTask id='_9' name='fin proceso' activiti:candidateGroups='DGRC'></userTask>
+    <userTask id='_9' name='procesa fin' activiti:candidateGroups='DGRC'></userTask>
     <userTask id='_11' name='elije otro candidato' activiti:candidateGroups='DGRC'></userTask>
     <userTask id='_6' name='espero mensaje de ServicioDePostulante' activiti:candidateGroups='DGRC'></userTask>
     <exclusiveGateway id='_3'></exclusiveGateway>
@@ -38,6 +38,7 @@
     <exclusiveGateway id='_13'></exclusiveGateway>
     <exclusiveGateway id='_12' default='_12_F'></exclusiveGateway>
     <endEvent id='_EndEvent_1'></endEvent>
+    <endEvent id='_EndEvent_2'></endEvent>
     <sequenceFlow id='_3_5' sourceRef='_3' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
     <sequenceFlow id='_6_7' sourceRef='_6' targetRef='_7'></sequenceFlow>
@@ -47,10 +48,10 @@
       </conditionExpression>
     </sequenceFlow>
     <sequenceFlow id='_7_11' sourceRef='_7' targetRef='_11'></sequenceFlow>
-    <sequenceFlow id='_9_13' sourceRef='_9' targetRef='_13'></sequenceFlow>
+    <sequenceFlow id='_9_F' sourceRef='_9' targetRef='_EndEvent_1'></sequenceFlow>
     <sequenceFlow id='_11_13' sourceRef='_11' targetRef='_13'></sequenceFlow>
     <sequenceFlow id='_13_12' sourceRef='_13' targetRef='_12'></sequenceFlow>
-    <sequenceFlow id='_12_F' sourceRef='_12' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_12_F' sourceRef='_12' targetRef='_EndEvent_2'></sequenceFlow>
     <sequenceFlow id='_12_3' sourceRef='_12' targetRef='_3' name='cantidadCandidatos&gt;0'>
       <conditionExpression xsi:type='tFormalExpression'>
         <![CDATA[${cantidadCandidatos>0}]]>

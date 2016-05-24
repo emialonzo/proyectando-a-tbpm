@@ -85,7 +85,7 @@ var start = function(model) {
     "_id":"StartEvent_1"
   });
   proceso.process.endEvent.push({
-    "_id":"EndEvent_1"
+    "_id":"EndEvent"
   });
 }
 
@@ -404,7 +404,7 @@ var generarFlujos = function(modelo) {
   }
   for (var i = 0; i < proceso.process.sequenceFlow.length; i++) {
     if (proceso.process.sequenceFlow[i]._targetRef == 'F') {
-      proceso.process.sequenceFlow[i]._targetRef = "EndEvent_1";
+      proceso.process.sequenceFlow[i]._targetRef = "EndEvent";
     }
   }
 }
@@ -469,10 +469,10 @@ var conectarEndEvent = function(modelo) {
     } else if (ultimo.sentencia.task == "subproceso") {
       task = _.find(proceso.process.subProcess, function(val){ return val._id == ultimo.id});
     }
-    flujo._id = task._id + "_EndEvent_1"
+    flujo._id = task._id + "_EndEvent"
     flujo._sourceRef = task._id;
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
-    lane.flowNodeRef.push({"__text":"EndEvent_1"});
+    lane.flowNodeRef.push({"__text":"EndEvent"});
   } else if (ultimo.tipo == "evento") {
     var evento;
     if (ultimo.sentencia.evento.throw) {
@@ -480,31 +480,31 @@ var conectarEndEvent = function(modelo) {
     } else {
       evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == ultimo.id});
     }
-    flujo._id = evento._id + "_EndEvent_1"
+    flujo._id = evento._id + "_EndEvent"
     flujo._sourceRef = evento._id
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.sentencia.actor});
-    lane.flowNodeRef.push({"__text":"EndEvent_1"});
+    lane.flowNodeRef.push({"__text":"EndEvent"});
   } else if (ultimo.tipo == "cierro") {
     if (ultimo.tag == "and") {
       var andGW = _.find(proceso.process.parallelGateway, function(val) {return val._id == ultimo.id});
-      flujo._id = andGW._id + "_EndEvent_1"
+      flujo._id = andGW._id + "_EndEvent"
       flujo._sourceRef = andGW._id
     } else if (ultimo.tag == "xor") {
       var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
-      flujo._id = xorGW._id + "_EndEvent_1"
+      flujo._id = xorGW._id + "_EndEvent"
       flujo._sourceRef = xorGW._id
     } else if (ultimo.tag == "loop") {
       var loopGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
-      flujo._id = loopGW._id + "_EndEvent_1"
+      flujo._id = loopGW._id + "_EndEvent"
       flujo._sourceRef = loopGW._id;
       loopGW._default = flujo._id;
     } else if (ultimo.tag == "adjunto") {
       var xorGW = _.find(proceso.process.exclusiveGateway, function(val) {return val._id == ultimo.id});
-      flujo._id = xorGW._id + "_EndEvent_1"
+      flujo._id = xorGW._id + "_EndEvent"
       flujo._sourceRef = xorGW._id
     }
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == ultimo.lane});
-    lane.flowNodeRef.push({"__text":"EndEvent_1"});
+    lane.flowNodeRef.push({"__text":"EndEvent"});
   }
   proceso.process.sequenceFlow.push(flujo);
 }
@@ -861,6 +861,26 @@ var textToModel = function(texto) {
   return modelo;
 }
 
+var generarEventosFinExtras = function(proceso) {
+  var i = 1;
+  var primero = true;
+  var eventoFinViejo = proceso.process.endEvent[0];
+  for (var flujo in proceso.process.sequenceFlow) {
+    if (proceso.process.sequenceFlow[flujo]._targetRef == eventoFinViejo._id) {
+      var idEventoFinNuevo = "EndEvent_" +i;
+      var eventoFinNuevo = {"_id":idEventoFinNuevo}
+      proceso.process.sequenceFlow[flujo]._targetRef = idEventoFinNuevo;
+      i++;
+      if (primero) {
+        proceso.process.endEvent[0] = eventoFinNuevo;
+        primero = false;
+      } else {
+        proceso.process.endEvent.push(eventoFinNuevo);
+      }
+    }
+  }
+}
+
 var modelToXML = function (modelo, nombreProceso) {
   start();
   for (var i=0; i<modelo.sentencia.length; i++) {
@@ -877,6 +897,11 @@ var modelToXML = function (modelo, nombreProceso) {
   //conectarEndEvent(modelo.sentencia);
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
+
+  //FIXME si se quiere dejar un solo evento de fin hay que comentar esta funcion
+  generarEventosFinExtras(proceso);
+  //FIXME si se quiere dejar un solo evento de fin hay que comentar esta funcion
+
   proceso.process = ajustarIDs(proceso.process, "");
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);

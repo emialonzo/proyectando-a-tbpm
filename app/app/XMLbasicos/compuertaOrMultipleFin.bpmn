@@ -1,0 +1,57 @@
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id_compuertaOrMultipleFin' name='Pool_compuertaOrMultipleFin' processRef='id_compuertaOrMultipleFin'></participant>
+  </collaboration>
+  <process id='id_compuertaOrMultipleFin' isExecutable='true' name='compuertaOrMultipleFin'>
+    <laneSet id='laneSet_id_compuertaOrMultipleFin'>
+      <lane id='Lane_marketing' name='marketing'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_8</flowNodeRef>
+        <flowNodeRef>_10</flowNodeRef>
+        <flowNodeRef>_12</flowNodeRef>
+        <flowNodeRef>_14</flowNodeRef>
+        <flowNodeRef>_16</flowNodeRef>
+        <flowNodeRef>_17</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='_StartEvent_1'></startEvent>
+    <userTask id='_3' name='ingresa datos'></userTask>
+    <userTask id='_6' name='hace una cosa'></userTask>
+    <userTask id='_8' name='hace otra cosassdaf'></userTask>
+    <userTask id='_10' name='hace otra cossdfasdfasa'></userTask>
+    <userTask id='_12' name='hace otra cdfasdfosa'></userTask>
+    <userTask id='_14' name='hace otra asdfosa'></userTask>
+    <userTask id='_16' name='no hace nada'></userTask>
+    <exclusiveGateway id='_4' default='_4_16'></exclusiveGateway>
+    <exclusiveGateway id='_17'></exclusiveGateway>
+    <endEvent id='_EndEvent_1'></endEvent>
+    <endEvent id='_EndEvent_2'></endEvent>
+    <endEvent id='_EndEvent_3'></endEvent>
+    <endEvent id='_EndEvent_4'></endEvent>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6' name='dato==&quot;menor&quot;'></sequenceFlow>
+    <sequenceFlow id='_4_8' sourceRef='_4' targetRef='_8' name='dato==&quot;mayor&quot;'></sequenceFlow>
+    <sequenceFlow id='_4_10' sourceRef='_4' targetRef='_10' name='dato==&quot;mayoras&quot;'></sequenceFlow>
+    <sequenceFlow id='_4_12' sourceRef='_4' targetRef='_12' name='dato==&quot;mayorasd&quot;'></sequenceFlow>
+    <sequenceFlow id='_4_14' sourceRef='_4' targetRef='_14' name='dato==&quot;mayordsfasd&quot;'></sequenceFlow>
+    <sequenceFlow id='_4_16' sourceRef='_4' targetRef='_16'></sequenceFlow>
+    <sequenceFlow id='_6_17' sourceRef='_6' targetRef='_17'></sequenceFlow>
+    <sequenceFlow id='_8_F' sourceRef='_8' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_10_F' sourceRef='_10' targetRef='_EndEvent_2'></sequenceFlow>
+    <sequenceFlow id='_12_17' sourceRef='_12' targetRef='_17'></sequenceFlow>
+    <sequenceFlow id='_14_F' sourceRef='_14' targetRef='_EndEvent_3'></sequenceFlow>
+    <sequenceFlow id='_16_17' sourceRef='_16' targetRef='_17'></sequenceFlow>
+    <sequenceFlow id='_17_F' sourceRef='_17' targetRef='_EndEvent_4'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+  </process>
+</definitions>
