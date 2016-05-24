@@ -101,13 +101,13 @@ condicion = exp:ex {return {expresion:exp, doc:text() }}
 /*condicion = expresion /  cond:[a-z]i+ ws { return cond.join("");}*/
 
 condicion_entonces = "entonces"
+secuencia_or = "no hace nada" {  return {"tipo":"secuencia", "sentencia":[]}} / secuencia
 sent_o = ws id_o separador
-         ws primero:(con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})
-         resto:(ws con:condicion "entonces" ws sen:secuencia {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})*
-         final:(ws defecto ws sen:secuencia {return collect({"condicion":"defecto"}, sen)})
+         ws primero:(con:condicion "entonces" ws sen:secuencia_or {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})
+         resto:(ws con:condicion "entonces" ws sen:secuencia_or {return collect({"condicion":con.expresion, "expresion":con.expresion, "doc":con.doc}, sen)})*
+         final:(ws defecto ws sen:secuencia_or {return collect({"condicion":"defecto"}, sen)})
          ws fin
          {return [primero].concat(resto.concat(final));}
-
 
 adj_id = "alternativa de"
 adj_cond = "transcurre" / "llega" ws mensaje
