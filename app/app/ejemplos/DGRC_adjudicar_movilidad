@@ -2,7 +2,7 @@ mientras cantidadCandidatos es mayor que 0,
   el DGRC comunica adjudicacion de movilidad.
   el DGRC espera por mensaje de ServicioDePostulante.
   si se cumple,
-    confirmaInteres es "si" entonces el DGRC fin proceso.
+    confirmaInteres es "si" entonces el DGRC procesa fin. y finaliza
     si no el DGRC elije otro candidato.
 fin
 fin
