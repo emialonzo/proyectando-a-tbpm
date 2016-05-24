@@ -359,7 +359,6 @@ var asociarElementosLanes = function(elem) {
 //Genero los elementos XML necesarios para los flujos
 var procesarFlujos = function(elem) {
   for (var i = 0; i < elem.sig.length; i++) {
-    //if (elem.sig[i] != "F") {
       var idFlujo = elem.id + "_" + elem.sig[i];
       var flujo = {"_id":idFlujo, "_sourceRef":elem.id, "_targetRef": elem.sig[i]};
       if (elem.tipo == "xor") {
@@ -378,7 +377,6 @@ var procesarFlujos = function(elem) {
         }
       }
       proceso.process.sequenceFlow.push(flujo);
-    //}
   }
 }
 
@@ -812,16 +810,6 @@ var ajustarIDs = function(procesoJson, subproceso) {
   } else {
     prefix = subproceso;
   }
-  if (procesoJson.startEvent) {
-    for (var i=0; i< procesoJson.startEvent.length; i++) {
-      procesoJson.startEvent[i]._id = prefix + procesoJson.startEvent[i]._id;
-    }
-  }
-  if (procesoJson.endEvent) {
-    for (var i=0; i< procesoJson.endEvent.length; i++) {
-      procesoJson.endEvent[i]._id = prefix + procesoJson.endEvent[i]._id;
-    }
-  }
   // LANES
   if (subproceso == "") {
     for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
@@ -830,106 +818,34 @@ var ajustarIDs = function(procesoJson, subproceso) {
       }
     }
   }
-  // USER TASKS
-  if (procesoJson.userTask) {
-    for (var i=0; i< procesoJson.userTask.length; i++) {
-      procesoJson.userTask[i]._id = prefix + procesoJson.userTask[i]._id;
-    }
-  }
-  // SERVICE TASKS
-  if (procesoJson.serviceTask) {
-    for (var i=0; i< procesoJson.serviceTask.length; i++) {
-      procesoJson.serviceTask[i]._id = prefix + procesoJson.serviceTask[i]._id;
-    }
-  }
-  // MANUAL TASKS
-  if (procesoJson.manualTask) {
-    for (var i=0; i< procesoJson.manualTask.length; i++) {
-      procesoJson.manualTask[i]._id = prefix + procesoJson.manualTask[i]._id;
-    }
-  }
-  // EXCLUSIVE GATEWAYS
-  if (procesoJson.exclusiveGateway) {
-    for (var i=0; i< procesoJson.exclusiveGateway.length; i++) {
-      if (procesoJson.exclusiveGateway[i]._default) {
-        procesoJson.exclusiveGateway[i]._default = prefix + procesoJson.exclusiveGateway[i]._default;
+  for (var prop in procesoJson) {
+    if (procesoJson.hasOwnProperty(prop) && prop != "laneSet") {
+      for (var i=0; i<procesoJson[prop].length; i++) {
+        procesoJson[prop][i]._id = prefix + procesoJson[prop][i]._id;
+        if (prop == "exclusiveGateway") {
+          if (procesoJson[prop][i]._default) {
+            procesoJson[prop][i]._default = prefix + procesoJson[prop][i]._default;
+          }
+        } else if (prop == "boundaryEvent") {
+          procesoJson[prop][i]._attachedToRef = prefix + procesoJson[prop][i]._attachedToRef;
+        } else if (prop == "sequenceFlow") {
+          procesoJson[prop][i]._sourceRef = prefix + procesoJson[prop][i]._sourceRef;
+          procesoJson[prop][i]._targetRef = prefix + procesoJson[prop][i]._targetRef;
+        }
       }
-      procesoJson.exclusiveGateway[i]._id = prefix + procesoJson.exclusiveGateway[i]._id;
-    }
-  }
-  // PARALLEL GATEWAYS
-  if (procesoJson.parallelGateway) {
-    for (var i=0; i< procesoJson.parallelGateway.length; i++) {
-      procesoJson.parallelGateway[i]._id = prefix + procesoJson.parallelGateway[i]._id;
-    }
-  }
-  // INTERMEDIATE CATCH EVENTS
-  if (procesoJson.intermediateCatchEvent) {
-    for (var i=0; i< procesoJson.intermediateCatchEvent.length; i++) {
-      procesoJson.intermediateCatchEvent[i]._id = prefix + procesoJson.intermediateCatchEvent[i]._id;
-    }
-  }
-  // INTERMEDIATE THROW EVENTS
-  if (procesoJson.intermediateThrowEvent) {
-    for (var i=0; i< procesoJson.intermediateThrowEvent.length; i++) {
-      procesoJson.intermediateThrowEvent[i]._id = prefix + procesoJson.intermediateThrowEvent[i]._id;
-    }
-  }
-  // BOUNDARY EVENTS
-  if (procesoJson.boundaryEvent) {
-    for (var i=0; i< procesoJson.boundaryEvent.length; i++) {
-      procesoJson.boundaryEvent[i]._id = prefix + procesoJson.boundaryEvent[i]._id;
-      procesoJson.boundaryEvent[i]._attachedToRef = prefix + procesoJson.boundaryEvent[i]._attachedToRef;
-    }
-  }
-  // SUBPROCESS
-  if (procesoJson.subProcess) {
-    for (var i=0; i< procesoJson.subProcess.length; i++) {
-      procesoJson.subProcess[i]._id = prefix + procesoJson.subProcess[i]._id;
-    }
-  }
-  // SEQUENCE FLOWS
-  if (procesoJson.sequenceFlow) {
-    for (var i=0; i< procesoJson.sequenceFlow.length; i++) {
-      procesoJson.sequenceFlow[i]._id = prefix + procesoJson.sequenceFlow[i]._id;
-      procesoJson.sequenceFlow[i]._sourceRef = prefix + procesoJson.sequenceFlow[i]._sourceRef;
-      procesoJson.sequenceFlow[i]._targetRef = prefix + procesoJson.sequenceFlow[i]._targetRef;
     }
   }
   return procesoJson;
 }
 
 var limpiarProceso = function(proceso) {
-  //delete(proceso.process.laneSet)
-  if (proceso.process.userTask.length == 0) {
-    delete(proceso.process.userTask);
+  for (var propiedad in proceso.process) {
+    if (proceso.process.hasOwnProperty(propiedad) && proceso.process[propiedad].length == 0) {
+      delete proceso.process[propiedad];
+    }
   }
-  if (proceso.process.manualTask.length == 0) {
-    delete(proceso.process.manualTask);
-  }
-  if (proceso.process.serviceTask.length == 0) {
-    delete(proceso.process.serviceTask);
-  }
-  if (proceso.process.exclusiveGateway.length == 0) {
-    delete(proceso.process.exclusiveGateway);
-  }
-  if (proceso.process.parallelGateway.length == 0) {
-    delete(proceso.process.parallelGateway);
-  }
-  if (proceso.process.intermediateCatchEvent.length == 0) {
-    delete(proceso.process.intermediateCatchEvent);
-  }
-  if (proceso.process.intermediateThrowEvent.length == 0) {
-    delete(proceso.process.intermediateThrowEvent);
-  }
-  if (proceso.process.boundaryEvent.length == 0) {
-    delete(proceso.process.boundaryEvent);
-  }
-  if (proceso.process.subProcess.length == 0) {
-    delete(proceso.process.subProcess);
-  }
-  if (proceso.collaboration.messageFlow.length == 0) {
-    delete(proceso.collaboration.messageFlow);
+  if (proceso.collaboration.messageFlow && proceso.collaboration.messageFlow.length == 0) {
+    delete proceso.collaboration.messageFlow;
   }
   return proceso;
 }
@@ -962,7 +878,6 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso);
   proceso.process = ajustarIDs(proceso.process, "");
-  console.log("################templates#######################")
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
   var path = __dirname + "/XMLbasicos/";
