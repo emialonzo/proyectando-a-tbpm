@@ -489,22 +489,22 @@ function agregarPrpiedad(nodo, campo){
       }
     }
 
-    // // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
-    // process.laneSet = {};
-    // process.laneSet._id = "wertyujcfghjv"
-    // process.laneSet.lane = [];
-    // var keys = _.keys(laneSetX);
-    // for (var i = 0; i < keys.length; i++) {
-    //   lane = keys[i];
-    //   var aux = {}
-    //   aux.flowNodeRef = []
-    //   aux["_id"] = templateId(lane);
-    //   aux["_name"] = "nombre_"+lane.replace(/\s/g, "_")
-    //   for (var j = 0; j < laneSetX[lane].length; j++) {
-    //     aux.flowNodeRef.push(laneSetX[lane][j]);
-    //   }
-    //   process.laneSet.lane.push(aux);
-    // }
+    // // //agrego info del LANES //FIXME lo saco porque hay problemas aca
+    process.laneSet = {};
+    process.laneSet._id = "id_lane"
+    process.laneSet.lane = [];
+    var keys = _.keys(laneSetX);
+    for (var i = 0; i < keys.length; i++) {
+      lane = keys[i];
+      var aux = {}
+      aux.flowNodeRef = []
+      aux["_id"] = templateId(lane);
+      aux["_name"] = "nombre_"+lane.replace(/\s/g, "_")
+      for (var j = 0; j < laneSetX[lane].length; j++) {
+        aux.flowNodeRef.push(laneSetX[lane][j]);
+      }
+      process.laneSet.lane.push(aux);
+    }
 
 
     process["_id"] = idProceso;
@@ -548,7 +548,7 @@ function agregarPrpiedad(nodo, campo){
     // console.log("*******************");
     // console.log(pd.json(losFlujos));
     // console.log("*******************");
-    console.log(pd.json(bpmn));
+    // console.log(pd.json(bpmn));
     // console.log("*******************");
     return bpmn;
   }
@@ -604,13 +604,22 @@ var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
   return subproceso;
 }
 
-var ajustarIDs = function(proceso, subproceso) {
+var ajustarIDs = function(proceso, subproceso_nombre) {
   var prefix;
-  if (subproceso == "") {
+  if (subproceso_nombre == "") {
     prefix = "_";
   } else {
-    prefix = subproceso;
+    prefix = subproceso_nombre;
   }
+
+  // var regExId = /(\"_id\":\s*\")([^\"]+)(\")/g
+  // var strProcess = JSON.stringify(proceso);
+  // var newStr = strProcess.replace(regExId, function(match, p1, p2, p3){
+  //   return p1 + subproceso_nombre + p2 + p3
+  // })
+  // proceso = JSON.parse(newStr);
+
+
   if (proceso.startEvent) {
     // console.log("Hay startEvent, en total son:" + proceso.startEvent.length);
     for (var i=0; i< proceso.startEvent.length; i++) {
@@ -623,7 +632,7 @@ var ajustarIDs = function(proceso, subproceso) {
     }
   }
   // LANES
-  if (subproceso == "") {
+  if (subproceso_nombre == "") {
     for (var i=0; i< proceso.laneSet.lane.length; i++) {
       for (var j=0; j< proceso.laneSet.lane[i].flowNodeRef.length; j++) {
         proceso.laneSet.lane[i].flowNodeRef[j].__text = prefix + proceso.laneSet.lane[i].flowNodeRef[j].__text

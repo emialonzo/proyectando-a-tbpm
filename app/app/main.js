@@ -115,7 +115,7 @@ function conversion(){
         $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
         $("#id-xml-activiti").text(bpmnActiviti);
         try{
-          var dot2 = makeDot2.toDot(bpmn);
+          var dot2 = makeDot2.toDot(bpmnActiviti);
           $("#id-dot").html(dot2);
           makeDot.executeDot(dot2, callbackDot)
         } catch(e){

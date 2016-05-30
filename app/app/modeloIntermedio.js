@@ -94,10 +94,13 @@ function recursivoFlujo(nodox, ant, sig){
       if(nodo.sentencia[0].finaliza){
         sig = ["F"];
       }
+      aux = recursivoFlujo(nodo.sentencia[0], ant, sig)
+      nodo.sentencia[0] = aux
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
+
     } else{
-      console.log("Yepa!! ta vacioooo sin tilde");
+      console.log("Secuencia vacia");
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
     //si es el cierro (compuerta de balance) de un loop  se asigna flujo defecto
@@ -207,6 +210,26 @@ function asignarIdCondicion(modelo){
   return ret;
 }
 
+// //toma un nodo de tipo compuerta y chequea si es necesario agregar compuerta de cierre
+// function corroborarBalance(nodo){
+//   var cantSalida = nodo.sentencia.length;
+//   var cantTerminados = 0;
+//   for (var i = 0; i < nodo.sentencia.length; i++) {
+//     var secuencia = nodo.sentencia[i]
+//     for (var j = 0; j < secuencia.sentencia.length; j++) {
+//       var nodo_secuencia = secuencia.sentencia[j]
+//       if(nodo_secuencia.finaliza){
+//         cantTerminados++
+//       }
+//     }
+//   }
+//   console.debug("::: CorroborarBalance :::")
+//   console.debug("cantSalida:"+cantSalida)
+//   console.debug("cantTerminados:"+cantTerminados)
+//
+//   return cantSalida - cantTerminados > 1
+// }
+
 //itera sobre el modelo, en caso de encontrar un gw dentro de una secuencia agrega una gw de cierre inmediatamente despues
 var balancearModelo = function(modelo){
   return recursivoBalance(modelo);
@@ -216,6 +239,7 @@ function recursivoBalance(modelo){
   var ret = [];
   while(modelo.length >0){
     var elem = modelo.shift();
+    // if(isGateway(elem.tipo) && corroborarBalance(elem)){
     if(isGateway(elem.tipo)){
       modelo.unshift(cierrogw(elem));
     } else if((elem.tipo == "adjunto") && elem.interrumpible && !elem.unica){
@@ -416,7 +440,14 @@ function corregirFlujoSecuencia(modelo) {
   stack.push(modelo);
   while(stack.length>0){
     nodo = stack.pop();
-    corregirSiguiente(nodo);
+    try {
+      corregirSiguiente(nodo);
+    } catch (e) {
+      console.error(e);
+      console.error(pd.json(nodo));
+    } finally {
+
+    }
     if(nodo.sentencia instanceof Array){
       for (var i = nodo.sentencia.length-1; i >= 0; i--) {
         stack.push(nodo.sentencia[i]);

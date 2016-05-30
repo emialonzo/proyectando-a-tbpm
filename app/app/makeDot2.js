@@ -42,8 +42,8 @@ var toDot = function(xml){
 
 var saltoLinea = "\n"
 
-var finales = 1;
 function processXml(xml){
+  // var finales = 1;
   //inicializacion
   var bpmn = conv.xml_str2json(xml)
   var proceso = bpmn.definitions.process
@@ -55,11 +55,11 @@ function processXml(xml){
       if(sec.conditionExpression){
          cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
       }
-      if(sec._targetRef == "_EndEvent_1"){
-        flujodot.push(sec._sourceRef + " -> " + sec._targetRef + "_" + (finales++) + cond)
-      }else{
+      // if(sec._targetRef == "_EndEvent_1"){
+      //   flujodot.push(sec._sourceRef + " -> " + sec._targetRef + "_" + (finales++) + cond)
+      // }else{
         flujodot.push(sec._sourceRef + " -> " + sec._targetRef + cond)
-      }
+      // }
     }
   }
   if(proceso.exclusiveGateway){
@@ -139,21 +139,21 @@ function processXml(xml){
     }
   }
 
-  // if(proceso.endEvent){
-  //   for (var i = 0; i < proceso.endEvent.length; i++) {
-  //     var fin = proceso.endEvent[i]
-  //     flujodot.push(templateTarea(fin._id, "FIN:" + saltoLinea + fin._name, "pink4"))
-  //   }
-  // }
-  //FIXME parche
   if(proceso.endEvent){
     for (var i = 0; i < proceso.endEvent.length; i++) {
       var fin = proceso.endEvent[i]
-      for (var k = 1; k < finales; k++) {
-        flujodot.push(templateTarea(fin._id + "_" + k, "FIN:" + saltoLinea + fin._name, "pink4"))
-      }
+      flujodot.push(templateTarea(fin._id, "FIN:" + saltoLinea + fin._name, "pink4"))
     }
   }
+  // //FIXME parche
+  // if(proceso.endEvent){
+  //   for (var i = 0; i < proceso.endEvent.length; i++) {
+  //     var fin = proceso.endEvent[i]
+  //     for (var k = 1; k < finales; k++) {
+  //       flujodot.push(templateTarea(fin._id + "_" + k, "FIN:" + saltoLinea + fin._name, "pink4"))
+  //     }
+  //   }
+  // }
 
 }
 
