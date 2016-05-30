@@ -69,10 +69,15 @@ function recursivoFlujo(nodox, ant, sig){
     return ;
   }
   var nodo = findById(nodox.id);
+  var a_ant = nodo.ant;
+  var a_sig = nodo.sig;
+  var a_id = nodo.id;
+  var a_tipo = nodo.tipo;
   try {
     //se le asigna al nodo el siguiente y el anterior
     //luego dependiendo del tipo se le hacen correcciones
-    nodo.sig = sig;
+    nodo.sig = [];
+    _.map(sig, function(elem){nodo.sig.push(elem)});
     nodo.ant = ant;
   } catch (e) {
     console.error(pd.json(nodox));
@@ -81,6 +86,7 @@ function recursivoFlujo(nodox, ant, sig){
   }
 
   if(nodo.tipo == "secuencia"){
+    console.log("SECUENCIA:" + nodo.ant + " <- " + nodo.id + " -> " + nodo.sig);
     //si es una secuencia, hay que asignar sig y ant de todas las tareas internas
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
@@ -94,8 +100,8 @@ function recursivoFlujo(nodox, ant, sig){
       if(nodo.sentencia[0].finaliza){
         sig = ["F"];
       }
-      aux = recursivoFlujo(nodo.sentencia[0], ant, sig)
-      nodo.sentencia[0] = aux
+      // aux = recursivoFlujo(nodo.sentencia[0], ant, sig)
+      // nodo.sentencia[0] = aux
       nodo.sentencia[0].ant = ant;
       nodo.sentencia[0].sig = sig;
 
@@ -112,6 +118,7 @@ function recursivoFlujo(nodox, ant, sig){
 
     //asigna un flujo siguiente al
     nodo.sig.push(nodo.ref);
+    console.log("agrego el flujo: " + nodo.id + " -> " + nodo.ref);
   } else if(nodo.tipo == "adjunto"){
     //obtengo flujo de la secuencia interna de la ejecucion del evento adjunto
     var aux
@@ -155,9 +162,14 @@ function recursivoFlujo(nodox, ant, sig){
   }
   else if ( isGateway(nodo.tipo) ){
     //si es un compuerta entonces se debe asingar el flujo a todos sus elementos internos
+    if(nodo.tipo=="loop"){
+      console.log("El loop tenia" + pd.json(nodo));
+    }
+    // var aux = sig[0];
     nodo.sig = [];
     for (var i = 0; i < nodo.sentencia.length ; i++) {
       nodo.sig.push(nodo.sentencia[i].id);
+      console.log("Compuerta:" + nodo.tipo + " ID:" + nodo.id + " sig:" + sig);
       nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.id], sig);
     }
   }
