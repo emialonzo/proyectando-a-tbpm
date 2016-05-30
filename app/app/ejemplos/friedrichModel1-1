@@ -1,0 +1,16 @@
+el departamento de ventas, obtiene una orden.
+si se cumple, noAceptaOrden entonces el departamento de ventas, no hace nada. y finaliza
+si no el departamento de ventas, informa al deposito y al departamento de ingenieria.
+al mismo tiempo, 1 mientras piezasNecesitadas es mayor que 0,
+el deposito verifica la cantidad de piezas disponibles.
+si se cumple,
+piezaDisponible entonces el deposito reserva la pieza.
+si no el deposito ordena la pieza.
+fin
+el deposito selecciona la siguiente pieza.
+fin
+2 el departamento de ingenieria, se prepara para el ensamblaje.
+fin
+el departamento de ingenieria, ensambla la bicicleta.
+el departamento de ventas, envia la bicicleta al cliente.
+fin
