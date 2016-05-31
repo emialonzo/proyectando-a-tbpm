@@ -1,13 +1,13 @@
 
 // var $ = require("jquery");
 var parser = require("./parser.js");
-var makeBpmn = require("./makeBpmn");
 var intermedio = require('./modeloIntermedio');
+var makeBpmn = require("./makeBpmn");
 var procesar = require('./procesamientoModelo');
-var makeDot = require('./makeDot');
+// var makeDot = require('./makeDot');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
-var yaoqiang = require('../imageJava');
+var yaoqiang = require('../yaoqiangJava');
 var env = require('./env');
 
 var pd = require('pretty-data').pd;
@@ -117,7 +117,7 @@ function conversion(){
         try{
           var dot2 = makeDot2.toDot(bpmnActiviti);
           $("#id-dot").html(dot2);
-          makeDot.executeDot(dot2, callbackDot)
+          makeDot2.executeDot(dot2, callbackDot)
         } catch(e){
           $("#id-dot").html("error!!");
           mostrarError("Ha ocurrido un error interno mientras se generaba el gráfico de flujo con la herramienta Graphviz")
