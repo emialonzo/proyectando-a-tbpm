@@ -1,11 +1,14 @@
 #!/bin/sh
 
 file='yaoqiang.zip'
+dirname='yaoqiang'
 
-wget -O $file https://sourceforge.net/projects/bpmn/files/latest/download
-echo ""
-echo "****************************************************"
-echo "* Ahora debes descomprimirlo en la carpeta yaoqian *"
-echo "****************************************************"
-echo ""
-# unzip -p $file | mv yaoqiang
+# url='localhost:8000/yaoqiang.zip'
+url='https://sourceforge.net/projects/bpmn/files/latest/download'
+
+wget -O $file $url
+rm -r $dirname
+mkdir $dirname
+unzip $file  -d $dirname
+rm $file
+mv $dirname/*/* $dirname/
