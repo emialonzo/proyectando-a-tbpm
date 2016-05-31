@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'  --asar --arch=x64 --overwrite --platform=linux --version=0.36.1",
+    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'   --arch=x64 --overwrite --platform=linux --version=0.36.1",
     "start": "electron index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "devtron": "^1.1.1",
     "electron-prebuilt": "^0.36.1",
     "gulp-browserify": "^0.5.1",
     "gulp-clean": "^0.3.1",
