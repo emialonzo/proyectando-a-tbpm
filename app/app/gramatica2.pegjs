@@ -64,7 +64,8 @@ sent_ev = ws actor:actor ws "espera por" ws evento:tipo_evento ws punto {return 
 tipo_evento = d:digito ws unidad:tiempo {return "tiempo", {"tipo":"timer","tiempo" : d, "unidad":unidad, "throw":false};}
 		/ mensaje_evento
 
-mensaje_evento = mensaje ws "de" ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p, "pool":p, "throw":false};}
+articulo_evento = "del" / "de"
+mensaje_evento = mensaje ws articulo_evento ws p:palabras {return {"tipo":"mensaje","evento":"mensaje", "mensaje":p, "pool":p, "throw":false};}
 mensaje = "mensaje" / "mail" / "respuesta"
 tiempo =  "segundos" / "minutos" / "horas" / "dias" / "semanas" / "meses" / "años" /
           "segundo" / "minuto" / "hora" / "dia" / "semana" / "mes" / "año"

@@ -1,0 +1,7 @@
+el supervisor espera por mensaje del empleado.
+el supervisor utiliza el servicio aprobacionDeSolicitudes.
+si se cumple,
+altoRiesgo entonces el supervisor envia un mensaje al empleado. y finaliza
+bajoRiesgo entonces el supervisor envia un mensaje al empleado. y finaliza
+si no el supervisor utiliza el servicio aprobarRecursos. el supervisor envia un mensaje al empleado.
+fin

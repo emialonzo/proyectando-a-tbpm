@@ -1,0 +1,4 @@
+si se cumple,
+necesitaReparacion entonces el servicio de reparacion, chequea y reapara la maquina.
+si no el servicio de reparacion, chequea y configura la maquina.
+fin
