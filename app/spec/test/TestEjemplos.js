@@ -7,9 +7,11 @@ var parser = require(directorioBase + "parser.js");
 var makeBpmn = require(directorioBase + "makeBpmn.js");
 var intermedio = require(directorioBase + 'modeloIntermedio');
 
-var yaoqiang = require(__dirname + '/../../imageJava');
+var procesar = require(directorioBase + 'procesamientoModelo');
+// var intermedio = require(directorioBase + 'modeloIntermedio');
 
-var intermedio = require(directorioBase + '/modeloIntermedio');
+var yaoqiang = require(__dirname + '/../../yaoqiangJava');
+
 
 var path = directorioBase + "ejemplos/";
 parser.init();
@@ -28,29 +30,36 @@ for (var i=0; i<items.length; i++) {
 
 describe("Testeando ejemplos", function() {
 
-  it("Reccorriendo ejemplos", function(){
+  it("Ejemplos: parser, procesamiento, xml", function(){
     var correcto = [];
     var error = [];
     for (var nombre_archivo in ejemplos) {
       try{
         if (ejemplos.hasOwnProperty(nombre_archivo)) {
+          // console.info('Test:' + nombre_archivo);
           var text = ejemplos[nombre_archivo];
 
           var modelo = parser.parse(text);
           var modeloInt = intermedio.procesarModelo(modelo);
 
-          var bpmn = makeBpmn.makeBpmnForTest(modeloInt);
+          // var bpmn = makeBpmn.makeBpmnForTest(modeloInt);
+          var result = procesar.modelToXML(modeloInt, nombre_archivo);
+          correcto.push(nombre_archivo);
 
-          yaoqiang.generarXml(bpmn, function(xml){
-            correcto.push(nombre_archivo)
-          });
+          // yaoqiang.generarXml(result.xml, function(xml){
+          //   correcto.push(nombre_archivo)
+          // });
         }
       } catch(e){
-        error.push(nombre_archivo)
+        // console.info("Error:" + e);
+        error.push(nombre_archivo + ' ::: ' + e)
       }
 
     } //end for ejemplos
-    console.log("paso: " + correcto + " | fallo:" + error);
+    console.info('Errores:')
+      for (var i = 0; i < error.length; i++) {
+        console.info('\t'+error[i])
+      }
   })
 
 });
