@@ -1,10 +1,6 @@
-var PEG = require("pegjs");
 var fs = require("fs");
 var _ = require("underscore");
 var pd = require('pretty-data').pd;
-var toDot = require('./makeDot').toDot;
-var intermedio = require('./modeloIntermedio');
-var prettyjson = require('prettyjson');
 var env = require('./env');
 
 var x2js = require('x2js'); //new X2JS();

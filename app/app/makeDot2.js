@@ -2,8 +2,6 @@
 var fs = require("fs");
 var _ = require("underscore");
 var pd = require('pretty-data').pd;
-var intermedio = require('./modeloIntermedio');
-var isGateway = intermedio.isGateway;
 
 var x2js = require('x2js');
 var conv = new x2js({
