@@ -1,0 +1,22 @@
+el marketing utiliza el subproceso determinarDetallesDeContacto.
+el empleado del call center, realiza la tarea manual determinar persona de contacto.
+si se cumple,
+noHayPersona entonces el empleado del call center, no hace nada. y finaliza
+si no el empleado del call center, realiza la tarea manual determinar disponibilidad de fondos para el proyecto.
+fin
+si se cumple,
+bajoPresupuesto entonces el empleado del call center, utiliza el servicio recordar cliente para seguimiento.
+personaInteresada entonces no hace nada
+si no el encargado de desarrollo, realiza la tarea manual contactar al cliente.
+si se cumple, estaInteresado entonces no hace nada
+si no el encargado de desarrollo, no hace nada. y finaliza
+fin
+fin
+si se cumple,
+presentacionDeVentas entonces el representante de ventas, realiza una presentacion.
+si no el representante tecnico, realiza un apresentacion tecnica.
+fin
+al mismo tiempo,
+1 el representante de ventas, espera por mensaje del cliente.
+2 el representante de ventas, espera por 2 semanas.
+fin

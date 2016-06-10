@@ -1,0 +1,12 @@
+el servicio de reparacion, espera por mensaje de cliente.
+el servicio de reparacion, calcula el costo de la reparacion.
+el servicio de reparacion, envia el costo de la reparacion al cliente.
+el servicio de reparacion, espera por respuesta de cliente.
+si se cumple,
+costoEsMuyCaro entonces el servicio de reparacion, no hace nada. y finaliza
+si no
+mientras reparacionNecesaria,
+el servicio de reparacion, utiliza el subproceso repararComputadora.
+el servicio de reparacion, verifica reparacion.
+fin
+fin
