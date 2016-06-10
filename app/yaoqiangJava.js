@@ -1,20 +1,22 @@
-// var child = require('child_process').spawn('java done.jar',['argument to pass in']);
-// var child = require('child_process').spawn('java xmlToImg');
+//modulos
 var fs = require('fs');
-var nombreArchivo = "salida"
-
 var x2js = require('x2js'); //new X2JS();
+
+//inicializando convertirodor
 var conv = new x2js();
 
 
-
+//constantes
+var nombreArchivo = "salida"
 var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
 var filePathPng = __dirname + '/' + nombreArchivo + '.png';
 var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
-// console.log(filePath);
+var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar'
+
 
 var laneSet ;
 
+// bpmn str
 var yaoqiang = function(bpmn,callback, generarXml){
   // var generarXml = generarXml || true;
 
@@ -24,21 +26,18 @@ var yaoqiang = function(bpmn,callback, generarXml){
   delete jsonBpmn.definitions.process.laneSet;
   bpmn = conv.json2xml_str(jsonBpmn)
 
-
-
-  fs.writeFile(nombreArchivo+".bpmn", bpmn, function(err) {
+  fs.writeFile(filePath, bpmn, function(err) {
     if(err) {
-        return console.log(err);
+      return console.log(err);
     }
   });
 
-  var formato = generarXml? 'salidaBPMNDI.bpmn' : ''
+  var formato = generarXml? 'salidaBPMNDI.bpmn' : 'salida.png'
 
   var child = require('child_process').spawn(
-    'java', ['-jar', 'yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar', filePath , '--export', formato]
+    'java', ['-jar', yaoqiangPath, filePath , '--export', __dirname+'/'+formato]
   );
   child.stdout.on('data', function(data) {
-    // console.log(data.toString());
   });
 
   child.stderr.on("data", function (data) {
@@ -72,7 +71,6 @@ var yaoqiang = function(bpmn,callback, generarXml){
         listaShapes[i] = shape
       }
       //ajustando condiciones
-      // jsonYao.definitions.process.sequenceFlow = jsonBpmn.definitions.process.sequenceFlow
       jsonBpmn.definitions.BPMNDiagram = jsonYao.definitions.BPMNDiagram;
       jsonBpmn.definitions.process.laneSet = laneSet;
 
