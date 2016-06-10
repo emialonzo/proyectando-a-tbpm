@@ -71,7 +71,7 @@
         </extensionElements>
       </startEvent>
       <userTask id='DGRC_adjudicar_movilidad_5' name='comunica adjudicacion de movilidad' activiti:candidateGroups='DGRC'></userTask>
-      <userTask id='DGRC_adjudicar_movilidad_9' name='fin proceso' activiti:candidateGroups='DGRC'></userTask>
+      <userTask id='DGRC_adjudicar_movilidad_9' name='procesa fin' activiti:candidateGroups='DGRC'></userTask>
       <userTask id='DGRC_adjudicar_movilidad_11' name='elije otro candidato' activiti:candidateGroups='DGRC'></userTask>
       <userTask id='DGRC_adjudicar_movilidad_6' name='espero mensaje de ServicioDePostulante' activiti:candidateGroups='DGRC'></userTask>
       <exclusiveGateway id='DGRC_adjudicar_movilidad_3'></exclusiveGateway>
@@ -79,6 +79,7 @@
       <exclusiveGateway id='DGRC_adjudicar_movilidad_13'></exclusiveGateway>
       <exclusiveGateway id='DGRC_adjudicar_movilidad_12' default='DGRC_adjudicar_movilidad_12_F'></exclusiveGateway>
       <endEvent id='DGRC_adjudicar_movilidad_EndEvent_1'></endEvent>
+      <endEvent id='DGRC_adjudicar_movilidad_EndEvent_2'></endEvent>
       <sequenceFlow id='DGRC_adjudicar_movilidad_3_5' sourceRef='DGRC_adjudicar_movilidad_3' targetRef='DGRC_adjudicar_movilidad_5'></sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_5_6' sourceRef='DGRC_adjudicar_movilidad_5' targetRef='DGRC_adjudicar_movilidad_6'></sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_6_7' sourceRef='DGRC_adjudicar_movilidad_6' targetRef='DGRC_adjudicar_movilidad_7'></sequenceFlow>
@@ -88,10 +89,10 @@
         </conditionExpression>
       </sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_7_11' sourceRef='DGRC_adjudicar_movilidad_7' targetRef='DGRC_adjudicar_movilidad_11'></sequenceFlow>
-      <sequenceFlow id='DGRC_adjudicar_movilidad_9_13' sourceRef='DGRC_adjudicar_movilidad_9' targetRef='DGRC_adjudicar_movilidad_13'></sequenceFlow>
+      <sequenceFlow id='DGRC_adjudicar_movilidad_9_F' sourceRef='DGRC_adjudicar_movilidad_9' targetRef='DGRC_adjudicar_movilidad_EndEvent_1'></sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_11_13' sourceRef='DGRC_adjudicar_movilidad_11' targetRef='DGRC_adjudicar_movilidad_13'></sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_13_12' sourceRef='DGRC_adjudicar_movilidad_13' targetRef='DGRC_adjudicar_movilidad_12'></sequenceFlow>
-      <sequenceFlow id='DGRC_adjudicar_movilidad_12_F' sourceRef='DGRC_adjudicar_movilidad_12' targetRef='DGRC_adjudicar_movilidad_EndEvent_1'></sequenceFlow>
+      <sequenceFlow id='DGRC_adjudicar_movilidad_12_F' sourceRef='DGRC_adjudicar_movilidad_12' targetRef='DGRC_adjudicar_movilidad_EndEvent_2'></sequenceFlow>
       <sequenceFlow id='DGRC_adjudicar_movilidad_12_3' sourceRef='DGRC_adjudicar_movilidad_12' targetRef='DGRC_adjudicar_movilidad_3' name='cantidadCandidatos&gt;0'>
         <conditionExpression xsi:type='tFormalExpression'>
           <![CDATA[${cantidadCandidatos>0}]]>

@@ -28,10 +28,11 @@
       </timerEventDefinition>
     </boundaryEvent>
     <endEvent id='_EndEvent_1'></endEvent>
+    <endEvent id='_EndEvent_2'></endEvent>
     <sequenceFlow id='_3_7' sourceRef='_3' targetRef='_7'></sequenceFlow>
     <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6'></sequenceFlow>
     <sequenceFlow id='_6_F' sourceRef='_6' targetRef='_EndEvent_1'></sequenceFlow>
-    <sequenceFlow id='_7_F' sourceRef='_7' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_7_F' sourceRef='_7' targetRef='_EndEvent_2'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
   </process>
 </definitions>

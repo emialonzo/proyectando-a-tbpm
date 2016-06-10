@@ -29,6 +29,7 @@
       </timerEventDefinition>
     </boundaryEvent>
     <endEvent id='_EndEvent_1'></endEvent>
+    <endEvent id='_EndEvent_2'></endEvent>
     <subProcess id='_4' name='adjuntoNoInterrumpible'>
       <startEvent id='adjuntoNoInterrumpible_StartEvent_1'></startEvent>
       <userTask id='adjuntoNoInterrumpible_3' name='hace algo'></userTask>
@@ -40,17 +41,18 @@
         </timerEventDefinition>
       </boundaryEvent>
       <endEvent id='adjuntoNoInterrumpible_EndEvent_1'></endEvent>
+      <endEvent id='adjuntoNoInterrumpible_EndEvent_2'></endEvent>
       <sequenceFlow id='adjuntoNoInterrumpible_3_7' sourceRef='adjuntoNoInterrumpible_3' targetRef='adjuntoNoInterrumpible_7'></sequenceFlow>
       <sequenceFlow id='adjuntoNoInterrumpible_4_6' sourceRef='adjuntoNoInterrumpible_4' targetRef='adjuntoNoInterrumpible_6'></sequenceFlow>
       <sequenceFlow id='adjuntoNoInterrumpible_6_F' sourceRef='adjuntoNoInterrumpible_6' targetRef='adjuntoNoInterrumpible_EndEvent_1'></sequenceFlow>
-      <sequenceFlow id='adjuntoNoInterrumpible_7_F' sourceRef='adjuntoNoInterrumpible_7' targetRef='adjuntoNoInterrumpible_EndEvent_1'></sequenceFlow>
+      <sequenceFlow id='adjuntoNoInterrumpible_7_F' sourceRef='adjuntoNoInterrumpible_7' targetRef='adjuntoNoInterrumpible_EndEvent_2'></sequenceFlow>
       <sequenceFlow id='adjuntoNoInterrumpible_StartEvent_1_3' sourceRef='adjuntoNoInterrumpible_StartEvent_1' targetRef='adjuntoNoInterrumpible_3'></sequenceFlow>
     </subProcess>
     <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
     <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
     <sequenceFlow id='_5_F' sourceRef='_5' targetRef='_EndEvent_1'></sequenceFlow>
     <sequenceFlow id='_6_8' sourceRef='_6' targetRef='_8'></sequenceFlow>
-    <sequenceFlow id='_8_F' sourceRef='_8' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_8_F' sourceRef='_8' targetRef='_EndEvent_2'></sequenceFlow>
     <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
   </process>
 </definitions>
