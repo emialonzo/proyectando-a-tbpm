@@ -86,7 +86,7 @@ function recursivoFlujo(nodox, ant, sig){
   }
 
   if(nodo.tipo == "secuencia"){
-    console.log("SECUENCIA:" + nodo.ant + " <- " + nodo.id + " -> " + nodo.sig);
+    // console.log("SECUENCIA:" + nodo.ant + " <- " + nodo.id + " -> " + nodo.sig);
     //si es una secuencia, hay que asignar sig y ant de todas las tareas internas
     var largo_secuencia = nodo.sentencia.length;
     if(largo_secuencia>1){
@@ -106,7 +106,7 @@ function recursivoFlujo(nodox, ant, sig){
       nodo.sentencia[0].sig = sig;
 
     } else{
-      console.log("Secuencia vacia");
+      // console.log("Secuencia vacia");
     }
   } else if((nodo.tipo == "cierro") && (nodo.tag == "loop")){
     //si es el cierro (compuerta de balance) de un loop  se asigna flujo defecto
@@ -118,7 +118,7 @@ function recursivoFlujo(nodox, ant, sig){
 
     //asigna un flujo siguiente al
     nodo.sig.push(nodo.ref);
-    console.log("agrego el flujo: " + nodo.id + " -> " + nodo.ref);
+    // console.log("agrego el flujo: " + nodo.id + " -> " + nodo.ref);
   } else if(nodo.tipo == "adjunto"){
     //obtengo flujo de la secuencia interna de la ejecucion del evento adjunto
     var aux
@@ -162,14 +162,14 @@ function recursivoFlujo(nodox, ant, sig){
   }
   else if ( isGateway(nodo.tipo) ){
     //si es un compuerta entonces se debe asingar el flujo a todos sus elementos internos
-    if(nodo.tipo=="loop"){
-      console.log("El loop tenia" + pd.json(nodo));
-    }
+    // if(nodo.tipo=="loop"){
+    //   console.log("El loop tenia" + pd.json(nodo));
+    // }
     // var aux = sig[0];
     nodo.sig = [];
     for (var i = 0; i < nodo.sentencia.length ; i++) {
       nodo.sig.push(nodo.sentencia[i].id);
-      console.log("Compuerta:" + nodo.tipo + " ID:" + nodo.id + " sig:" + sig);
+      // console.log("Compuerta:" + nodo.tipo + " ID:" + nodo.id + " sig:" + sig);
       nodo.sentencia[i] = recursivoFlujo(nodo.sentencia[i], [nodo.id], sig);
     }
   }
