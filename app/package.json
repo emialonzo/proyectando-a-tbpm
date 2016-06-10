@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'   --arch=x64 --overwrite --platform=linux --version=0.36.1",
+    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'  --arch=x64 --overwrite --platform=linux --version=0.36.1",
     "start": "electron index.js"
   },
   "author": "",
