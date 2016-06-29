@@ -1,3 +1,16 @@
+>> 14 de junio:
+en vez de utiliza hace/realiza subproceso
+agregar BPMNDI a todos los diagramas
+en el modelador tomar solamente bpmndi
+en subproceso: En vez de "Es utilizado N veces" "repite el subproceso ..."
+
+Hacer dos casos:
+ - uno que muestre el flujo como está
+ - otro que muestre los datos
+
+---------------------------------------------------------
+
+
 todo
  * actores con nombres compuestos
  * condiciones: que sean expresiones y determinar como evaluarlas(!!).
@@ -32,6 +45,10 @@ el A espera por 20 segundos.
 el A espera por mensaje respuesta.
 SE INTERRUMPE X, si transcurre 20 segundo la A L. fin
 
+**ya está** ALTERNATIVA DE X, [NO SE INTERRUMPE] si pasa  ...
+**ya está** UNICA ALTERNATIVA DE X, si pasa ... (no hay flujo normal)
+**ya está** ALTERNATIVA DE X, SE INTERRUMPE si pasa ..
+
 XML
 
 :::::::::::::::: POOLS ::::::::::::::::
@@ -65,7 +82,17 @@ el Usuario ENVIA MENSAJE A NOMBRE_POOL.
 
 :::::::::::::::: LOOP  ::::::::::::::::
 dentro de la definicion de una tarea hay dos posibilidades:
-1(sacado de yaoqiang): <standardLoopCharacteristics testBefore="false"/>
-2(sacada de la doc de activiti): <multiInstanceLoopCharacteristics isSequential="false|true">
+1(sacado de yaoqiang):
+<standardLoopCharacteristics testBefore="false"/>
+
+2(sacada de la doc de activiti):
+<multiInstanceLoopCharacteristics isSequential="false|true">
   <loopCardinality>5</loopCardinality>
 </multiInstanceLoopCharacteristics>
+
+::::::::::::::::: XOR :::::::::::
+si no hay datos las variables de expresiones las inicializamos en el evento de inicio
+
+
+
+::::: MEJORAR MENSAJES DE ERROR ::::
