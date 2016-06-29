@@ -6,7 +6,7 @@ si se cumple,
 costoEsMuyCaro entonces el servicio de reparacion, no hace nada. y finaliza
 si no
 mientras reparacionNecesaria,
-el servicio de reparacion, utiliza el subproceso repararComputadora.
+el servicio de reparacion, realiza el subproceso repararComputadora.
 el servicio de reparacion, verifica reparacion.
 fin
 fin
