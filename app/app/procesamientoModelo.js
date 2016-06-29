@@ -463,6 +463,8 @@ function templatesProceso(proceso, nombreProceso){
 
   proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.collaboration = proceso.collaboration;
+  bpmn.definitions.collaboration._id = "Collaboration_id";
+  
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
