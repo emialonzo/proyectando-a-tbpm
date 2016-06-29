@@ -1,23 +1,19 @@
-
-// var $ = require("jquery");
 var parser = require("./parser.js");
 var intermedio = require('./modeloIntermedio');
 var makeBpmn = require("./makeBpmn");
 var procesar = require('./procesamientoModelo');
-// var makeDot = require('./makeDot');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
 var yaoqiang = require('../yaoqiangJava');
 var env = require('./env');
 
-
-
 var pd = require('pretty-data').pd;
 var fs = require('fs');
 const ipcRenderer = require('electron').ipcRenderer;
 
+//variables globales
 var BpmnModeler = window.BpmnJS;
-// var Modeler = require('bpmn-js/lib/Modeler');
+
 var bpmnModeler;
 var pre_xml_bpmndi;
 
@@ -25,67 +21,35 @@ var ejemploActivo;
 var entrar = true;
 
 var bpmnGlobales={};
-
 var conYaoqiang = env.conYaoqiang;
+var conBPMNDI = true;
 
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
 var ejecutar = false;
-function ejecutarProceso(xml){
-  var xml = $("#id-xml-ejecutar").text() || xml || ""
-  fs.writeFileSync(__dirname + "/../motor/" + "motor.bpmn", pd.xml(xml));
-  ipcRenderer.send('abrir-motor');
-}
 
-// if(codeMirror){
-//   console.log("esta seteado el code mirror");
-//   console.log(codeMirror);
-// }
-// else{
-//   console.log("sin code mirror");
-// }
-
-// PRUEBAS
-// var xmlText = '<userTask completionQuantity="1" id="_3" implementation="##unspecified" isForCompensation="false" name="tarea" startQuantity="1"><ioSpecification><dataOutput id="Dout_3_1" itemSubjectRef="xsd:string" name="outNombre"/><dataOutput id="Dout_3_2" itemSubjectRef="xsd:int" name="outEdad"/><inputSet/><outputSet><dataOutputRefs>Dout_3_1</dataOutputRefs><dataOutputRefs>Dout_3_2</dataOutputRefs></outputSet></ioSpecification>id="Dout_ " itemSubjectRef="xsd:string" name="outNombre"<property id="_3_P_1" itemSubjectRef="xsd:string" name="nombre"/><property id="_3_P_2" itemSubjectRef="xsd:int" name="edad"/><dataOutputAssociation id="DOA_3_1"><sourceRef>Dout_3_1</sourceRef><targetRef>_3_P_1</targetRef></dataOutputAssociation><dataOutputAssociation id="DOA_3_2"><sourceRef>Dout_3_2</sourceRef><targetRef>_3_P_2</targetRef></dataOutputAssociation></userTask>';
-// var jsonObj = conv.xml_str2json( xmlText );
-// console.log("pruebas" + pd.json(jsonObj));
-
-// console.error = alert;
-
-function saveDiagram() {
-  console.log("Click en guardar diagrama desde el modeler.");
-  bpmnModeler.saveXML({ format: true }, function(err, xml) {
-    if(!err){
-      // ipcRenderer.send('guardar-archivo', "titulo", "bpmn",  xml );
-      ipcRenderer.send('guardar-archivo', "titulo", "bpmn", pd.xml(agregarBPMNDI(bpmnGlobales.activiti, xml)) );
-    }else{
-      console.error("Error:" + err);
-    }
-  });
-}
-
+//funciones
 function conversion(){
 
   $("#id-bpmn-model").empty();
   if(bpmnModeler){
     bpmnModeler.clear();
   }
+  if(!bpmnModeler){
+    inicializarModeler();
+  }
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   var nombre = $("#id-nombre-proceso").val();
-  // console.log("##########################################")
-  // console.log(nombre)
-  // console.log("##########################################")
+
   try {
     var modelo ;
     try {
       //parsea texto
       modelo = parser.parse(text);
     } catch (e) {
-      // console.error(e);
-      // console.error(pd.json(e));
       console.error("Error al obtener modelo intermedio desde texto!");
       mostrarError("Ha ocurrido un error al realizar el parser del texto, puede no esté escribiendo el texto acorde a la gramática.")
       errorParser(e);
@@ -93,11 +57,11 @@ function conversion(){
     }
     limpiarMensajesError();
 
-    var campos = modelo.campos;
-    $("#id-forms").html(pd.json(campos));
-
-    var expresiones = modelo.expresiones;
-    $("#id-expresiones").html(pd.json(expresiones));
+    // var campos = modelo.campos;
+    // $("#id-forms").html(pd.json(campos));
+    //
+    // var expresiones = modelo.expresiones;
+    // $("#id-expresiones").html(pd.json(expresiones));
 
     //se muestra el modelo generado por la gramática
     $("#id-modelo-abstracto").text(jsonToString(modelo));
@@ -113,7 +77,7 @@ function conversion(){
     }
 
     try {
-      if(conYaoqiang){
+      if(conBPMNDI){
         var result = procesar.modelToXML(modeloInt, nombre);
         var bpmn = result.xml;
         var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
@@ -124,7 +88,7 @@ function conversion(){
 
         //var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
         $("#id-xml-code").text(bpmn);
-        $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
+        // $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
         $("#id-xml-activiti").text(bpmnActiviti);
         try{
           var dot2 = makeDot2.toDot(bpmnActiviti);
@@ -137,30 +101,11 @@ function conversion(){
 
         // yaoqiang.generarImagen(bpmn, callbackYaoqiang);
         yaoqiang.generarXml(bpmn, callbackXml);
-
-        if(!bpmnModeler){
-          var div = $('<div id="canvas" style="height: 450px"></div>');
-          // id="id-bpmn-container"
-          $("#id-modeler-container").append(div);
-          bpmnModeler = new BpmnModeler({
-            container: '#canvas'
-          });
-
-          var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
-
-          $("#id-modeler-container").prepend(button)
-
-          $(".djs-palette-entries div.group").each(function(){
-            if($(this).data("group")!= "tools"){
-              $(this).remove();
-            }
-          })
-        }
       } else{
         var procesoBPMN = procesar.modelToXML(modeloInt, nombre);
         $("#id-xml-code").text(procesoBPMN);
         var procesoJSON = procesar.xml2json(procesoBPMN);
-        $("#id-json-code").text(procesoJSON);
+        // $("#id-json-code").text(procesoJSON);
       }
     } catch (e) {
       console.error(e);
@@ -181,8 +126,46 @@ function conversion(){
     $("#pestanias li:eq(0) a").tab('show');
     entrar = false;
   }
-  quitarSpin();
   return modelo;
+} //fin conversion()
+
+function saveDiagram() {
+  bpmnModeler.saveXML({ format: true }, function(err, xml) {
+    if(!err){
+      ipcRenderer.send('guardar-archivo', "titulo", "bpmn", pd.xml(agregarBPMNDI(bpmnGlobales.activiti, xml)) );
+    }else{
+      console.error("Error:" + err);
+    }
+  });
+}
+
+function inicializarModeler(){
+  console.log("Inicializo modeler!!!");
+  var div = $('<div id="canvas" style="height: 450px"></div>');
+  // id="id-bpmn-container"
+  $("#id-modeler-container").append(div);
+  bpmnModeler = new BpmnModeler({
+    container: '#canvas'
+  });
+  var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
+  $("#id-modeler-container").prepend(button)
+  $(".djs-palette-entries div.group").each(function(){
+    if($(this).data("group")!= "tools"){
+      $(this).remove();
+    }
+  })
+}
+
+function importarEnModelador(xml){
+  console.log("Importando en modelador.");
+  bpmnModeler.clear();
+  bpmnModeler.importXML(xml, function(err) {
+    if (err) {
+      return console.error('could not import BPMN 2.0 diagram', err);
+    }
+    var canvas = bpmnModeler.get('canvas');
+    console.log("Modelo importado.");
+  });
 }
 
 function callbackDot(image){
@@ -197,28 +180,17 @@ function callbackDot(image){
 
 function callbackXml(xml){
   $("#id-xml-ejecutar").text(pd.xml(xml));
-
-  bpmnModeler.importXML(xml, function(err) {
-    if (err) {
-      return console.error('could not import BPMN 2.0 diagram', err);
-    }
-    var canvas = bpmnModeler.get('canvas');
-    // canvas.zoom('fit-viewport');
-  });
+  // importarEnModelador(xml);
   console.log("XML finalizado!");
-
-
   var myNotification = new Notification('XML terminado', {
     body: 'Se ha terminado de generar el XML'
   });
-
   myNotification.onclick = function () {
     // console.log('Notification clicked')
   }
 }
 
 function callbackYaoqiang(base64){
-  // console.log("base64::" + base64);
   var img = $('<img id="yaoqiang-img">');
   img.attr( 'src', 'data:image/png;base64,'+base64 );
   img.addClass("img-responsive");
@@ -248,8 +220,6 @@ function safe_tags(str) {
 }
 
 function jsonToString(str){
-  // console.log("jsonToString");
-  // return JSON.stringify(str,null, 2);
   return pd.json(str);
 }
 
@@ -280,8 +250,6 @@ function menu(){
     ejemploActivo = $(this);
   });
 }
-
-var ejemploModeloAbstracto;
 
 function posPegError(pegError) {
   // console.log(JSON.stringify(pegError));
@@ -317,14 +285,17 @@ function limpiarMensajesError(){
   $("div#id-texto-container div#div-error").html("");
 }
 
+//agrega o sustituyo el bpmndi del xml por un bpmndi en formato json
+function agregarBPMNDIJson(xmlBase, jsonBpmndi){
+  var jsonBase = conv.xml_str2json( xmlBase );
+  jsonBase.definitions.BPMNDiagram = jsonBpmndi;
+  return conv.json2xml_str(jsonBase);
+}
+
 // Le agrega o sustituye al primer XML el BPMNDI del segundo
 function agregarBPMNDI(xmlBase, xmlBPMNDI){
-  var jsonBase = conv.xml_str2json( xmlBase );
   var jsonBpmndi = conv.xml_str2json( xmlBPMNDI );
-
-  jsonBase.definitions.BPMNDiagram = jsonBpmndi.definitions.BPMNDiagram;
-
-  return conv.json2xml_str(jsonBase);
+  return agregarBPMNDIJson(xmlBase, jsonBpmndi.definitions.BPMNDiagram);
 }
 
 function agregarSpin(){
@@ -346,16 +317,21 @@ function quitarSpin(){
 }
 
 $(function() {
+
   $('.btn-descargar').click(function(){
     var idContainer = $(this).data('target');
     var xml = $(idContainer).text();
     ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
-    if(ejecutar){
-      ejecutarProceso(xml)
-    }
-    // console.log(xml);
+  })
+  $('.btn-modeler').click(function(){
+    console.log("Abriendo modelador.");
 
+    // var idContainer = $(this).data('target');
+    // var xml = $(idContainer).text();
+    var xml = $(this).parent().find("code").text();
 
+    // console.debug(xml);
+    importarEnModelador(xml);
   })
   menu();
   parser.init(__dirname + '/gramatica2.pegjs');
