@@ -26,6 +26,8 @@ var yaoqiang = function(bpmn,callback, generarXml){
   delete jsonBpmn.definitions.process.laneSet;
   bpmn = conv.json2xml_str(jsonBpmn)
 
+  // console.log("bpmn:" + bpmn);
+
   fs.writeFile(filePath, bpmn, function(err) {
     if(err) {
       return console.log(err);
@@ -102,41 +104,47 @@ var generarXml = function(bpmn, callback){
   yaoqiang(bpmn, callback, true);
 }
 
-function procesarYaoqiang(bpmn){
+function procesarYaoqiang(bpmn, callback){
   //borramos laneSet por bug en yaoqiang
   var jsonBpmn = conv.xml_str2json( bpmn );
   laneSet = jsonBpmn.definitions.process.laneSet;
   delete jsonBpmn.definitions.process.laneSet;
+
   bpmn = conv.json2xml_str(jsonBpmn)
+
+  // console.log("Y aca es "+bpmn);
 
   fs.writeFile(filePath, bpmn, function(err) {
     if(err) {
       return console.log(err);
     }
   });
-  var formato = 'salidaBPMNDI.bpmn';
+
+  // console.log("filePath"+fs.readFileSync(filePath).toString());
 
   var child = require('child_process').spawn(
-    'java', ['-jar', yaoqiangPath, filePath , '--export', __dirname+'/'+formato]
+    'java', ['-jar', yaoqiangPath, filePath , '--export', filePathBpmndi]
   );
   child.stdout.on('data', function(data) {
   });
 
   child.stderr.on("data", function (data) {
-    var env = require('./app/env');
-    var excepcionSiFallaYaoqiang = env.excepcionSiFallaYaoqiang || false;
-    if(excepcionSiFallaYaoqiang){
-      // console.error("Error al procesar en yaoqiang");
-      throw "Error al procesar en yaoqiang"
-    }else{
+    // var env = require('./app/env');
+    // var excepcionSiFallaYaoqiang = env.excepcionSiFallaYaoqiang || false;
+    // if(excepcionSiFallaYaoqiang){
+    //   // console.error("Error al procesar en yaoqiang");
+    //   throw "Error al procesar en yaoqiang"
+    // }else{
       console.log(data.toString());
-    }
+    // }
   });
 
   child.on('close', function (code) {
     var xml = fs.readFileSync(filePathBpmndi).toString();
+    // console.log("xml final:" + xml);
 
     var jsonYao = conv.xml_str2json( xml );
+
     //ajustando pools
     var listaShapes = jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape
     for (var i = 0; i < listaShapes.length; i++) {
@@ -148,14 +156,20 @@ function procesarYaoqiang(bpmn){
       }
       listaShapes[i] = shape;
     }
+    jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape = listaShapes;
 
-    return jsonYao;
+    // console.debug(jsonYao.definitions.BPMNDiagram);
+    callback(jsonYao.definitions.BPMNDiagram);
   });
 }
 
 var generarBpmndiJson = function(bpmn, callback){
-  var bpmndi = procesarYaoqiang(bpmn);
-  callback(bpmndi);
+  try {
+    fs.unlinkSync(filePathBpmndi);
+  }catch (e) {
+
+  }
+  var bpmndi = procesarYaoqiang(bpmn, callback);
 }
 
 module.exports = {

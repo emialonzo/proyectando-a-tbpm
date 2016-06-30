@@ -33,7 +33,11 @@ var ejecutar = false;
 //funciones
 function conversion(){
 
+  // $("#pestanias").animatescroll({scrollSpeed:2000,easing:'easeInOutBack', padding:20, element:"body"});
+
   $("#id-bpmn-model").empty();
+  $("#id-xml-activiti").text("");
+  $("#id-xml-code").text("");
   if(bpmnModeler){
     bpmnModeler.clear();
   }
@@ -79,28 +83,35 @@ function conversion(){
     try {
       if(conBPMNDI){
         var result = procesar.modelToXML(modeloInt, nombre);
+
         var bpmn = result.xml;
+
         var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
         var bpmnActiviti = resultActiviti.xml;
 
         bpmnGlobales.basico = bpmn;
         bpmnGlobales.activiti = bpmnActiviti;
 
-        //var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
-        $("#id-xml-code").text(bpmn);
-        // $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
-        $("#id-xml-activiti").text(bpmnActiviti);
-        try{
-          var dot2 = makeDot2.toDot(bpmnActiviti);
-          $("#id-dot").html(dot2);
-          makeDot2.executeDot(dot2, callbackDot)
-        } catch(e){
-          $("#id-dot").html("error!!");
-          mostrarError("Ha ocurrido un error interno mientras se generaba el gráfico de flujo con la herramienta Graphviz")
-        }
+        generarBpmndi(bpmn, function(bpmn_di){
+          $("#id-xml-code").text(pd.xml(bpmn_di));
+        });
+        // bpmnActiviti = generarBpmndi(bpmnActiviti);
+        generarBpmndi(bpmnActiviti, function(bpmn_di){
+          $("#id-xml-activiti").text(pd.xml(bpmn_di));
+        });
+
+
+        // try{
+        //   var dot2 = makeDot2.toDot(bpmnActiviti);
+        //   $("#id-dot").html(dot2);
+        //   makeDot2.executeDot(dot2, callbackDot)
+        // } catch(e){
+        //   $("#id-dot").html("error!!");
+        //   mostrarError("Ha ocurrido un error interno mientras se generaba el gráfico de flujo con la herramienta Graphviz")
+        // }
 
         // yaoqiang.generarImagen(bpmn, callbackYaoqiang);
-        yaoqiang.generarXml(bpmn, callbackXml);
+        // yaoqiang.generarXml(bpmn, callbackXml);
       } else{
         var procesoBPMN = procesar.modelToXML(modeloInt, nombre);
         $("#id-xml-code").text(procesoBPMN);
@@ -123,8 +134,8 @@ function conversion(){
   }
 
   if(entrar){
-    $("#pestanias li:eq(0) a").tab('show');
-    entrar = false;
+    $("#pestanias li:eq(2) a").tab('show');
+    // entrar = false;
   }
   return modelo;
 } //fin conversion()
@@ -168,9 +179,13 @@ function importarEnModelador(xml){
   });
 }
 
+function generarDot(xml){
+  makeDot2.generateImageElement(xml, callbackDot)
+}
+
 function callbackDot(image){
   // console.error(image);
-  $("#id-dot").prepend(image);
+  $("#id-dot").html(image);
   $("#id-dot img").addClass("img-responsive");
   $("#id-dot img").after("<hr />");
   $("#id-dot img").click(function(){
@@ -292,6 +307,18 @@ function agregarBPMNDIJson(xmlBase, jsonBpmndi){
   return conv.json2xml_str(jsonBase);
 }
 
+function generarBpmndi(bpmn, callback){
+  // var retVal;
+  yaoqiang.generarBpmndiJson(bpmn, function(bpmndi){
+    console.log("bpmn:"+bpmn);
+    console.log("bpmndi:"+bpmndi);
+    // retVal = agregarBPMNDIJson(bpmn, bpmndi);
+    callback(agregarBPMNDIJson(bpmn, bpmndi))
+  });
+  // console.log("retval:" + retVal);
+  // return retVal;
+}
+
 // Le agrega o sustituye al primer XML el BPMNDI del segundo
 function agregarBPMNDI(xmlBase, xmlBPMNDI){
   var jsonBpmndi = conv.xml_str2json( xmlBPMNDI );
@@ -316,6 +343,9 @@ function quitarSpin(){
   $("body #overlay-id").remove();
 }
 
+var conteinerActual;
+var xmlActual;
+
 $(function() {
 
   $('.btn-descargar').click(function(){
@@ -325,14 +355,33 @@ $(function() {
   })
   $('.btn-modeler').click(function(){
     console.log("Abriendo modelador.");
+    conteinerActual = $(this).parent().find("code");
 
-    // var idContainer = $(this).data('target');
-    // var xml = $(idContainer).text();
-    var xml = $(this).parent().find("code").text();
-
-    // console.debug(xml);
-    importarEnModelador(xml);
+    xmlActual = conteinerActual.text();
+    importarEnModelador(xmlActual);
   })
+  $('.btn-dot').click(function(){
+    var xml = $(this).parent().find("code").text();
+    generarDot(xml);
+  })
+
+  $('#modalModeler').on('hidden.bs.modal', function (e) {
+    bpmnModeler.saveXML({ format: true }, function(err, xmlModeler) {
+      if(!err){
+
+        conteinerActual.text(
+          pd.xml(agregarBPMNDI(xmlActual, xmlModeler))
+        );
+        // ipcRenderer.send('guardar-archivo', "titulo", "bpmn", pd.xml(agregarBPMNDI(bpmnGlobales.activiti, xml)) );
+      }else{
+        console.error("Error:" + err);
+      }
+      // conteinerActual.text(
+      //   pd.xml("<hola>"+xml+"</hola>")
+      // );
+    });
+  });
+
   menu();
   parser.init(__dirname + '/gramatica2.pegjs');
 

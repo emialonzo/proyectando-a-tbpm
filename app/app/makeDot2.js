@@ -270,7 +270,13 @@ var executeDot = function(dot_file, callback){
   // child.send(dot_file);
 }
 
+var generateImageElement = function(xml, callback){
+  executeDot(toDot(xml), callback);
+}
+
 module.exports = {
   toDot: toDot,
-  executeDot: executeDot
+  executeDot: executeDot,
+  generateImageElement:generateImageElement
+
 };
