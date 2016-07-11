@@ -1,10 +1,7 @@
-
-// var $ = require("jquery");
 var parser = require("./parser.js");
 var intermedio = require('./modeloIntermedio');
 var makeBpmn = require("./makeBpmn");
 var procesar = require('./procesamientoModelo');
-// var makeDot = require('./makeDot');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
 var yaoqiang = require('../yaoqiangJava');
@@ -14,69 +11,48 @@ var pd = require('pretty-data').pd;
 var fs = require('fs');
 const ipcRenderer = require('electron').ipcRenderer;
 
+//variables globales
 var BpmnModeler = window.BpmnJS;
-// var Modeler = require('bpmn-js/lib/Modeler');
+
 var bpmnModeler;
 var pre_xml_bpmndi;
 
 var ejemploActivo;
 var entrar = true;
 
+var bpmnGlobales={};
 var conYaoqiang = env.conYaoqiang;
+var conBPMNDI = true;
 
 
 var x2js = require('x2js'); //new X2JS();
 var conv = new x2js();
 
 var ejecutar = false;
-function ejecutarProceso(xml){
-  var xml = $("#id-xml-ejecutar").text() || xml || ""
-  fs.writeFileSync(__dirname + "/../motor/" + "motor.bpmn", pd.xml(xml));
-  ipcRenderer.send('abrir-motor');
-}
 
-// if(codeMirror){
-//   console.log("esta seteado el code mirror");
-//   console.log(codeMirror);
-// }
-// else{
-//   console.log("sin code mirror");
-// }
-
-// PRUEBAS
-// var xmlText = '<userTask completionQuantity="1" id="_3" implementation="##unspecified" isForCompensation="false" name="tarea" startQuantity="1"><ioSpecification><dataOutput id="Dout_3_1" itemSubjectRef="xsd:string" name="outNombre"/><dataOutput id="Dout_3_2" itemSubjectRef="xsd:int" name="outEdad"/><inputSet/><outputSet><dataOutputRefs>Dout_3_1</dataOutputRefs><dataOutputRefs>Dout_3_2</dataOutputRefs></outputSet></ioSpecification>id="Dout_ " itemSubjectRef="xsd:string" name="outNombre"<property id="_3_P_1" itemSubjectRef="xsd:string" name="nombre"/><property id="_3_P_2" itemSubjectRef="xsd:int" name="edad"/><dataOutputAssociation id="DOA_3_1"><sourceRef>Dout_3_1</sourceRef><targetRef>_3_P_1</targetRef></dataOutputAssociation><dataOutputAssociation id="DOA_3_2"><sourceRef>Dout_3_2</sourceRef><targetRef>_3_P_2</targetRef></dataOutputAssociation></userTask>';
-// var jsonObj = conv.xml_str2json( xmlText );
-// console.log("pruebas" + pd.json(jsonObj));
-
-// console.error = alert;
-
-function saveDiagram() {
-  bpmnModeler.saveXML({ format: true }, function(err, xml) {
-    if(!err){
-      ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
-    }
-  });
-}
-
+//funciones
 function conversion(){
+
   $("#id-bpmn-model").empty();
+  $("#id-xml-activiti").text("");
+  $("#id-xml-code").text("");
   if(bpmnModeler){
     bpmnModeler.clear();
   }
+  if(!bpmnModeler){
+    inicializarModeler();
+  }
+
   //obtengo texto
   var text = $("#id-modelo-texto").val();
   var nombre = $("#id-nombre-proceso").val();
-  // console.log("##########################################")
-  // console.log(nombre)
-  // console.log("##########################################")
+
   try {
     var modelo ;
     try {
       //parsea texto
       modelo = parser.parse(text);
     } catch (e) {
-      // console.error(e);
-      // console.error(pd.json(e));
       console.error("Error al obtener modelo intermedio desde texto!");
       mostrarError("Ha ocurrido un error al realizar el parser del texto, puede no esté escribiendo el texto acorde a la gramática.")
       errorParser(e);
@@ -84,11 +60,6 @@ function conversion(){
     }
     limpiarMensajesError();
 
-    var campos = modelo.campos;
-    $("#id-forms").html(pd.json(campos));
-
-    var expresiones = modelo.expresiones;
-    $("#id-expresiones").html(pd.json(expresiones));
 
     //se muestra el modelo generado por la gramática
     $("#id-modelo-abstracto").text(jsonToString(modelo));
@@ -104,51 +75,28 @@ function conversion(){
     }
 
     try {
-      if(conYaoqiang){
-        var result = procesar.modelToXML(modeloInt, nombre);
-        var bpmn = result.xml;
-        var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso)
-        var bpmnActiviti = resultActiviti.xml;
+      //generando xml
+      var result = procesar.modelToXML(modeloInt, nombre);
+      var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
 
-        //var bpmn = pd.xml(makeBpmn.makeBpmn(modeloInt));
-        $("#id-xml-code").text(bpmn);
-        $("#id-json-code").text(pd.json(conv.xml_str2json(bpmn)));
-        $("#id-xml-activiti").text(bpmnActiviti);
-        try{
-          var dot2 = makeDot2.toDot(bpmnActiviti);
-          $("#id-dot").html(dot2);
-          makeDot2.executeDot(dot2, callbackDot)
-        } catch(e){
-          $("#id-dot").html("error!!");
-          mostrarError("Ha ocurrido un error interno mientras se generaba el gráfico de flujo con la herramienta Graphviz")
-        }
+      //ajustando nombres de variables
+      var bpmn = result.xml;
+      var bpmnActiviti = resultActiviti.xml;
 
-        yaoqiang.generarImagen(bpmn, callbackYaoqiang);
-        yaoqiang.generarXml(bpmn, callbackXml);
+      if(conBPMNDI){
+        //consumiendo yaoqiang para obtener bpmndi de forma asincrónica
+        generarBpmndi(bpmn, function(bpmn_di){
+          $("#id-xml-code").text(pd.xml(bpmn_di));
+          // $("#pestanias").animatescroll({scrollSpeed:2000,easing:'easeInOutBack', padding:20, element:"body"});
+        });
 
-        if(!bpmnModeler){
-          var div = $('<div id="canvas" style="height: 450px"></div>');
-          // id="id-bpmn-container"
-          $("#id-modeler-container").append(div);
-          bpmnModeler = new BpmnModeler({
-            container: '#canvas'
-          });
+        generarBpmndi(bpmnActiviti, function(bpmn_di){
+          $("#id-xml-activiti").text(pd.xml(bpmn_di));
+        });
 
-          var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
-
-          $("#id-modeler-container").prepend(button)
-
-          $(".djs-palette-entries div.group").each(function(){
-            if($(this).data("group")!= "tools"){
-              $(this).remove();
-            }
-          })
-        }
       } else{
-        var procesoBPMN = procesar.modelToXML(modeloInt, nombre);
-        $("#id-xml-code").text(procesoBPMN);
-        var procesoJSON = procesar.xml2json(procesoBPMN);
-        $("#id-json-code").text(procesoJSON);
+        $("#id-xml-code").text(pd.xml(bpmn));
+        $("#id-xml-activiti").text(pd.xml(bpmnActiviti));
       }
     } catch (e) {
       console.error(e);
@@ -166,15 +114,59 @@ function conversion(){
   }
 
   if(entrar){
-    $("#pestanias li:eq(0) a").tab('show');
-    entrar = false;
+    $("#pestanias li:eq(2) a").tab('show');
+    // entrar = false;
   }
   return modelo;
+} //fin conversion()
+
+function saveDiagram() {
+  bpmnModeler.saveXML({ format: true }, function(err, xml) {
+    if(!err){
+      // ipcRenderer.send('guardar-archivo', "titulo", "bpmn", pd.xml(agregarBPMNDI(bpmnGlobales.activiti, xml)) );
+      ipcRenderer.send('guardar-archivo', "titulo", "bpmn",  xml);
+    }else{
+      console.error("Error:" + err);
+    }
+  });
+}
+
+function inicializarModeler(){
+  // console.log("Inicializo modeler!!!");
+  var div = $('<div id="canvas" style="height: 450px"></div>');
+  // id="id-bpmn-container"
+  $("#id-modeler-container").append(div);
+  bpmnModeler = new BpmnModeler({
+    container: '#canvas'
+  });
+  var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
+  $("#id-modeler-container").prepend(button)
+  $(".djs-palette-entries div.group").each(function(){
+    if($(this).data("group")!= "tools"){
+      $(this).remove();
+    }
+  })
+}
+
+function importarEnModelador(xml){
+  // console.log("Importando en modelador.");
+  bpmnModeler.clear();
+  bpmnModeler.importXML(xml, function(err) {
+    if (err) {
+      return console.error('could not import BPMN 2.0 diagram', err);
+    }
+    var canvas = bpmnModeler.get('canvas');
+    // console.log("Modelo importado.");
+  });
+}
+
+function generarDot(xml){
+  makeDot2.generateImageElement(xml, callbackDot)
 }
 
 function callbackDot(image){
   // console.error(image);
-  $("#id-dot").prepend(image);
+  $("#id-dot").html(image);
   $("#id-dot img").addClass("img-responsive");
   $("#id-dot img").after("<hr />");
   $("#id-dot img").click(function(){
@@ -183,35 +175,18 @@ function callbackDot(image){
 }
 
 function callbackXml(xml){
-  // console.error(image);
-  // $("#id-xml-container").append("<hr/>");
-  // if(!pre_xml_bpmndi){
-  //   pre_xml_bpmndi = $('<pre id="xml-bpmndi" />');
-  //   $("#id-xml-container").append(pre_xml_bpmndi);
-  // }
   $("#id-xml-ejecutar").text(pd.xml(xml));
-  // pre_xml_bpmndi.text(pd.xml(xml));
-  // console.error(xml);
-
-  bpmnModeler.importXML(xml, function(err) {
-    if (err) {
-      return console.error('could not import BPMN 2.0 diagram', err);
-    }
-    var canvas = bpmnModeler.get('canvas');
-    // canvas.zoom('fit-viewport');
-  });
+  // importarEnModelador(xml);
   console.log("XML finalizado!");
   var myNotification = new Notification('XML terminado', {
     body: 'Se ha terminado de generar el XML'
   });
-
   myNotification.onclick = function () {
     // console.log('Notification clicked')
   }
 }
 
 function callbackYaoqiang(base64){
-  // console.log("base64::" + base64);
   var img = $('<img id="yaoqiang-img">');
   img.attr( 'src', 'data:image/png;base64,'+base64 );
   img.addClass("img-responsive");
@@ -241,8 +216,6 @@ function safe_tags(str) {
 }
 
 function jsonToString(str){
-  // console.log("jsonToString");
-  // return JSON.stringify(str,null, 2);
   return pd.json(str);
 }
 
@@ -274,8 +247,6 @@ function menu(){
   });
 }
 
-var ejemploModeloAbstracto;
-
 function posPegError(pegError) {
   // console.log(JSON.stringify(pegError));
   return [pegError.location.start.offset, pegError.location.end.offset]
@@ -294,7 +265,7 @@ function errorParser(pegError){
 
   var str = `<div class="alert alert-`+ tipo +` alert-dismissible" role="alert">
   <button type="button" class="close"
-  data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   ` + strError + `</div>`
 
   $("div#id-texto-container div#div-error").prepend(str);
@@ -310,18 +281,78 @@ function limpiarMensajesError(){
   $("div#id-texto-container div#div-error").html("");
 }
 
+//agrega o sustituyo el bpmndi del xml por un bpmndi en formato json
+function agregarBPMNDIJson(xmlBase, jsonBpmndi){
+  var jsonBase = conv.xml_str2json( xmlBase );
+  jsonBase.definitions.BPMNDiagram = jsonBpmndi;
+  return conv.json2xml_str(jsonBase);
+}
+
+function generarBpmndi(bpmn, callback){
+  yaoqiang.generarBpmndiJson(bpmn, function(bpmndi){
+    // console.log("bpmn:"+bpmn);
+    // console.log("bpmndi:"+bpmndi);
+    callback(agregarBPMNDIJson(bpmn, bpmndi))
+  });
+}
+
+// Le agrega o sustituye al primer XML el BPMNDI del segundo
+function agregarBPMNDI(xmlBase, xmlBPMNDI){
+  var jsonBpmndi = conv.xml_str2json( xmlBPMNDI );
+  return agregarBPMNDIJson(xmlBase, jsonBpmndi.definitions.BPMNDiagram);
+}
+
+function agregarSpin(){
+  if(!Spin){
+    var Spin = require('spin');
+  }
+  var overlay = $('<div class="overlay" id="overlay-id" style="position: fixed; background: rgba(0,0,0,0.25); height: 100%; width: 100%; top:0px; left:0px; z-index: 10000;"></div>');
+  overlay.appendTo($("body"));
+  new Spin().spin(document.getElementById('overlay-id'))
+  overlay.children().first().offset({ top: "50%", left: "50%" });
+}
+
+
+function quitarSpin(){
+  // console.log("quitar spin");
+  $("body #overlay-id").remove();
+}
+
+var conteinerActual;
+var xmlActual;
+
 $(function() {
+
   $('.btn-descargar').click(function(){
     var idContainer = $(this).data('target');
     var xml = $(idContainer).text();
     ipcRenderer.send('guardar-archivo', "titulo", "bpmn", xml);
-    if(ejecutar){
-      ejecutarProceso(xml)
-    }
-    // console.log(xml);
-
-
   })
+
+
+  $('.btn-modeler').click(function(){
+    // console.log("Abriendo modelador.");
+    conteinerActual = $(this).parent().find("code");
+    xmlActual = conteinerActual.text();
+    importarEnModelador(xmlActual);
+  })
+
+  $('.btn-dot').click(function(){
+    var xml = $(this).parent().find("code").text();
+    generarDot(xml);
+  })
+
+  $('#modalModeler').on('hidden.bs.modal', function (e) {
+    bpmnModeler.saveXML({ format: true }, function(err, xmlModeler) {
+      if(!err){
+        conteinerActual.text(pd.xml(agregarBPMNDI(xmlActual, xmlModeler)));
+      }else{
+        console.error("Error:" + err);
+      }
+
+    });
+  });
+
   menu();
   parser.init(__dirname + '/gramatica2.pegjs');
 

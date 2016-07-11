@@ -37,7 +37,7 @@
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#" onclick="ejecutarProceso()">Ejecutar proceso</a></li>
+          <!-- <li><a href="#" onclick="ejecutarProceso()">Ejecutar proceso</a></li> -->
           <!-- <li><a href="#">Settings</a></li>
           <li><a href="#">Profile</a></li>
           <li><a href="#">Help</a></li> -->
@@ -106,10 +106,10 @@
           <li role="presentation"><a href="#id-xml-container" aria-controls="xml" role="tab" data-toggle="tab">XML basico</a></li>
           <li role="presentation"><a href="#id-xml-container-ejecutar" aria-controls="xml" role="tab" data-toggle="tab">XML estandar</a></li>
           <li role="presentation"><a href="#id-xml-container-activiti" aria-controls="xml" role="tab" data-toggle="tab">XML activiti</a></li>
-          <li role="presentation"><a href="#id-json-container" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li>
-          <li role="presentation"><a href="#id-dot" aria-controls="dot" role="tab" data-toggle="tab">Dot</a></li>
-          <li role="presentation"><a href="#id-bpmn-container" aria-controls="imagen" role="tab" data-toggle="tab">Imagen</a></li>
-          <li role="presentation"><a href="#id-modeler-container" aria-controls="modeler" role="tab" data-toggle="tab">Modelador</a></li>
+          <!-- <li role="presentation"><a href="#id-json-container" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li> -->
+          <!-- <li role="presentation"><a href="#id-dot" aria-controls="dot" role="tab" data-toggle="tab">Dot</a></li> -->
+          <!-- <li role="presentation"><a href="#id-bpmn-container" aria-controls="imagen" role="tab" data-toggle="tab">Imagen</a></li> -->
+          <!-- <li role="presentation"><a href="#id-modeler-container" aria-controls="modeler" role="tab" data-toggle="tab">Modelador</a></li> -->
 
         </ul>
         <div class="tab-content">
@@ -124,43 +124,57 @@
           </pre>
 
           <div id="id-xml-container" role="tabpanel" class="tab-pane fade " >
-            <button data-target="#id-xml-code" type="button" class="btn btn-primary btn-descargar" style="width: 100%;">Guardar</button>
+            <button data-target="#id-xml-code" type="button" class="btn btn-primary btn-descargar boton-accion" >Guardar</button>
+            <button type="button" class="btn btn-primary btn-modeler boton-accion" data-toggle="modal" data-target="#modalModeler" >
+              Modeler
+            </button>
+            <button type="button" class="btn btn-primary btn-dot boton-accion" data-toggle="modal" data-target="#modalDot" >
+              Dot
+            </button>
             <pre><code id="id-xml-code"></code></pre>
           </div>
 
           <div id="id-xml-container-ejecutar" role="tabpanel" class="tab-pane fade " >
-            <button data-target="#id-xml-ejecutar" type="button" class="btn btn-primary btn-descargar" style="width: 100%;">Guardar</button>
+            <button data-target="#id-xml-ejecutar" type="button" class="btn btn-primary btn-descargar boton-accion" >Guardar</button>
+            <button type="button" class="btn btn-primary btn-modeler boton-accion" data-toggle="modal" data-target="#modalModeler" >
+              Modeler
+            </button>
+            <button type="button" class="btn btn-primary btn-dot boton-accion" data-toggle="modal" data-target="#modalDot" >
+              Dot
+            </button>
             <pre><code id="id-xml-ejecutar"></code></pre>
           </div>
 
           <div id="id-xml-container-activiti" role="tabpanel" class="tab-pane fade " >
-            <button data-target="#id-xml-activiti" type="button" class="btn btn-primary btn-descargar" style="width: 100%;">Guardar</button>
+            <button data-target="#id-xml-activiti" type="button" class="btn btn-primary btn-descargar boton-accion" >Guardar</button>
+            <button type="button" class="btn btn-primary btn-modeler boton-accion" data-toggle="modal" data-target="#modalModeler" >
+              Modeler
+            </button>
+            <button type="button" class="btn btn-primary btn-dot boton-accion" data-toggle="modal" data-target="#modalDot" >
+              Dot
+            </button>
             <pre><code id="id-xml-activiti"></code></pre>
           </div>
 
-          <div id="id-json-container" role="tabpanel" class="tab-pane fade " >
+          <!-- <div id="id-json-container" role="tabpanel" class="tab-pane fade " >
             <pre><code id="id-json-code"></code></pre>
-          </div>
+          </div> -->
 
-          <pre id="id-forms" role="tabpanel" class="tab-pane fade " >
-          </pre>
 
-          <pre id="id-expresiones" role="tabpanel" class="tab-pane fade " >
-          </pre>
+          <!-- <pre id="id-dot" role="tabpanel" class="tab-pane fade " >
+          </pre> -->
 
-          <pre id="id-dot" role="tabpanel" class="tab-pane fade " >
-          </pre>
 
-          <div id="id-bpmn-container" role="tabpanel" class="tab-pane fade  ">
+          <!-- <div id="id-bpmn-container" role="tabpanel" class="tab-pane fade  ">
             <div id="id-bpmn-model" class="col-sm-12">
               <img src="recursos/mozoCocinero.svg" alt="" />
             </div>
-          </div>
+          </div> -->
 
-          <div id="id-modeler-container" role="tabpanel" class="tab-pane fade  ">
+          <!-- <div id="id-modeler-container" role="tabpanel" class="tab-pane fade  ">
+          </div> -->
             <!-- <div id="id-modeler" class="col-sm-12">
             </div> -->
-          </div>
         </div>
 
 
@@ -188,6 +202,49 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="modalModeler" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabelModeler">Modelador</h4>
+        </div>
+        <div class="modal-body">
+          <!-- <div id="id-modeler-container" role="tabpanel" class="tab-pane fade  ">
+          </div> -->
+          <div id="id-modeler-container" >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary">Actualizar</button>
+          <button type="button" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modalDot" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabelDot">Dor image</h4>
+        </div>
+        <div class="modal-body">
+          <pre id="id-dot">
+          </pre>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap core JavaScript
   ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
@@ -195,16 +252,14 @@
   <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <!-- <script src="bower_components/bpmn-js/dist/Modeler.js"></script> -->
   <script src="bower_components/bpmn-js/dist/bpmn-modeler.js"></script>
-  <!-- <script src="../bower_components/codemirror/lib/codemirror.js"></script> -->
 
   <!-- para toquetear -->
   <script type="text/javascript" src="main.js" ></script>
   <script type="text/javascript" src="util_parser.js" ></script>
-  <script type="text/javascript"  >
-//     // var myCodeMirror = CodeMirror("");
-//     var codeMirror = CodeMirror.fromTextArea(document.getElementById("id-modelo-texto"), {
-//     lineNumbers: true,
-// });
+  <!-- <script type="text/javascript" src="bower_components/animatescroll/animatescroll.min.js" ></script> -->
+
+  <script type="text/javascript">
+    $(".boton-accion").addClass("col-xs-4");
   </script>
 
 </body></html>

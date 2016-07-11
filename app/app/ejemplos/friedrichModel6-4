@@ -1,4 +1,4 @@
-el marketing utiliza el subproceso determinarDetallesDeContacto.
+el marketing realiza el subproceso determinarDetallesDeContacto.
 el empleado del call center, realiza la tarea manual determinar persona de contacto.
 si se cumple,
 noHayPersona entonces el empleado del call center, no hace nada. y finaliza
