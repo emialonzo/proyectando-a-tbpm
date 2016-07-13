@@ -44,8 +44,8 @@ function conversion(){
   }
 
   //obtengo texto
-  var text = $("#id-modelo-texto").val();
-  var nombre = $("#id-nombre-proceso").val();
+  var text = $("#id-modelo-texto").val().toLowerCase();
+  var nombre = $("#id-nombre-proceso").val().toLowerCase();
 
   try {
     var modelo ;
@@ -316,6 +316,51 @@ function agregarSpin(){
 function quitarSpin(){
   // console.log("quitar spin");
   $("body #overlay-id").remove();
+}
+
+
+var tourInicializado = false;
+var tour = undefined;
+
+function ayuda(){
+  console.log("ayuda!");
+  // if(!tourInicializado){
+  //   tourInicializado=true;
+  //   tour = new Tour({
+  //     debug: true,
+  //     orphan: true,
+  //     steps: [
+  //       {
+  //         element: "#barra-navegacion",
+  //         title: "Ejemplos",
+  //         content: "Una lista con los ejemplos básicos de la aplicación. Se eligen al hacer click.",
+  //         placement: "right"
+  //       },
+  //       {
+  //         element: "#id-modelo-texto",
+  //         title: "Editor de texto.",
+  //         content: "Aquí se debe escribir la descripción del modelo en el lenguaje establecido.",
+  //         placement: "bottom"
+  //       },
+  //       {
+  //         element: "#getBpmn",
+  //         title: "Ejecutar sistema",
+  //         content: "Una vez escrito el modelo se debe hacer click para ejecutar el sistema."
+  //       },
+  //       {
+  //         element: "li #id-xml-container",
+  //         title: "Resultado",
+  //         content: "En esta pestaña se depliegan los resultados obtenidos de la aplicación.",
+  //         placement: "top"
+  //       }
+  //     ]
+  //   });
+  //   tour.init();
+  //   tour.restart();
+  //   // tour.start();
+  // }else{
+  //   tour.restart();
+  // }
 }
 
 var conteinerActual;
