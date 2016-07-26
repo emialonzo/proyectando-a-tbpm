@@ -121,10 +121,10 @@ function conversion(){
 } //fin conversion()
 
 function saveDiagram() {
-  bpmnModeler.saveXML({ format: true }, function(err, xml) {
+  bpmnModeler.saveSVG({ format: true }, function(err, svg) {
     if(!err){
       // ipcRenderer.send('guardar-archivo', "titulo", "bpmn", pd.xml(agregarBPMNDI(bpmnGlobales.activiti, xml)) );
-      ipcRenderer.send('guardar-archivo', "titulo", "bpmn",  xml);
+      ipcRenderer.send('guardar-archivo', "titulo", "svg",  svg);
     }else{
       console.error("Error:" + err);
     }
@@ -139,7 +139,7 @@ function inicializarModeler(){
   bpmnModeler = new BpmnModeler({
     container: '#canvas'
   });
-  var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></button>')
+  var button = $('<button type="button" id="getBpmn" class="btn btn-default" onclick="saveDiagram()"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Guardar Imagen</button>')
   $("#id-modeler-container").prepend(button)
   $(".djs-palette-entries div.group").each(function(){
     if($(this).data("group")!= "tools"){

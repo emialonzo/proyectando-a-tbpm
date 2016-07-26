@@ -1,6 +1,8 @@
 //modulos
 var fs = require('fs');
 var x2js = require('x2js'); //new X2JS();
+var crypto = require('crypto');
+
 
 //inicializando convertirodor
 var conv = new x2js();
@@ -8,11 +10,11 @@ var conv = new x2js();
 
 //constantes
 var nombreArchivo = "salida"
-var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
 var filePathPng = __dirname + '/' + nombreArchivo + '.png';
-var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
 var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar'
 
+var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
+var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
 
 var laneSet ;
 
@@ -105,6 +107,12 @@ var generarXml = function(bpmn, callback){
 }
 
 function procesarYaoqiang(bpmn, callback){
+
+  var random = crypto.randomBytes(4).readUInt32LE(0);
+  var filePath = __dirname + '/' + nombreArchivo + random + '.bpmn';
+  var filePathBpmndi = __dirname + '/' + nombreArchivo + random + 'BPMNDI.bpmn';
+
+
   //borramos laneSet por bug en yaoqiang
   var jsonBpmn = conv.xml_str2json( bpmn );
   laneSet = jsonBpmn.definitions.process.laneSet;
@@ -159,16 +167,13 @@ function procesarYaoqiang(bpmn, callback){
     jsonYao.definitions.BPMNDiagram.BPMNPlane.BPMNShape = listaShapes;
 
     // console.debug(jsonYao.definitions.BPMNDiagram);
+    fs.unlinkSync(filePath);
+    fs.unlinkSync(filePathBpmndi);
     callback(jsonYao.definitions.BPMNDiagram);
   });
 }
 
 var generarBpmndiJson = function(bpmn, callback){
-  try {
-    fs.unlinkSync(filePathBpmndi);
-  }catch (e) {
-
-  }
   var bpmndi = procesarYaoqiang(bpmn, callback);
 }
 
