@@ -130,6 +130,17 @@ function processXml(xml){
     }
   }
 
+  if(proceso.intermediateThrowEvent){
+    for (var i = 0; i < proceso.intermediateThrowEvent.length; i++) {
+      var evento = proceso.intermediateThrowEvent[i]
+      if(evento.timerEventDefinition){
+        flujodot.push(templateTarea(evento._id, "Tiempo:\n" + evento.timerEventDefinition.timeDuration, "pink2"))
+      }else if(evento.messageEventDefinition){
+        flujodot.push(templateTarea(evento._id, "Mensaje:\n" + evento.messageEventDefinition._messageRef, "pink3"))
+      }
+
+    }
+  }
   if(proceso.startEvent){
     for (var i = 0; i < proceso.startEvent.length; i++) {
       var comienzo = proceso.startEvent[i]
