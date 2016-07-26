@@ -1,0 +1,8 @@
+mientras cantidadCandidatos es mayor que 0,
+  el DGRC envia mensaje a ServicioDePostulante.
+  el DGRC espera por mensaje de ServicioDePostulante.
+  si se cumple,
+    confirmaInteres es "si" entonces el DGRC no hace nada. y finaliza
+    si no no hace nada
+fin
+fin
