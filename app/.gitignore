@@ -7,5 +7,5 @@ salida.*
 **/bower_components
 salidaBPMNDI.bpmn
 logs
-app/XMLbasicos/*.bpmn
-app/XMLejecutables/*.bpmn
+app/XMLbasicos/*
+app/XMLejecutables/*
