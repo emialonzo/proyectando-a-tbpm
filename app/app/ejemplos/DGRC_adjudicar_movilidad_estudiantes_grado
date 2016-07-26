@@ -11,11 +11,24 @@ unica alternativa de recibir postulaciones, si transcurre 1 mes
     realizarPriorizacion es "si" entonces el DGRC realizar priorizacion.
     si no no hace nada fin
 
-  si se cumple,
+  mientras necesitaReasignarCupo es "si",
+    si se cumple,
     necesitaNegociarCupos es "si" entonces el DGRC negociar cupos.
     si no no hace nada fin
 
-  si se cumple,
-    esxistenMovilidadesAAsignar es "si" entonces el DGRC realiza el subproceso DGRC_adjudicar_movilidad.
+    si se cumple,
+    esxistenMovilidadesAAsignar es "si"
+      entonces el DGRC realiza el subproceso DGRC_adjudicar_movilidad.
+      si se cumple,
+        huboadjudicacion es "si" entonces
+          al mismo tiempo,
+            1 el DGRC envia mensaje a contraparteextranjera.
+            2 el DGRC envia mensaje a servidiopostulante.
+          fin
+          si se cumple,
+            reqiuereDocumentacion es "si" entonces el DGRC procesa documentacion adicional.
+            si no no hace nada fin
+      si no no hace nada fin
     si no no hace nada fin
+  fin
   fin
