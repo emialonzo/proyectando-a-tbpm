@@ -57,7 +57,7 @@ construccion_tareas =
     ws actor:actor ws prefijo_tarea_servicio ws accion:accion ws punto
     { return {"actor": actor , "accion" : accion , "task": "service"};} /
     ws actor:actor ws prefijo_tarea_subproceso ws accion:accion
-    loop:(ws puntoYcoma ws loop:"varias veces" {return loop})? ws punto ws
+    loop:(ws puntoYcoma ws loop:subproceso_loop {return loop})? ws punto ws
     { return {"actor": actor , "accion" : accion , "task": "subproceso", "loop":loop}} /
     ws actor:actor ws accion:accion ws punto ws (campos:construccion_formulario?)
     { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
@@ -167,8 +167,7 @@ mensaje = "mensaje" / "mail" / "respuesta"
 prefijo_tarea_servicio = "utiliza el servicio"
 prefijo_tarea_manual = "realiza la tarea manual"
 prefijo_tarea_subproceso = "realiza el subproceso"
-subproceso_loop = "Se realiza" / "Es realizado"
-subproceso_loop_aux = "vez" / "veces"
+subproceso_loop = "varias veces" / "muchas veces"
 formulario_id = "es un formulario"
 ver_form_id = "muestra" / "despliega"
 prefijo_compuerta_AND = "al mismo tiempo" / "a la vez" / "en paralelo"
