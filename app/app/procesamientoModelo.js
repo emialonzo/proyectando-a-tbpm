@@ -49,6 +49,7 @@ var conv = new x2js({
 
 var SequenceFlow_GlobalID = 1;
 var path = __dirname;
+var SUBPROCESSREP = 2;
 
 var options = {
   keysColor: 'blue',
@@ -421,7 +422,7 @@ var agregarSubprocesos = function(modelo, proceso) {
           subProcessPos = j;
         }
       }
-      templateSubproceso(elem, subProcessPos, false);
+      templateSubproceso(elem, subProcessPos, false, false);
     } else if (elem.tipo == "adjunto") {
       for (var j=0; j<elem.sentencia.length; j++) {
         agregarSubprocesos(elem.sentencia[j], proceso);
@@ -464,7 +465,7 @@ function templatesProceso(proceso, nombreProceso){
   proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.collaboration = proceso.collaboration;
   bpmn.definitions.collaboration._id = "Collaboration_id";
-  
+
   bpmn.definitions.process = proceso.process;
   bpmn.definitions.process._id = idProceso;
   bpmn.definitions.process._isExecutable = true;
@@ -504,7 +505,7 @@ var templateElementos = function(elem) {
         subProcessPos = i;
       }
     }
-    templateSubproceso(elem, subProcessPos, true);
+    templateSubproceso(elem, subProcessPos, true, false);
   } else if (elem.tipo == "evento") {
     if (elem.sentencia.evento.tipo == "mensaje") {
       if (elem.sentencia.evento.throw) {
@@ -711,20 +712,21 @@ var templateExpresionesLOOP = function(elem) {
   }
 }
 
-var templateSubproceso = function(elem, subProcessPos, ejecutable) {
+var templateSubproceso = function(elem, subProcessPos, ejecutable, estandar) {
   var prefix = ""
-  if (ejecutable) {
+  if (ejecutable || estandar) {
     prefix = prefix + "_";
   }
-  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable);
+  var xmlSubProceso = obtenerxmlSubProceso(elem.sentencia.accion, ejecutable, estandar);
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
-  jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process,elem.sentencia.accion);
+  jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process, elem.sentencia.accion);
   var auxSubProceso = {"subprocess":{"_id":"","_name":elem.sentencia.accion}};
-  if (elem.sentencia.cant) {
-    if (ejecutable) {
+  if (elem.sentencia.loop != null) {
+    //TODO para los estandares lo manejamos igual que para activiti, ya que la forma tambien es estandar.
+    if (ejecutable || estandar) {
       auxSubProceso.subprocess['multiInstanceLoopCharacteristics'] = {};
       auxSubProceso.subprocess.multiInstanceLoopCharacteristics._isSequential = true;
-      auxSubProceso.subprocess.multiInstanceLoopCharacteristics.loopCardinality = elem.sentencia.cant;
+      auxSubProceso.subprocess.multiInstanceLoopCharacteristics.loopCardinality = SUBPROCESSREP;
     } else {
       auxSubProceso.subprocess['standardLoopCharacteristics'] = {};
     }
@@ -740,9 +742,11 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable) {
   proceso.process.subProcess[subProcessPos] = auxSubProceso.subprocess;
 }
 
-var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
+var obtenerxmlSubProceso = function(nombreArchivo, ejecutable, estandar) {
   var archivo = path;
-  if (ejecutable) {
+  if (estandar) {
+    archivo = archivo + "/XMLestandares/" + nombreArchivo + ".bpmn";
+  } else if (ejecutable) {
     archivo = archivo + "/XMLejecutables/" + nombreArchivo + ".bpmn";
   } else {
     archivo = archivo + "/XMLbasicos/" + nombreArchivo + ".bpmn";

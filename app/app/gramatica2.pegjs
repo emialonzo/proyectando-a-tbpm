@@ -56,9 +56,9 @@ construccion_tareas =
     { return {"actor": actor , "accion" : accion , "task": "manual"};} /
     ws actor:actor ws prefijo_tarea_servicio ws accion:accion ws punto
     { return {"actor": actor , "accion" : accion , "task": "service"};} /
-    ws actor:actor ws prefijo_tarea_subproceso ws accion:accion ws punto ws
-    cant:(subproceso_loop ws cant:digito ws subproceso_loop_aux ws punto {return cant})?
-    { return {"actor": actor , "accion" : accion , "task": "subproceso", "cant":cant}} /
+    ws actor:actor ws prefijo_tarea_subproceso ws accion:accion
+    loop:(ws puntoYcoma ws loop:"varias veces" {return loop})? ws punto ws
+    { return {"actor": actor , "accion" : accion , "task": "subproceso", "loop":loop}} /
     ws actor:actor ws accion:accion ws punto ws (campos:construccion_formulario?)
     { return {"actor": actor , "accion" : accion , "task": "human", "campos":getCampos(campos)};}
 
@@ -97,6 +97,7 @@ construccion_loop =
 ws = [ \t\n\r]*
 coma = ","
 punto = "."
+puntoYcoma = ";"
 
 // Indica si el flujo debe terminar.
 finaliza = "y finaliza"
