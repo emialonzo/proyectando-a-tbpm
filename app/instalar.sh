@@ -9,3 +9,6 @@ fi
 if [ ! -d "app/XMLejecutables" ]; then
   mkdir app/XMLejecutables
 fi
+if [ ! -d "$dirname" ]; then
+  sh downloadYaoqiang.sh
+fi
