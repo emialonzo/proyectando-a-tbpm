@@ -12,6 +12,7 @@ var conv = new x2js();
 var nombreArchivo = "salida"
 var filePathPng = __dirname + '/' + nombreArchivo + '.png';
 var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar'
+var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.bpmn.graph.jar'
 
 var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
 var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
