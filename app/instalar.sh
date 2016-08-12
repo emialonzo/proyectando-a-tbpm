@@ -1,5 +1,6 @@
 #!/bin/sh
 
+npm install
 if [ ! -e "app/env.js" ]; then
   cp app/env.js-template app/env.js
 fi
