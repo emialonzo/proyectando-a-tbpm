@@ -11,8 +11,8 @@ var conv = new x2js();
 //constantes
 var nombreArchivo = "salida"
 var filePathPng = __dirname + '/' + nombreArchivo + '.png';
-var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar'
-var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.bpmn.graph.jar'
+// var yaoqiangPath = __dirname + '/yaoqian/modules/org.yaoqiang.asaf.bpmn-graph.jar'
+var yaoqiangPath = __dirname + '/yaoqiang/modules/org.yaoqiang.bpmn.graph.jar'
 
 var filePath = __dirname + '/' + nombreArchivo + '.bpmn';
 var filePathBpmndi = __dirname + '/' + nombreArchivo + 'BPMNDI.bpmn';
@@ -146,6 +146,12 @@ function procesarYaoqiang(bpmn, callback){
     // }else{
       console.log(data.toString());
     // }
+    try {
+      fs.unlinkSync(filePath);
+      fs.unlinkSync(filePathBpmndi);
+    } catch (e) {
+      console.log("Archivos temporales no existen.");
+    }
   });
 
   child.on('close', function (code) {
