@@ -1,0 +1,23 @@
+{
+  "name": "text_to_bpmn",
+  "description": "Procesar un lenguaje descripto por una gramática libre de contexto y obtener un modelo BPMN",
+  "directory": "./app/bower_components",
+  "main": "index.js",
+  "license": "ISC",
+  "keywords": [
+    "bpmn",
+    "parsing"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bpmn-js": "^0.15.2"
+  }
+}

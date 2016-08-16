@@ -2,6 +2,7 @@ node_modules
 basuraDeEmi
 dist
 yaoqian
+yaoqiang
 salida.*
 **/env.js
 **/bower_components
@@ -9,3 +10,4 @@ salidaBPMNDI.bpmn
 logs
 app/XMLbasicos/*
 app/XMLejecutables/*
+app/XMLestandares/*
