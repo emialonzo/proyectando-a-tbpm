@@ -324,43 +324,47 @@ var tour = undefined;
 
 function ayuda(){
   console.log("ayuda!");
-  // if(!tourInicializado){
-  //   tourInicializado=true;
-  //   tour = new Tour({
-  //     debug: true,
-  //     orphan: true,
-  //     steps: [
-  //       {
-  //         element: "#barra-navegacion",
-  //         title: "Ejemplos",
-  //         content: "Una lista con los ejemplos básicos de la aplicación. Se eligen al hacer click.",
-  //         placement: "right"
-  //       },
-  //       {
-  //         element: "#id-modelo-texto",
-  //         title: "Editor de texto.",
-  //         content: "Aquí se debe escribir la descripción del modelo en el lenguaje establecido.",
-  //         placement: "bottom"
-  //       },
-  //       {
-  //         element: "#getBpmn",
-  //         title: "Ejecutar sistema",
-  //         content: "Una vez escrito el modelo se debe hacer click para ejecutar el sistema."
-  //       },
-  //       {
-  //         element: "li #id-xml-container",
-  //         title: "Resultado",
-  //         content: "En esta pestaña se depliegan los resultados obtenidos de la aplicación.",
-  //         placement: "top"
-  //       }
-  //     ]
-  //   });
-  //   tour.init();
-  //   tour.restart();
-  //   // tour.start();
-  // }else{
-  //   tour.restart();
-  // }
+  if(!tourInicializado){
+    tourInicializado=true;
+    tour = new Tour({
+      // debug: true,
+      orphan: true,
+      steps: [
+        {
+          element: "#barra-navegacion",
+          title: "Ejemplos",
+          content: "Una lista con los ejemplos básicos de la aplicación. Se eligen al hacer click.",
+          placement: "right",
+          onNext: function (tour) {$(".ejemplo ").first().trigger( "click" );},
+        },
+        {
+          element: "#id-modelo-texto",
+          title: "Editor de texto.",
+          content: "Aquí se debe escribir la descripción del modelo en el lenguaje establecido.",
+          placement: "bottom"
+        },
+        {
+          element: "#getBpmn",
+          title: "Ejecutar sistema",
+          content: "Una vez escrito el modelo se debe hacer click para ejecutar el sistema.",
+          onNext: function (tour) {$("#getBpmn").first().trigger( "click" );},
+        },
+        {
+          element: "li #id-xml-container",
+          title: "Resultado",
+          content: "En esta pestaña se depliegan los resultados obtenidos de la aplicación.",
+          placement: "top"
+        }
+      ]
+    });
+    tour.init();
+    tour.restart();
+    // tour.start();
+    tour.goTo(0);
+  }else{
+    tour.restart();
+    tour.goTo(0);
+  }
 }
 
 var conteinerActual;
