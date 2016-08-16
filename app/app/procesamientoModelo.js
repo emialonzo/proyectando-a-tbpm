@@ -403,7 +403,12 @@ var conectarStartEvent = function(modelo) {
     flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + loopGW._id;
     flujoStartEvent._targetRef = loopGW._id;
   } else if (primero.tipo == "evento") {
-    var evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == primero.id});
+    var evento;
+    if (primero.sentencia.evento.tipo == "mensaje" && primero.sentencia.evento.throw) {
+      evento = _.find(proceso.process.intermediateThrowEvent, function(val){ return val._id == primero.id});
+    } else {
+      evento = _.find(proceso.process.intermediateCatchEvent, function(val){ return val._id == primero.id});
+    }
     var lane = _.find(proceso.process.laneSet.lane, function(val){return val._name == primero.sentencia.actor});
     flujoStartEvent._id = proceso.process.startEvent[0]._id + "_" + evento._id;
     flujoStartEvent._targetRef = evento._id;

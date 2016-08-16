@@ -108,7 +108,7 @@ actor =
   articulo ws nombre:[a-z]i+ { return nombre.join("")}
 
 // Articulos
-articulo = "el" / "la" / "los" / "las" / "del" / "de"
+articulo = "el" / "la" / "los" / "las" / "del" / "de" / "una" / "un"
 //articulo_evento = "del" / "de"
 
 // Indica el fin de una construccion
