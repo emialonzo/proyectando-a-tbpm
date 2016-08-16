@@ -1,0 +1,11 @@
+mientras cupoVacante,
+El personal espera por mensaje de postulante.
+El personal ingresa datos del postulante. ingresa datos del postulante, es un formulario con los siguientes campos:
+nombre que es un texto, apellido que es un texto obligatorio, CI que es un numero obligatorio.
+El personal coordina una entrevista con el postulante.
+Si se cumple,
+postulanteAcepta entonces el personal envia mensaje a postulante.
+el personal se reune con el postulante. el personal realiza el subproceso entrevista.
+si no no hace nada
+fin
+fin

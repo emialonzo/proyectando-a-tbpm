@@ -460,7 +460,7 @@ function templatesProceso(proceso, nombreProceso){
   }
 
   var idPool = "pool_" + idProceso;
-  proceso.collaboration.participant.push({"_id":idPool, "_name":"Pool_"+nombreProceso, "_processRef":idProceso});
+  proceso.collaboration.participant.push({"_id":idPool, "_name":"pool_"+nombreProceso, "_processRef":idProceso});
 
   proceso.process.laneSet._id = "laneSet_"+idProceso;
   bpmn.definitions.collaboration = proceso.collaboration;
