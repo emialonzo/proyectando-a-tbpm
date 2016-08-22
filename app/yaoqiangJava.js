@@ -83,6 +83,7 @@ function procesarYaoqiang(bpmn, callback){
       callback(jsonYao.definitions.BPMNDiagram);
     }else{
       borrarArchivosTemporales(filePath, filePathBpmndi);
+      callback({});
     }
   });
 }
