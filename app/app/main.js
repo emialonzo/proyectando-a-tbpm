@@ -2,6 +2,7 @@ var parser = require("./parser.js");
 var intermedio = require('./modeloIntermedio');
 var makeBpmn = require("./makeBpmn");
 var procesar = require('./procesamientoModelo');
+var procesarEstandar = require('./procesamientoModeloEstandar');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
 var yaoqiang = require('../yaoqiangJava');
@@ -36,6 +37,7 @@ function conversion(){
   $("#id-bpmn-model").empty();
   $("#id-xml-activiti").text("");
   $("#id-xml-code").text("");
+  $("#id-xml-ejecutar").text("");
   if(bpmnModeler){
     bpmnModeler.clear();
   }
@@ -93,6 +95,16 @@ function conversion(){
         generarBpmndi(bpmnActiviti, function(bpmn_di){
           $("#id-xml-activiti").text(pd.xml(bpmn_di));
         });
+
+        try {
+          var resultEstandar = procesarEstandar.modelToXMLEstandar(modeloInt, nombre);
+          generarBpmndi(resultEstandar, function(bpmn_di){
+            $("#id-xml-ejecutar").text(pd.xml(bpmn_di));
+          });
+        } catch (e) {
+          console.log("Error en al obtener xml estándar.");
+          console.error(e);
+        }
 
       } else{
         $("#id-xml-code").text(pd.xml(bpmn));
@@ -281,12 +293,6 @@ function limpiarMensajesError(){
   $("div#id-texto-container div#div-error").html("");
 }
 
-//agrega o sustituyo el bpmndi del xml por un bpmndi en formato json
-function agregarBPMNDIJson(xmlBase, jsonBpmndi){
-  var jsonBase = conv.xml_str2json( xmlBase );
-  jsonBase.definitions.BPMNDiagram = jsonBpmndi;
-  return conv.json2xml_str(jsonBase);
-}
 
 function generarBpmndi(bpmn, callback){
   yaoqiang.generarBpmndiJson(bpmn, function(bpmndi){
@@ -296,7 +302,15 @@ function generarBpmndi(bpmn, callback){
   });
 }
 
+//agrega o sustituyo el bpmndi del xml por un bpmndi en formato json
+function agregarBPMNDIJson(xmlBase, jsonBpmndi){
+  var jsonBase = conv.xml_str2json( xmlBase );
+  jsonBase.definitions.BPMNDiagram = jsonBpmndi;
+  return conv.json2xml_str(jsonBase);
+}
+
 // Le agrega o sustituye al primer XML el BPMNDI del segundo
+//NO SE ESTA USANDO
 function agregarBPMNDI(xmlBase, xmlBPMNDI){
   var jsonBpmndi = conv.xml_str2json( xmlBPMNDI );
   return agregarBPMNDIJson(xmlBase, jsonBpmndi.definitions.BPMNDiagram);
