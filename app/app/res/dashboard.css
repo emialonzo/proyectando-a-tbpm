@@ -106,3 +106,7 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+.modal-lg {
+    width: 95%;
+}
