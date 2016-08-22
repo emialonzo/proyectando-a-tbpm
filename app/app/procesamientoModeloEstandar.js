@@ -483,6 +483,8 @@ function armarJson(nombreProceso){
   // }
 
   bpmn.definitions.process = process;
+  generarEventosFinExtras(bpmn.definitions);
+
   return bpmn;
 }
 
@@ -516,9 +518,17 @@ var templateSubproceso = function(elem, ejecutable) {
 
   aux.subProcess._id = templateId(elem.id)
   aux.subProcess._name = elem.sentencia.accion
-  delete aux.subprocess.laneSet;
-    delete aux.subProcess["_isExecutable"]
+  try {
+    console.debug(aux.subProcess.laneSet);
+    delete aux.subProcess.laneSet;
+  } catch (e) {
+    console.error(e);
+  } finally {
 
+  }
+  delete aux.subProcess["_isExecutable"]
+
+  console.debug(aux);
   return aux;
 }
 
@@ -530,100 +540,61 @@ var obtenerxmlSubProceso = function(nombreArchivo, ejecutable) {
   return subproceso;
 }
 
-var ajustarIDs = function(proceso, subproceso_nombre) {
+var ajustarIDs = function(procesoJson, subproceso) {
   var prefix;
-  if (subproceso_nombre == "") {
+  if (subproceso == "") {
     prefix = "_";
   } else {
-    prefix = subproceso_nombre;
-  }
-
-  if (proceso.startEvent) {
-    for (var i=0; i< proceso.startEvent.length; i++) {
-      proceso.startEvent[i]._id = prefix + proceso.startEvent[i]._id;
-    }
-  }
-  if (proceso.endEvent) {
-    for (var i=0; i< proceso.endEvent.length; i++) {
-      proceso.endEvent[i]._id = prefix + proceso.endEvent[i]._id;
-    }
+    prefix = subproceso;
   }
   // LANES
-  if (subproceso_nombre == "") {
-    for (var i=0; i< proceso.laneSet.lane.length; i++) {
-      for (var j=0; j< proceso.laneSet.lane[i].flowNodeRef.length; j++) {
-        proceso.laneSet.lane[i].flowNodeRef[j].__text = prefix + proceso.laneSet.lane[i].flowNodeRef[j].__text
+  if (subproceso == "") {
+    for (var i=0; i< procesoJson.laneSet.lane.length; i++) {
+      for (var j=0; j< procesoJson.laneSet.lane[i].flowNodeRef.length; j++) {
+        procesoJson.laneSet.lane[i].flowNodeRef[j].__text = prefix + procesoJson.laneSet.lane[i].flowNodeRef[j].__text
       }
     }
   }
-  // USER TASKS
-  if (proceso.userTask) {
-    for (var i=0; i< proceso.userTask.length; i++) {
-      proceso.userTask[i]._id = prefix + proceso.userTask[i]._id;
-    }
-  }
-  // SERVICE TASKS
-  if (proceso.serviceTask) {
-    for (var i=0; i< proceso.serviceTask.length; i++) {
-      proceso.serviceTask[i]._id = prefix + proceso.serviceTask[i]._id;
-    }
-  }
-  // MANUAL TASKS
-  if (proceso.manualTask) {
-    for (var i=0; i< proceso.manualTask.length; i++) {
-      proceso.manualTask[i]._id = prefix + proceso.manualTask[i]._id;
-    }
-  }
-  // EXCLUSIVE GATEWAYS
-  if (proceso.exclusiveGateway) {
-    for (var i=0; i< proceso.exclusiveGateway.length; i++) {
-      if (proceso.exclusiveGateway[i]._default) {
-        proceso.exclusiveGateway[i]._default = prefix + proceso.exclusiveGateway[i]._default;
+  for (var prop in procesoJson) {
+    if (procesoJson.hasOwnProperty(prop) && prop != "laneSet") {
+      for (var i=0; i<procesoJson[prop].length; i++) {
+        procesoJson[prop][i]._id = prefix + procesoJson[prop][i]._id;
+        if (prop == "exclusiveGateway") {
+          if (procesoJson[prop][i]._default) {
+            procesoJson[prop][i]._default = prefix + procesoJson[prop][i]._default;
+          }
+        } else if (prop == "boundaryEvent") {
+          procesoJson[prop][i]._attachedToRef = prefix + procesoJson[prop][i]._attachedToRef;
+        } else if (prop == "sequenceFlow") {
+          procesoJson[prop][i]._sourceRef = prefix + procesoJson[prop][i]._sourceRef;
+          procesoJson[prop][i]._targetRef = prefix + procesoJson[prop][i]._targetRef;
+        }
       }
-      proceso.exclusiveGateway[i]._id = prefix + proceso.exclusiveGateway[i]._id;
     }
   }
-  // PARALLEL GATEWAYS
-  if (proceso.parallelGateway) {
-    for (var i=0; i< proceso.parallelGateway.length; i++) {
-      proceso.parallelGateway[i]._id = prefix + proceso.parallelGateway[i]._id;
-    }
-  }
-  // INTERMEDIATE CATCH EVENTS
-  if (proceso.intermediateCatchEvent) {
-    for (var i=0; i< proceso.intermediateCatchEvent.length; i++) {
-      proceso.intermediateCatchEvent[i]._id = prefix + proceso.intermediateCatchEvent[i]._id;
-    }
-  }
-  // INTERMEDIATE THROW EVENTS
-  if (proceso.intermediateThrowEvent) {
-    for (var i=0; i< proceso.intermediateThrowEvent.length; i++) {
-      proceso.intermediateThrowEvent[i]._id = prefix + proceso.intermediateThrowEvent[i]._id;
-    }
-  }
-  // BOUNDARY EVENTS
-  if (proceso.boundaryEvent) {
-    for (var i=0; i< proceso.boundaryEvent.length; i++) {
-      proceso.boundaryEvent[i]._id = prefix + proceso.boundaryEvent[i]._id;
-      proceso.boundaryEvent[i]._attachedToRef = prefix + proceso.boundaryEvent[i]._attachedToRef;
-    }
-  }
-  // SUBPROCESS
-  if (proceso.subProcess) {
-    for (var i=0; i< proceso.subProcess.length; i++) {
-      proceso.subProcess[i]._id = prefix + proceso.subProcess[i]._id;
-    }
-  }
-  // SEQUENCE FLOWS
-  if (proceso.sequenceFlow) {
-    for (var i=0; i< proceso.sequenceFlow.length; i++) {
-      proceso.sequenceFlow[i]._id = prefix + proceso.sequenceFlow[i]._id;
-      proceso.sequenceFlow[i]._sourceRef = prefix + proceso.sequenceFlow[i]._sourceRef;
-      proceso.sequenceFlow[i]._targetRef = prefix + proceso.sequenceFlow[i]._targetRef;
-    }
-  }
-  return proceso;
+  return procesoJson;
 }
+
+ function generarEventosFinExtras(proceso) {
+  var i = 1;
+  var primero = true;
+  var eventoFinViejo = proceso.process.endEvent[0];
+  for (var flujo in proceso.process.sequenceFlow) {
+    if (proceso.process.sequenceFlow[flujo]._targetRef == eventoFinViejo._id) {
+      var idEventoFinNuevo = "EndEvent_" +i;
+      var eventoFinNuevo = {"_id":idEventoFinNuevo}
+      proceso.process.sequenceFlow[flujo]._targetRef = idEventoFinNuevo;
+      i++;
+      if (primero) {
+        proceso.process.endEvent[0] = eventoFinNuevo;
+        primero = false;
+      } else {
+        proceso.process.endEvent.push(eventoFinNuevo);
+      }
+    }
+  }
+}
+
 
 var templateServiceTask = function(elem) {
   //FIXME si se quisiera cambiar la implementacion del web service hay que cambiar el nombre de la clase
