@@ -512,12 +512,17 @@ var templateSubproceso = function(elem, ejecutable) {
   var jsonSubProceso = conv.xml_str2json(xmlSubProceso);
   jsonSubProceso.definitions.process = ajustarIDs(jsonSubProceso.definitions.process, elem.sentencia.accion)
 
-  var aux = {"subProcess":{"_id":"_SUBP"+elem.id,"_name":elem.sentencia.accion}};
+  var aux = {"subProcess":{}};
 
   if (elem.sentencia.loop != null) {
     aux.subProcess['standardLoopCharacteristics'] = {};
   }
-  aux.subProcess = jsonSubProceso.definitions.process
+  for (var variable in jsonSubProceso.definitions.process) {
+    if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
+      aux.subProcess[variable] = jsonSubProceso.definitions.process[variable];
+    }
+  }
+
   aux.subProcess._id = templateId(elem.id)
   aux.subProcess._name = elem.sentencia.accion;
 
