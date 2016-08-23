@@ -73,14 +73,13 @@ function buscarVariables(condicion){
 }
 
 function asignarElFlujo(nodo){
-  if((nodo.tipo == "xor") || ((nodo.tipo == "cierro") && (nodo.tag == "loop") && nodo.expresion)){
-    // console.debug(nodo.condiciones);
+  if( (nodo.tipo == "xor") || ( (nodo.tipo == "cierro")&&(nodo.tag == "loop")&&nodo.expresion ) ){
     var condicion ;
     for (var i = 0; i < nodo.sig.length; i++) {
-      // console.log("nodo:" + nodo.id + "  condiciones?" + nodo.condiciones[nodo.sig[i]]);
+
       if(nodo.condiciones && nodo.condiciones[nodo.sig[i]]){
         buscarVariables(nodo.condiciones[nodo.sig[i]])
-          condicion = nodo.condiciones[nodo.sig[i]]
+        condicion = nodo.condiciones[nodo.sig[i]]
 
       }  else{
         condicion =""
@@ -88,12 +87,12 @@ function asignarElFlujo(nodo){
       var conditionExpression = {"_xsi:type":"tFormalExpression","__cdata":condicion};
       if(condicion){
         losFlujos.push(
-          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
+          {"sequenceFlow": {"_id":templateIdFlujo(nodo.id, nodo.sig[i]), "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "conditionExpression":conditionExpression, "_name":condicion}}
         );
       }
       else{
         losFlujos.push(
-          {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "_name":"defecto"}}
+          {"sequenceFlow": {"_id":templateIdFlujo(nodo.id, nodo.sig[i]), "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i], "_name":"defecto"}}
         );
       }
     }
@@ -101,7 +100,7 @@ function asignarElFlujo(nodo){
   else{
     for (var i = 0; i < nodo.sig.length; i++) {
       losFlujos.push(
-        {"sequenceFlow": {"_id":templateId(nodo.id)+"_"+"_"+nodo.sig[i], "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
+        {"sequenceFlow": {"_id":templateIdFlujo(nodo.id, nodo.sig[i]), "_sourceRef":templateId(nodo.id), "_targetRef": "_"+nodo.sig[i]}}
       );
     }
   }
@@ -223,7 +222,7 @@ function templateNodo(nodo){
 }
 
 function templateIdFlujo(idFrom, idTo){
-  return "_" + idFrom + "__" + idTo
+  return "_" + idFrom + "_" + idTo
 }
 
 function templateId(id){
@@ -349,7 +348,7 @@ function makeJsonBpmn(modelo, nombreProceso){
       if(!startInsertado){
         var idStart = "idStart";
         losFlujos.push(
-          {"sequenceFlow": {"_id":idStart+"_"+templateId(nodo.id), "_sourceRef":idStart, "_targetRef":templateId(nodo.id) }}
+          {"sequenceFlow": {"_id":templateIdFlujo(idStart,nodo.id), "_sourceRef":idStart, "_targetRef":templateId(nodo.id) }}
         );
         losNodos.push({"startEvent":{"_id":idStart , "_name":"StartEvent"}});
         startInsertado = true;

@@ -408,7 +408,7 @@ var asociarCampos = function(modelo, campos) {
 }
 
 var asociarExpresiones = function(modelo, expresiones) {
-  if (expresiones) {
+  // if (expresiones) {
     var stack = [];
     var nodo;
     stack.push(modelo);
@@ -434,6 +434,7 @@ var asociarExpresiones = function(modelo, expresiones) {
             }
           }
         }
+        // console.debug("condiciones de " + nodo.id + ":" +nodo.condiciones);
       }
 
         if(nodo.sentencia instanceof Array){
@@ -442,7 +443,7 @@ var asociarExpresiones = function(modelo, expresiones) {
           }
         }
     }
-  }
+  // }
 }
 
 //recorre el modelo y para coda nodo corrije el flujo del siguiente si corresponde
