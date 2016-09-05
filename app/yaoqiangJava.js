@@ -72,7 +72,7 @@ function procesarYaoqiang(bpmn, callback){
         var shape = listaShapes[i];
         if(shape.Bounds._width<0){
           shape.Bounds._width = 200;
-          shape.Bounds._height = shape.BPMNLabel.Bounds._height
+          shape.Bounds._height = 100;//shape.BPMNLabel.Bounds._height
           // shape.isExpanded="true"
         }
         listaShapes[i] = shape;
