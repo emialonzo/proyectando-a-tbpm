@@ -49,6 +49,7 @@ function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val().toLowerCase();
   var nombre = $("#id-nombre-proceso").val().toLowerCase();
+  nombre = nombre.replace(" ", "_");
 
   try {
     var modelo ;
@@ -83,6 +84,8 @@ function conversion(){
       var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
 
       //ajustando nombres de variables
+      // var bpmn = result.xml; //sin quitar compuertas innecesarias
+      // var bpmnActiviti = resultActiviti.xml;
       var bpmn = ajustesBPMN.ajustarCompuertasInnecesarias(result.xml);
       var bpmnActiviti = ajustesBPMN.ajustarCompuertasInnecesarias(resultActiviti.xml);
 
