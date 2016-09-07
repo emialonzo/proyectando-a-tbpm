@@ -356,6 +356,7 @@ var procesarModelo = function(model){
   modelo = asociarCampos(modelo, model.campos);
   modelo = asociarExpresiones(modelo, model.expresiones);
 
+  // eliminarXorInnecesarios(dicccionarioId[aux.id]);
   //elimina el flujo de salida de una tarea que tenga un evento adjunto con UNICA en true
   procesarEventosAdjuntos();
 
@@ -379,6 +380,44 @@ function procesarEventosAdjuntos(){
     }
   }
 }
+
+function eliminarXorInnecesarios(modelo){
+  var stack =[];
+  var nodo;
+  stack.push(modelo);
+  while(stack.length>0){
+    nodo = stack.pop();
+    try {
+      //si tengo una compuerta xor con un elemento de entrada y uno solo de salida
+      if( ((nodo.tipo == "cierro") && (nodo.sentencia = "xor")) && (nodo.sig.length == 1) && (nodo.ant.length == 1)){
+      // if( (((nodo.tipo == "cierro") && (nodo.sentencia = "xor")) || (nodo.tipo == "xor")) && (nodo.sig.length == 1) && (nodo.ant.length == 1)){
+        console.log("Se quita compuerta: " + nodo.id)
+        anterior = findById(nodo.ant[0]);
+        for (var i = 0; i < anterior.sig.length; i++) {
+          if(anterior.sig[i] == nodo.id){
+            anterior.sig[i] = nodo.sig[0];
+          }
+          if(anterior.default && (anterior.default == nodo.id)){
+            anterior.default = nodo.sig[0];
+          }
+        }
+        nodo.sig = [];
+        updateNodo(anterior)
+        updateNodo(nodo)
+      }
+    } catch (e) {
+      console.error(e);
+      console.error(pd.json(nodo));
+    }
+    if(nodo.sentencia instanceof Array){
+      for (var i = nodo.sentencia.length-1; i >= 0; i--) {
+        stack.push(nodo.sentencia[i]);
+      }
+    }
+  } //fin while
+  return findById(modelo.id)
+}
+
 
 var asociarCampos = function(modelo, campos) {
   if (campos) {
