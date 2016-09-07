@@ -162,7 +162,7 @@ campo_solo_lectura = ws nombre:palabra ws coma? ws {return {"nombre":nombre, "ti
 // AUXILIARES
 evento_catch = "espera por"
 evento_throw = "envia mensaje a" / "envia respuesta a"
-auxiliar_evento_adjunto = "si transcurre" / "si llega" ws mensaje
+auxiliar_evento_adjunto = "si transcurren" / "si transcurre" / "si llega" ws mensaje
 mensaje = "mensaje" / "mail" / "respuesta"
 prefijo_tarea_servicio = "utiliza el servicio"
 prefijo_tarea_manual = "realiza la tarea manual"
