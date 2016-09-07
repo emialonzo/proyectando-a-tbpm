@@ -32,6 +32,7 @@ var toDot = function(xml){
   gwdot=[];
   flujodot=[];
   secuencias = {};
+  flujoDefecto = {};
 
   processXml(xml)
   printFile(flujodot);
@@ -40,46 +41,44 @@ var toDot = function(xml){
 
 var saltoLinea = "\n"
 
+function templateAtributoDefecto(){
+  return "dir=both,arrowtail=rcrowlvee"
+}
+
 function processXml(xml){
   // var finales = 1;
   //inicializacion
   var bpmn = conv.xml_str2json(xml)
   var proceso = bpmn.definitions.process
-  //armando flujo
-  if(proceso.sequenceFlow){
-    for (var i = 0; i < proceso.sequenceFlow.length; i++) {
-      var sec = proceso.sequenceFlow[i]
-      var cond = ""
-      if(sec.conditionExpression){
-         cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
-      } else if (sec._name) {
-        cond = "[ label=\"" + sec._name.replace(/\"/g, "\\\"") + "\"]"
 
-      }
-      // if(sec._targetRef == "_EndEvent_1"){
-      //   flujodot.push(sec._sourceRef + " -> " + sec._targetRef + "_" + (finales++) + cond)
-      // }else{
-        flujodot.push(sec._sourceRef + " -> " + sec._targetRef + cond)
-      // }
-    }
-  }
   if(proceso.exclusiveGateway){
     for (var i = 0; i < proceso.exclusiveGateway.length; i++) {
       var exclusivo = proceso.exclusiveGateway[i]
       if(exclusivo._default){
         var defecto = exclusivo._default; // _num_num
-        defecto = defecto.replace(/_(\d+)_+(\d+)/, "_$1 -> _$2")
-        for (var j = 0; j < flujodot.length; j++) {
-          var flujo = flujodot[j]
-          if(flujo == defecto){
-            flujodot[j] += " [dir=both,arrowtail=rcrowlvee]"
-          }
-        }
+        flujoDefecto[defecto] = true;
       }
       flujodot.push(templateTarea(exclusivo._id, "XOR:" + saltoLinea + exclusivo._name, "paleturquoise2"))
     }
-
   }
+
+  //armando flujo, se debe ejecutar el de las compuertas or antes
+  if(proceso.sequenceFlow){
+    for (var i = 0; i < proceso.sequenceFlow.length; i++) {
+      var sec = proceso.sequenceFlow[i]
+      var param = []
+      if(sec.conditionExpression){
+        param.push("label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"")
+      } else if (sec._name) {
+        param.push("label=\"" + sec._name.replace(/\"/g, "\\\"") + "\"")
+      }
+      if(sec._id in flujoDefecto){
+        param.push(templateAtributoDefecto());
+      }
+      flujodot.push(sec._sourceRef + " -> " + sec._targetRef + "[" + param.join(",") + "]" )
+    }
+  }
+
   //armando tareas
   if(proceso.userTask){
     for (var i = 0; i < proceso.userTask.length; i++) {
@@ -192,17 +191,17 @@ function printFile() {
   file.push("digraph G01 {");
   file.push("rankdir=LR; node [shape=box, style=\"rounded, filled\"];");
   for (var key in taskdot) {
-     var listaTareas = taskdot[key];
-      file.push("subgraph cluster" + key.replace(/\s+/g, '_') + " { rankdir=LR;")
-      file.push("labeljust=l;");
-      file.push("label=\"Lane:" + key  + "\";");
-     for (var prop in listaTareas) {
-       file.push(listaTareas[prop]);
-        // console.log(prop + " = " );
-     }
-     file.push("");
-     file.push("}");
-     file.push("");
+    var listaTareas = taskdot[key];
+    file.push("subgraph cluster" + key.replace(/\s+/g, '_') + " { rankdir=LR;")
+    file.push("labeljust=l;");
+    file.push("label=\"Lane:" + key  + "\";");
+    for (var prop in listaTareas) {
+      file.push(listaTareas[prop]);
+      // console.log(prop + " = " );
+    }
+    file.push("");
+    file.push("}");
+    file.push("");
   }
   _.map(gwdot, function(elem){file.push(elem);});
   _.map(flujodot, function(elem){file.push(elem);});
@@ -211,11 +210,11 @@ function printFile() {
 
 function templateDotTask(nodo){
   if(nodo.sentencia.task == "human")
-    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"red\" ];";
+  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"red\" ];";
   else if(nodo.sentencia.task == "service")
-    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"green\" ];";
+  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"green\" ];";
   else
-    return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"blue\" ];";
+  return nodo.id + " [label=\"id:" + nodo.id +" "+nodo.sentencia.accion + "\" fillcolor=\"blue\" ];";
 
 }
 
@@ -265,10 +264,9 @@ function templateDotFlow(nodo){
 var cp = require('child_process');
 
 var executeDot = function(dot_file, callback){
-  console.debug(dot_file)
-    var image = Viz(dot_file, { format: "png-image-element" });
-    callback(image)
-    // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
+  var image = Viz(dot_file, { format: "png-image-element" });
+  callback(image)
+  // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
   //   console.log('stdout: ' + stdout);
   //   console.log('stderr: ' + stderr);
   //
