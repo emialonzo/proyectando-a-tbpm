@@ -52,6 +52,9 @@ function processXml(xml){
       var cond = ""
       if(sec.conditionExpression){
          cond = "[ label=\"" + sec.conditionExpression.__cdata.replace(/\"/g, "\\\"") + "\"]"
+      } else if (sec._name) {
+        cond = "[ label=\"" + sec._name.replace(/\"/g, "\\\"") + "\"]"
+
       }
       // if(sec._targetRef == "_EndEvent_1"){
       //   flujodot.push(sec._sourceRef + " -> " + sec._targetRef + "_" + (finales++) + cond)
@@ -262,6 +265,7 @@ function templateDotFlow(nodo){
 var cp = require('child_process');
 
 var executeDot = function(dot_file, callback){
+  console.debug(dot_file)
     var image = Viz(dot_file, { format: "png-image-element" });
     callback(image)
     // var child = cp.fork(__dirname+'/workerDot.js', { execPath: "node" }, function(error, stdout, stderr) {
