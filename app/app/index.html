@@ -252,4 +252,52 @@
 $(".boton-accion").addClass("col-xs-4");
 </script>
 
+<!-- index.html -->
+<script>
+const remote = require('electron').remote;
+const subProcesos = require('./cargarSubProcesos');
+
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+
+var text ;
+var startSelection  ;
+var selectionEnd ;
+var textArea;
+
+function menuItemClick(menu_item){
+  var newText = text.substring (0, startSelection) +
+  menu_item.label +
+  text.substring (selectionEnd);
+  textArea.value = newText;
+}
+
+var menu_nuevo = new Menu();
+var menu_sub_proc = new Menu();
+
+for (sub_proc of subProcesos()) {
+  menu_sub_proc.append(new MenuItem({ label: sub_proc.substring (0, sub_proc.indexOf('.')), click: menuItemClick }));
+}
+sub_menu = new MenuItem({ label: 'SubProcesos',submenu: menu_sub_proc });
+menu_nuevo.append(sub_menu)
+menu_nuevo.append(new MenuItem({ type: 'separator' }));
+menu_nuevo.append(new MenuItem({ label: 'Deshacer',  role: 'undo'}));
+menu_nuevo.append(new MenuItem({ label: 'Cortar',  role: 'cut'}));
+menu_nuevo.append(new MenuItem({ label: 'Copiar',  role: 'copy'}));
+menu_nuevo.append(new MenuItem({ label: 'Pegar',  role: 'paste'}));
+menu_nuevo.append(new MenuItem({ label: 'Seleccionar Todo',  role: 'selectall'}));
+
+window.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+  if (!e.target.closest('textarea, input, [contenteditable="true"]')) return;
+  text = e.target.value;
+  startSelection = e.target.selectionStart;
+  selectionEnd = e.target.selectionEnd;
+  textArea = e.target;
+
+  menu_nuevo.popup(remote.getCurrentWindow());
+
+}, false);
+</script>
+
 </body></html>
