@@ -67,12 +67,12 @@ function processXml(xml){
     for (var i = 0; i < proceso.exclusiveGateway.length; i++) {
       var exclusivo = proceso.exclusiveGateway[i]
       if(exclusivo._default){
-        var defecto = exclusivo._default; // _num__num
-        defecto = defecto.replace("__", " -> _")
+        var defecto = exclusivo._default; // _num_num
+        defecto = defecto.replace(/_(\d+)_+(\d+)/, "_$1 -> _$2")
         for (var j = 0; j < flujodot.length; j++) {
           var flujo = flujodot[j]
           if(flujo == defecto){
-            flujodot[j] += " [arrowtail=rcrowlvee]"
+            flujodot[j] += " [dir=both,arrowtail=rcrowlvee]"
           }
         }
       }
