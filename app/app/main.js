@@ -3,6 +3,7 @@ var intermedio = require('./modeloIntermedio');
 var makeBpmn = require("./makeBpmn");
 var procesar = require('./procesamientoModelo');
 var procesarEstandar = require('./procesamientoModeloEstandar');
+var ajustesBPMN =  require('./ajustesBPMN');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
 var yaoqiang = require('../yaoqiangJava');
@@ -82,11 +83,12 @@ function conversion(){
       var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
 
       //ajustando nombres de variables
-      var bpmn = result.xml;
-      var bpmnActiviti = resultActiviti.xml;
+      var bpmn = ajustesBPMN.ajustarCompuertasInnecesarias(result.xml);
+      var bpmnActiviti = ajustesBPMN.ajustarCompuertasInnecesarias(resultActiviti.xml);
 
       if(conBPMNDI){
         //consumiendo yaoqiang para obtener bpmndi de forma asincrónica
+
         generarBpmndi(bpmn, function(bpmn_di){
           $("#id-xml-code").text(pd.xml(bpmn_di));
           // $("#pestanias").animatescroll({scrollSpeed:2000,easing:'easeInOutBack', padding:20, element:"body"});
@@ -98,6 +100,7 @@ function conversion(){
 
         try {
           var resultEstandar = procesarEstandar.modelToXMLEstandar(modeloInt, nombre);
+          resultEstandar = ajustesBPMN.ajustarCompuertasInnecesarias(resultEstandar);
           generarBpmndi(resultEstandar, function(bpmn_di){
             $("#id-xml-ejecutar").text(pd.xml(bpmn_di));
           });
