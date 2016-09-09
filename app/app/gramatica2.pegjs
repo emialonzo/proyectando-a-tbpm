@@ -120,7 +120,7 @@ digito "digito" = digits:[0-9]+ { return makeInteger(digits); }
 
 // Una o varias palabras
 palabra "palabra" = [a-z]i+ { return text()}
-palabras "palabras" = ([a-z]i+ ws?)+ { return text()}
+palabras "palabras" = ([a-z_]i+ ws?)+ { return text()}
 
 // Construccion para las sentencias de las compuertas OR
 secuencia_or = "no hace nada" {  return {"tipo":"secuencia", "sentencia":[]}} / secuencia
