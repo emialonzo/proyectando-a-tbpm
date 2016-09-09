@@ -309,7 +309,7 @@ function templatesCampos(nodo, aux){
   return aux;
 }
 
-function ponerNodo(nodo){
+function asignarNodo(nodo){
   losNodos.push(templateNodo(nodo));
 }
 
@@ -326,6 +326,18 @@ function asignarALane(nodo){
   }
 }
 
+function armarDefinitionsConNamespaces(){
+  return { "definitions" : {
+    "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
+    "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
+    "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
+    "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
+    "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+    "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "_expressionLanguage":"http://www.w3.org/1999/XPath"
+  }
+}
+}
 
 function makeJsonBpmn(modelo, nombreProceso){
   //inicializo variables globales
@@ -362,7 +374,7 @@ function makeJsonBpmn(modelo, nombreProceso){
       }
       asignarALane(nodo);
       asignarElFlujo(nodo);
-      ponerNodo(nodo);
+      asignarNodo(nodo);
       // endNodo = nodo;
     }
     if(nodo.sentencia instanceof Array){
@@ -374,19 +386,6 @@ function makeJsonBpmn(modelo, nombreProceso){
 
   losNodos.push({"endEvent":{"_id":"_F" , "_name":"EndEvent"}});
   return armarJson(nombreProceso);
-}
-
-function armarDefinitionsConNamespaces(){
-  return { "definitions" : {
-    "_xmlns" : "http://www.omg.org/spec/BPMN/20100524/MODEL",
-    "_xmlns:bpmndi": "http://www.omg.org/spec/BPMN/20100524/DI",
-    "_xmlns:dc": "http://www.omg.org/spec/DD/20100524/DC",
-    "_xmlns:di": "http://www.omg.org/spec/DD/20100524/DI",
-    "_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-    "_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-    "_expressionLanguage":"http://www.w3.org/1999/XPath"
-  }
-}
 }
 
 function armarJson(nombreProceso){
@@ -582,7 +581,7 @@ var ajustarIDs = function(procesoJson, subproceso) {
   return procesoJson;
 }
 
- function generarEventosFinExtras(proceso) {
+function generarEventosFinExtras(proceso) {
   var i = 1;
   var primero = true;
   var eventoFinViejo = proceso.process.endEvent[0];

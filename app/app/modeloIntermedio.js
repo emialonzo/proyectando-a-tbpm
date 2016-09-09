@@ -332,38 +332,6 @@ function crearEvento(tipo){
    }
 }
 
-//aplica las distintas transformaciones al modelo
-var procesarModelo = function(model){
-  var modelo = model.proceso;
-  inicializar();
-  //se asigna id
-  modelo = asignarId(modelo.sentencia);
-  //se balancea el modelo
-  modelo = balancearModelo(modelo);
-
-  aux = {};
-  aux.tipo = "secuencia";
-  aux.sentencia = modelo;
-  aux.id = ++globalId;
-  updateNodo(aux);
-  //se asigna el flujo
-  modelo = asignarFlujo(aux);
-  //se asignan los lanes
-  asignarLanes(modelo);
-  //corregir flujo
-  corregirFlujoSecuencia(modelo);
-
-  modelo = asociarCampos(modelo, model.campos);
-  modelo = asociarExpresiones(modelo, model.expresiones);
-
-  // eliminarXorInnecesarios(dicccionarioId[aux.id]);
-  //elimina el flujo de salida de una tarea que tenga un evento adjunto con UNICA en true
-  procesarEventosAdjuntos();
-
-  modelo = dicccionarioId[aux.id];
-  return modelo;
-}
-
 function procesarEventosAdjuntos(){
   for (var key in dicccionarioId) {
     if (dicccionarioId.hasOwnProperty(key)) {
@@ -419,7 +387,7 @@ function eliminarXorInnecesarios(modelo){
 }
 
 
-var asociarCampos = function(modelo, campos) {
+function asociarCampos(modelo, campos) {
   if (campos) {
     var stack = [];
     var nodo;
@@ -446,7 +414,7 @@ var asociarCampos = function(modelo, campos) {
   return modelo;
 }
 
-var asociarExpresiones = function(modelo, expresiones) {
+function asociarExpresiones(modelo, expresiones) {
   // if (expresiones) {
     var stack = [];
     var nodo;
@@ -536,6 +504,38 @@ function corregirSiguiente(nodo) {
   updateNodo(nodo);
 }
 
+
+//aplica las distintas transformaciones al modelo
+var procesarModelo = function(model){
+  var modelo = model.proceso;
+  inicializar();
+  //se asigna id
+  modelo = asignarId(modelo.sentencia);
+  //se balancea el modelo
+  modelo = balancearModelo(modelo);
+
+  aux = {};
+  aux.tipo = "secuencia";
+  aux.sentencia = modelo;
+  aux.id = ++globalId;
+  updateNodo(aux);
+  //se asigna el flujo
+  modelo = asignarFlujo(aux);
+  //se asignan los lanes
+  asignarLanes(modelo);
+  //corregir flujo
+  corregirFlujoSecuencia(modelo);
+
+  modelo = asociarCampos(modelo, model.campos);
+  modelo = asociarExpresiones(modelo, model.expresiones);
+
+  // eliminarXorInnecesarios(dicccionarioId[aux.id]);
+  //elimina el flujo de salida de una tarea que tenga un evento adjunto con UNICA en true
+  procesarEventosAdjuntos();
+
+  modelo = dicccionarioId[aux.id];
+  return modelo;
+}
 
 
 module.exports = {

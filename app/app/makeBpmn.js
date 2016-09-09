@@ -296,6 +296,7 @@ function agregarPrpiedad(nodo, campo){
         agregarPrpiedad(nodo, campo); //agrega la propiedad del nombre de campo al proceso
 
         if(campo.writable){
+          //inicializando ioSpecification.dataOutput
           if(!aux.userTask.ioSpecification.dataOutput){
             aux.userTask.ioSpecification.dataOutput = [];
 
@@ -311,6 +312,7 @@ function agregarPrpiedad(nodo, campo){
           //se asocian las propiedades con la dataOutput
           aux.userTask.dataOutputAssociation.push({ "sourceRef":getIdDataOutputCampo(nodo, campo), "targetRef": getIdCampo(nodo, campo.nombre)});
         }else{
+          //inicializando ioSpecification.dataInput
           if(!aux.userTask.ioSpecification.dataInput){
             aux.userTask.ioSpecification.dataInput = [];
 
