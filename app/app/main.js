@@ -6,6 +6,7 @@ var procesarEstandar = require('./procesamientoModeloEstandar');
 var ajustesBPMN =  require('./ajustesBPMN');
 var makeDot2 = require('./makeDot2');
 var ejemplos = require('./cargarEjemplos');
+var interfazSubMenu = require('./interfazSubMenu');
 var yaoqiang = require('../yaoqiangJava');
 var env = require('./env');
 
@@ -106,7 +107,7 @@ function conversion(){
           resultEstandar = ajustesBPMN.ajustarCompuertasInnecesarias(resultEstandar);
           generarBpmndi(resultEstandar, function(bpmn_di){
             $("#id-xml-ejecutar").text(pd.xml(bpmn_di));
-            agregarElemento(nombre);
+            interfazSubMenu.agregarElemento(nombre);
           });
         } catch (e) {
           console.log("Error en al obtener xml estándar.");
