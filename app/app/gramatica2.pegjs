@@ -64,8 +64,8 @@ construccion_tareas =
 
 construccion_compuerta_AND =
   ws prefijo_compuerta_AND coma
-  ws Integer primero:secuencia
-  resto:(ws Integer sen:secuencia {return sen;})+ ws fin
+  ws entero primero:secuencia
+  resto:(ws entero sen:secuencia {return sen;})+ ws fin
   {return [primero].concat(resto);}
 
 construccion_compuerta_OR =
@@ -115,7 +115,7 @@ articulo = "el" / "la" / "los" / "las" / "del" / "de" / "una" / "un"
 fin = "fin"
 
 // Numeros
-Integer "integer" = [0-9]+ { return parseInt(text(), 10); }
+entero "entero" = [0-9]+ { return parseInt(text(), 10); }
 digito "digito" = digits:[0-9]+ { return makeInteger(digits); }
 
 // Una o varias palabras
@@ -162,7 +162,7 @@ campo_solo_lectura = ws nombre:palabra ws coma? ws {return {"nombre":nombre, "ti
 // AUXILIARES
 evento_catch = "espera por"
 evento_throw = "envia mensaje a" / "envia respuesta a"
-auxiliar_evento_adjunto = "si transcurre" / "si llega" ws mensaje
+auxiliar_evento_adjunto = "si transcurren" / "si transcurre" / "si llega" ws mensaje
 mensaje = "mensaje" / "mail" / "respuesta"
 prefijo_tarea_servicio = "utiliza el servicio"
 prefijo_tarea_manual = "realiza la tarea manual"
