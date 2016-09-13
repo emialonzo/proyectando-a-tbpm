@@ -119,7 +119,7 @@ Integer "integer" = [0-9]+ { return parseInt(text(), 10); }
 digito "digito" = digits:[0-9]+ { return makeInteger(digits); }
 
 // Una o varias palabras
-palabra "palabra" = [a-z]i+ { return text()}
+palabra "palabra" = [a-z_]i+ { return text()}
 palabras "palabras" = ([a-z_]i+ ws?)+ { return text()}
 
 // Construccion para las sentencias de las compuertas OR
