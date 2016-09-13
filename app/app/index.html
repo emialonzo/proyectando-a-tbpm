@@ -271,14 +271,27 @@ function menuItemClick(menu_item){
   text.substring (selectionEnd);
   textArea.value = newText;
 }
+function generarSubMenu(){
+  var menu_sub_proc = new Menu();
+  for (sub_proc of subProcesos()) {
+    menu_sub_proc.append(new MenuItem({ label: sub_proc.substring (0, sub_proc.indexOf('.')), click: menuItemClick }));
+  }
+  console.debug("sub menu regenerado, largo:"+ menu_sub_proc.items.length)
+  //return menu_sub_proc;
+  return new MenuItem({ label: 'SubProcesos', submenu: menu_sub_proc});
+}
+
+function agregarElemento(nombreSubProceso){
+  if(!(nombreSubProceso in sub_menu_elementos)){
+    sub_menu_elementos[nombreSubProceso] = true;
+    sub_menu.submenu.append(new MenuItem({ label: nombreSubProceso, click: menuItemClick }));
+  }
+}
 
 var menu_nuevo = new Menu();
-var menu_sub_proc = new Menu();
-
-for (sub_proc of subProcesos()) {
-  menu_sub_proc.append(new MenuItem({ label: sub_proc.substring (0, sub_proc.indexOf('.')), click: menuItemClick }));
-}
-sub_menu = new MenuItem({ label: 'SubProcesos',submenu: menu_sub_proc });
+//var sub_menu = new MenuItem({ label: 'SubProcesos', submenu: new Menu() });
+var sub_menu = generarSubMenu();
+var sub_menu_elementos = {};
 menu_nuevo.append(sub_menu)
 menu_nuevo.append(new MenuItem({ type: 'separator' }));
 menu_nuevo.append(new MenuItem({ label: 'Deshacer',  role: 'undo'}));
@@ -288,12 +301,15 @@ menu_nuevo.append(new MenuItem({ label: 'Pegar',  role: 'paste'}));
 menu_nuevo.append(new MenuItem({ label: 'Seleccionar Todo',  role: 'selectall'}));
 
 window.addEventListener('contextmenu', function (e) {
+  console.debug("Click derecho")
   e.preventDefault();
   if (!e.target.closest('textarea, input, [contenteditable="true"]')) return;
   text = e.target.value;
   startSelection = e.target.selectionStart;
   selectionEnd = e.target.selectionEnd;
   textArea = e.target;
+
+  agregarElemento("prueba!!");
 
   menu_nuevo.popup(remote.getCurrentWindow());
 

@@ -49,7 +49,7 @@ function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val().toLowerCase();
   var nombre = $("#id-nombre-proceso").val().toLowerCase();
-  nombre = nombre.replace(" ", "_");
+  nombre = nombre.replace(/\s/g, "_");
 
   try {
     var modelo ;
@@ -106,6 +106,7 @@ function conversion(){
           resultEstandar = ajustesBPMN.ajustarCompuertasInnecesarias(resultEstandar);
           generarBpmndi(resultEstandar, function(bpmn_di){
             $("#id-xml-ejecutar").text(pd.xml(bpmn_di));
+            agregarElemento(nombre);
           });
         } catch (e) {
           console.log("Error en al obtener xml estándar.");
