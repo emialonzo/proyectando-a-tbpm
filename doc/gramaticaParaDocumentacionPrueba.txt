@@ -1,0 +1,80 @@
+start ← secuencia ws
+secuencia ← (ws sent:elementos)+
+elementos ← construccion_evento_intermedio |
+            construccion_tareas "y finaliza"? |
+            construccion_compuerta_AND |
+            construccion_compuerta_OR |
+            construccion_evento_adjunto |
+            construccion_loop
+construccion_evento_intermedio ← ws actor ws evento_catch ws construccion_evento ws "." |
+                                 ws actor ws evento_throw ws pool ws "."
+construccion_tareas ← ws actor ws prefijo_tarea_manual ws accion ws "." |
+                      ws actor ws prefijo_tarea_servicio ws accion ws "." |
+                      ws actor ws prefijo_tarea_subproceso ws accion (ws ";" ws subproceso_loop)? ws "." ws |
+                      ws actor ws accion ws "." ws (construccion_formulario?)
+construccion_compuerta_AND ← ws prefijo_compuerta_AND ","
+                             ws Integer secuencia
+                             (ws Integer secuencia)+ ws
+                             "fin"
+construccion_compuerta_OR = ws prefijo_compuerta_OR ","
+                            ws (condicion entonces ws secuencia_or)
+                            (ws con:condicion entonces ws sen:secuencia_or)*
+                            ws defecto ws secuencia_or ws
+                            "fin"
+construccion_evento_adjunto ← ws unica?
+                              ws prefijo_evento_adjunto ws palabras ws ","
+                              ws adjuntoInterrumpible?
+                              ws auxiliar_evento_adjunto ws construccion_evento
+                              ws secuencia ws
+                              "fin"
+construccion_loop ← ws prefijo_loop ws condicion "," secuencia ws "fin"
+
+construccion_formulario ← (palabras "," | palabra) ws formulario_id ws palabras ws ":" ws formulario "." ws |
+                          (palabras "," | palabra) ws ver_form_id ws palabras ws ":" ws formulario_solo_lectura "." ws
+formulario ← campo+
+campo ← ws palabra ws auxCampo ws tipo ws obligatorio? ws ","? ws
+formulario_solo_lectura ← campo_solo_lectura+
+campo_solo_lectura ← ws palabra ws ","? ws
+
+construccion_evento ← digito ws tiempo | mensaje ws articulo ws palabras
+condicion ← termino (operador termino)?
+termino ← ws [a-zA-Z0-9"]+ ws
+
+secuencia_or ← noHaceNada | secuencia
+actor ← articulo ws (n:[a-z ]i+ ws) "," ws | articulo ws [a-z]i+
+Integer "integer" ← [0-9]+
+digito "digito" ← digits:[0-9]+
+palabra "palabra" ← [a-z]i+
+palabras "palabras" ← ([a-z]i+ ws?)+
+accion "accion" ← ([a-z_]i+ ws)*
+
+ws ← [ \t\n\r]*
+
+adjuntoInterrumpible ← "se interrumpe"
+entonces ← "entonces"
+unica ← "unica"
+noHaceNada ← "no hace nada"
+obligatorio ← "obligatorio"
+
+auxCampo ← "que es un" | "que es una"
+evento_catch ← "espera por"
+evento_throw ← "envia mensaje a" | "envia respuesta a"
+auxiliar_evento_adjunto ← "si transcurre" | "si llega" ws mensaje
+mensaje ← "mensaje" | "mail" | "respuesta"
+prefijo_tarea_servicio ← "utiliza el servicio"
+prefijo_tarea_manual ← "realiza la tarea manual"
+prefijo_tarea_subproceso ← "realiza el subproceso"
+subproceso_loop ← "varias veces" | "muchas veces"
+formulario_id ← "es un formulario"
+ver_form_id ← "muestra" | "despliega"
+prefijo_compuerta_AND ← "al mismo tiempo" | "a la vez" | "en paralelo"
+prefijo_compuerta_OR ← "si se cumple"
+defecto ← "si no"
+prefijo_evento_adjunto ← "alternativa de"
+condicional ← "si"
+prefijo_loop ← "mientras"
+articulo ← "el" | "la" | "los" | "las" | "del" | "de" | "una" | "un"
+tipo ← "texto" | "numero" | "fecha" | "booleano"
+operador ← "no es" | "es mayor que" | "es menor que" | "es"
+tiempo ← "segundos" | "minutos" | "horas" | "dias" | "semanas" | "meses" | "años" |
+         "segundo" | "minuto" | "hora" | "dia" | "semana" | "mes" | "año"
