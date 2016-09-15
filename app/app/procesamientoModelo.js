@@ -860,9 +860,7 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso, false);
 
-  //FIXME si se quiere dejar un solo evento de fin hay que comentar esta funcion
-  generarEventosFinExtras(proceso);
-  //FIXME si se quiere dejar un solo evento de fin hay que comentar esta funcion
+  generarEventosFinExtras(proceso);  
 
   proceso.process = ajustarIDs(proceso.process, "");
   var bpmn = templatesProceso(proceso, nombreProceso);
