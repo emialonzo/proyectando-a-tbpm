@@ -136,7 +136,7 @@ var obtenerLanes = function(elem) {
 
 var generarPool = function(evento, idEvento) {
   var prefix = "pool_id_"
-  evento.pool = evento.pool.replace(" ", "_");
+  evento.pool = evento.pool.replace(/\s/g, "_");
   var idPool = prefix + evento.pool;
   if (!_.find(proceso.collaboration.participant, function(val){return val._id == idPool})) {
     proceso.collaboration.participant.push({"_id": idPool, "_name":"pool_"+evento.pool});
@@ -597,7 +597,7 @@ var extensionEvento = function(elem, evento) {
   if (evento.tipo == "timer") {
     extensionEvento = {"timerEventDefinition":{"timeDuration":templateEventoTiempoExpresion(evento)}}
   } else if (evento.tipo == "mensaje") {
-    evento.pool = evento.pool.replace(" ", "_");
+    evento.pool = evento.pool.replace(/\s/g, "_");
     extensionEvento = {"messageEventDefinition":{ "_messageRef":evento.pool}}
   }
   _.extend(elem, extensionEvento);
