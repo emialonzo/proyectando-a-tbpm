@@ -145,7 +145,7 @@ function templateEvento(evento){
   if(evento.tiempo){
     return {"timerEventDefinition":{"timeDuration":templateEventoTiempoExpresion(evento)}}
   }else{
-    evento.pool = evento.pool.replace(" ", "_");
+    evento.pool = evento.pool.replace(/\s/g, "_");
     return {"messageEventDefinition":{ "_messageRef":evento.pool}}
   }
 }
