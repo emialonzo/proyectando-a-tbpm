@@ -758,7 +758,11 @@ var obtenerxmlSubProceso = function(nombreArchivo, ejecutable, estandar) {
   } else {
     archivo = archivo + "/XMLbasicos/" + nombreArchivo + ".bpmn";
   }
-  var subproceso = fs.readFileSync(archivo).toString();
+  try {
+    var subproceso = fs.readFileSync(archivo).toString();
+  } catch (e) {
+    throw `Error al cargar el subproceso ${nombreArchivo}`;
+  }
   return subproceso;
 }
 

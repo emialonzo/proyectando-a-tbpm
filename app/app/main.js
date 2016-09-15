@@ -121,7 +121,8 @@ function conversion(){
     } catch (e) {
       console.error(e);
       console.error("error al pasar a xml");
-      mostrarError("Ha ocurrido un error interno mientras se generaba el archivo BPMN")
+      mostrarError(e);
+      // mostrarError("Ha ocurrido un error interno mientras se generaba el archivo BPMN")
       return;
     }
 
