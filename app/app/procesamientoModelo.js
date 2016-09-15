@@ -860,14 +860,11 @@ var modelToXML = function (modelo, nombreProceso) {
   agregarSubprocesos(modelo, proceso);
   proceso = limpiarProceso(proceso, false);
 
-  generarEventosFinExtras(proceso);  
+  generarEventosFinExtras(proceso);
 
   proceso.process = ajustarIDs(proceso.process, "");
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
-  var path = __dirname + "/XMLbasicos/";
-  var nombreArchivo = nombreProceso + ".bpmn";
-  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
   var result = {"xml":pd.xml(bpmn), "modelo":modelo, "proceso":proceso, "nombreProceso":nombreProceso}
   return result;
 }
@@ -879,9 +876,7 @@ var modelToXMLactiviti = function(modelo, proceso, nombreProceso){
   proceso = limpiarProceso(proceso, true);
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
-  var path = __dirname + "/XMLejecutables/";
-  var nombreArchivo = nombreProceso + ".bpmn";
-  fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
+  
   var result = {"xml":pd.xml(bpmn), "modelo":modelo, "proceso":proceso, "nombreProceso":nombreProceso}
   return result;
 }

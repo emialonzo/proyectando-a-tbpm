@@ -88,7 +88,14 @@ function conversion(){
       // var bpmn = result.xml; //sin quitar compuertas innecesarias
       // var bpmnActiviti = resultActiviti.xml;
       var bpmn = ajustesBPMN.ajustarCompuertasInnecesarias(result.xml);
+      var path = __dirname + "/XMLbasicos/";
+      var nombreArchivo = result.nombreProceso + ".bpmn";
+      fs.writeFileSync(path + nombreArchivo, bpmn);
+
       var bpmnActiviti = ajustesBPMN.ajustarCompuertasInnecesarias(resultActiviti.xml);
+      var path = __dirname + "/XMLejecutables/";
+      var nombreArchivo = resultActiviti.nombreProceso + ".bpmn";
+      fs.writeFileSync(path + nombreArchivo, bpmnActiviti);
 
       if(conBPMNDI){
         //consumiendo yaoqiang para obtener bpmndi de forma asincrónica
