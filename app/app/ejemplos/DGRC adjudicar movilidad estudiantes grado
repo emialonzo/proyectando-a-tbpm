@@ -1,34 +1,37 @@
-el DGRC recibir postulaciones.
-unica alternativa de recibir postulaciones, si transcurre 1 mes
-  el DGRC controlar documentacion.
+la DGRC realiza el subproceso DGRC_recibir_postulaciones; varias veces.
+unica alternativa de DGRC_recibir_postulaciones, se interrumpe si transcurre 1 mes
+  la DGRC controla documentacion.
   si se cumple,
-    analizarDisponibilidad es "si" entonces el DGRC analizar disponibilidad.
-    si no no hace nada fin
+    analizarDisponibilidad entonces la DGRC analiza disponibilidad.
+    si no no hace nada
+  fin
   si se cumple,
-    evaluacionExterna es "si" entonces el DGRC evaluacion externa.
-    si no no hace nada fin
+    evaluacionExterna entonces la DGRC realiza evaluacion.
+    si no no hace nada
+  fin
   si se cumple,
-    realizarPriorizacion es "si" entonces el DGRC realizar priorizacion.
-    si no no hace nada fin
-
-  mientras necesitaReasignarCupo es "si",
+    realizarPriorizacion entonces la DGRC realiza priorizacion.
+    si no no hace nada
+  fin
+  mientras necesitaReasignarCupo,
     si se cumple,
-    necesitaNegociarCupos es "si" entonces el DGRC negociar cupos.
-    si no no hace nada fin
-
+      necesitaNegociarCupos entonces la DGRC negocia cupos.
+      si no no hace nada
+    fin
     si se cumple,
-    esxistenMovilidadesAAsignar es "si"
-      entonces el DGRC realiza el subproceso DGRC_adjudicar_movilidad.
+      esxistenMovilidadesAAsignar entonces la DGRC realiza el subproceso DGRC_adjudicar_movilidad.
+      si no no hace nada
+    fin
+  fin
+  si se cumple,
+    huboadjudicacion entonces
+      al mismo tiempo,
+        1 la DGRC envia mensaje a contraparte extranjera.
+        2 la DGRC envia mensaje a servicio o postulante.
+      fin
       si se cumple,
-        huboadjudicacion es "si" entonces
-          al mismo tiempo,
-            1 el DGRC envia mensaje a contraparteextranjera.
-            2 el DGRC envia mensaje a servidiopostulante.
-          fin
-          si se cumple,
-            reqiuereDocumentacion es "si" entonces el DGRC procesa documentacion adicional.
-            si no no hace nada fin
-      si no no hace nada fin
+        reqiuereDocumentacion entonces la DGRC procesa documentacion adicional.
+        si no no hace nada
+      fin
     si no no hace nada fin
-  fin
-  fin
+fin
