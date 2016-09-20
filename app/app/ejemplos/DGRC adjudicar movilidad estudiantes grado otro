@@ -4,30 +4,24 @@ unica alternativa de DGRC_recibir_postulaciones, se interrumpe si transcurre 1 m
   la DGRC controla la informacion.
   si se cumple,
     noCumpleRequerimientos entonces la DGRC solicita informacion adicional.
-    si no no hace nada
-  fin
+    si no no hace nada fin
   si se cumple,
     analizarDisp entonces la DGRC analiza la disponibilidad.
-    si no no hace nada
-  fin
+    si no no hace nada fin
   si se cumple,
     evaluacionPrevia entonces no hace nada
-    Si no la DGRC evalua los participantes.
-  fin
+    Si no la DGRC evalua los participantes. fin
   si se cumple,
     realizarPriorizacion entonces La DGRC realiza priorizacion.
-    si no no hace nada
-  fin
+    si no no hace nada fin
   mientras negociarMasCupos,
     la DGRC realiza una negociacion de cupos.
-    la DGRC realiza el subproceso DGRC_adjudicar_movilidad.
-  fin
+    la DGRC realiza el subproceso DGRC_adjudicar_movilidad. fin
   al mismo tiempo,
     1 la DGRC envia mensaje a contraparte extranjera.
     2 la DGRC envia mensaje a servicio o postulante.
   fin
   si se cumple,
     docAdicional entonces la DGRC procesa documentacion adicional.
-    si no no hace nada
-  fin
+    si no no hace nada fin
 fin
