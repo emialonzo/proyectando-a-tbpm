@@ -63,6 +63,8 @@ function conversion(){
       return;
     }
     limpiarMensajesError();
+    var path = __dirname + "/ejemplos/";
+    fs.writeFileSync(path + nombre, text);
 
     //se muestra el modelo generado por la gramática
     $("#id-modelo-abstracto").text(jsonToString(modelo));

@@ -1,0 +1,27 @@
+la dgrc realiza el subproceso dgrc_recibir_postulaciones; varias veces.
+unica alternativa de dgrc_recibir_postulaciones, se interrumpe si transcurre 1 mes
+  la dgrc consolida la informacion.
+  la dgrc controla la informacion.
+  si se cumple,
+    nocumplerequerimientos entonces la dgrc solicita informacion adicional.
+    si no no hace nada fin
+  si se cumple,
+    analizardisp entonces la dgrc analiza la disponibilidad.
+    si no no hace nada fin
+  si se cumple,
+    evaluacionprevia entonces no hace nada
+    si no la dgrc evalua los participantes. fin
+  si se cumple,
+    realizarpriorizacion entonces la dgrc realiza priorizacion.
+    si no no hace nada fin
+  mientras negociarmascupos,
+    la dgrc realiza una negociacion de cupos.
+    la dgrc realiza el subproceso dgrc_adjudicar_movilidad. fin
+  al mismo tiempo,
+    1 la dgrc envia mensaje a contraparte extranjera.
+    2 la dgrc envia mensaje a servicio o postulante.
+  fin
+  si se cumple,
+    docadicional entonces la dgrc procesa documentacion adicional.
+    si no no hace nada fin
+fin
