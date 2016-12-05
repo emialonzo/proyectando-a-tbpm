@@ -741,6 +741,17 @@ var templateSubproceso = function(elem, subProcessPos, ejecutable, estandar) {
   for (var variable in jsonSubProceso.definitions.process) {
     if (jsonSubProceso.definitions.process.hasOwnProperty(variable)) {
       auxSubProceso.subprocess[variable] = jsonSubProceso.definitions.process[variable];
+      if ((ejecutable || estandar) && variable == "startEvent") {
+        var startEventAux = jsonSubProceso.definitions.process[variable];
+        if (startEventAux[0].extensionElements) {
+          for (var extElem in startEventAux[0].extensionElements.formProperty) {
+            var variable = startEventAux[0].extensionElements.formProperty[extElem]
+            if (!yaAgregueVariable(variable._id)) {
+              proceso.process.startEvent[0].extensionElements.formProperty.push({"__prefix":"activiti","_id":variable._id})
+            }
+          }
+        }
+      }
     }
   }
   auxSubProceso.subprocess._id = prefix+elem.id;
@@ -876,7 +887,7 @@ var modelToXMLactiviti = function(modelo, proceso, nombreProceso){
   proceso = limpiarProceso(proceso, true);
   var bpmn = templatesProceso(proceso, nombreProceso);
   bpmn = conv.json2xml_str(bpmn);
-  
+
   var result = {"xml":pd.xml(bpmn), "modelo":modelo, "proceso":proceso, "nombreProceso":nombreProceso}
   return result;
 }
