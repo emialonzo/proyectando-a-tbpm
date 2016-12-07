@@ -289,6 +289,9 @@ function errorParser(pegError){
   strError = strError.replace("but", "pero se encontró");
   strError = strError.replace("end of input", "fin del texto");
   strError = strError.replace("found", "");
+  strError = strError.replace(" or ", " o ");
+  strError = strError.replace("[ \\t\\n\\r]", "un salto de línea");
+
 
 
   var str = `<div class="alert alert-`+ tipo +` alert-dismissible" role="alert">
