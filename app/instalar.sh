@@ -14,6 +14,9 @@ fi
 if [ ! -d "app/XMLestandar" ]; then
   mkdir app/XMLestandar
 fi
+if [ ! -d "app/ejemplosRepositorio" ]; then
+  mkdir app/ejemplosRepositorio
+fi
 if [ ! -d "$dirname" ]; then
   sh downloadYaoqiang.sh
 fi

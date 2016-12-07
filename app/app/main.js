@@ -50,7 +50,6 @@ function conversion(){
   //obtengo texto
   var text = $("#id-modelo-texto").val().toLowerCase();
   var nombre = $("#id-nombre-proceso").val().toLowerCase();
-  nombre = nombre.replace(/\s/g, "_");
 
   try {
     var modelo ;
@@ -64,7 +63,8 @@ function conversion(){
       return;
     }
     limpiarMensajesError();
-
+    var path = __dirname + "/ejemplos/";
+    fs.writeFileSync(path + nombre, text);
 
     //se muestra el modelo generado por la gramática
     $("#id-modelo-abstracto").text(jsonToString(modelo));
@@ -80,8 +80,10 @@ function conversion(){
     }
 
     try {
+
+      var nombreModificado = nombre.replace(/\s/g, "_");
       //generando xml
-      var result = procesar.modelToXML(modeloInt, nombre);
+      var result = procesar.modelToXML(modeloInt, nombreModificado);
       var resultActiviti = procesar.modelToXMLactiviti(result.modelo, result.proceso, result.nombreProceso);
 
       //ajustando nombres de variables
@@ -90,12 +92,12 @@ function conversion(){
       var bpmn = ajustesBPMN.ajustarCompuertasInnecesarias(result.xml);
       var path = __dirname + "/XMLbasicos/";
       var nombreArchivo = result.nombreProceso + ".bpmn";
-      fs.writeFileSync(path + nombreArchivo, bpmn);
+      fs.writeFileSync(path + nombreArchivo, pd.xml(bpmn));
 
       var bpmnActiviti = ajustesBPMN.ajustarCompuertasInnecesarias(resultActiviti.xml);
       var path = __dirname + "/XMLejecutables/";
       var nombreArchivo = resultActiviti.nombreProceso + ".bpmn";
-      fs.writeFileSync(path + nombreArchivo, bpmnActiviti);
+      fs.writeFileSync(path + nombreArchivo, pd.xml(bpmnActiviti));
 
       if(conBPMNDI){
         //consumiendo yaoqiang para obtener bpmndi de forma asincrónica
@@ -110,11 +112,11 @@ function conversion(){
         });
 
         try {
-          var resultEstandar = procesarEstandar.modelToXMLEstandar(modeloInt, nombre);
+          var resultEstandar = procesarEstandar.modelToXMLEstandar(modeloInt, nombreModificado);
           resultEstandar = ajustesBPMN.ajustarCompuertasInnecesarias(resultEstandar);
           generarBpmndi(resultEstandar, function(bpmn_di){
             $("#id-xml-ejecutar").text(pd.xml(bpmn_di));
-            interfazSubMenu.agregarElemento(nombre);
+            interfazSubMenu.agregarElemento(nombreModificado);
           });
         } catch (e) {
           console.log("Error en al obtener xml estándar.");
@@ -125,6 +127,7 @@ function conversion(){
         $("#id-xml-code").text(pd.xml(bpmn));
         $("#id-xml-activiti").text(pd.xml(bpmnActiviti));
       }
+      guardarModeloTextual(text, nombre);
     } catch (e) {
       console.error(e);
       console.error("error al pasar a xml");
@@ -147,6 +150,15 @@ function conversion(){
   }
   return modelo;
 } //fin conversion()
+
+function guardarModeloTextual(texto, nombre) {
+  var path = __dirname + "/ejemplosRepositorio/";
+  var nombreArchivo = "nombreVacio"
+  if (nombre != "") {
+    var nombreArchivo = nombre;
+  }
+  fs.writeFileSync(path + nombreArchivo, texto);
+}
 
 function saveDiagram() {
   bpmnModeler.saveSVG({ format: true }, function(err, svg) {

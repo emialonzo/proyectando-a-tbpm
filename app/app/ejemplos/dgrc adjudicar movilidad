@@ -1,0 +1,8 @@
+mientras haymascandidatos es true,
+  el marketing envia mensaje a serviciodepostulante.
+  el marketing espera por mensaje de serviciodepostulante.
+  si se cumple,
+    confirmainteres es true entonces el marketing procesa confirmacion. y finaliza
+    si no no hace nada
+fin
+fin
