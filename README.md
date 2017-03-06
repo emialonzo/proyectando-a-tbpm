@@ -4,12 +4,13 @@
 
 ### Dependencias
  - nodej https://nodejs.org/
+ - JRE http://openjdk.java.net/
  
 ### Instalación
 ```
 git clone git@gitlab.fing.edu.uy:emiliano.alonzo/proyectando-a-tbpm.git
 cd proyectando-a-tbpm/app
-npm install
+sh instalar.sh 
 ```
 
 ### Utilización
@@ -47,14 +48,14 @@ El objetivo de este proyecto es especificar un lenguaje para descripción de pro
 
 ## Resultado esperados
 
-* [ ] Relevamiento de estrategias de generación de modelos de procesos de negocio desde texto
+* [x] Relevamiento de estrategias de generación de modelos de procesos de negocio desde texto
 
-* [ ] Selección y adaptación de las propuestas para la representación del flujo de control, recursos y datos
+* [x] Selección y adaptación de las propuestas para la representación del flujo de control, recursos y datos
 
-* [ ] Especificación de lenguaje para descripción de procesos de negocio en forma textual y transformaciones para la generación automática de los modelos y perspectivas asociadas (flujo de control, recursos, datos)
+* [x] Especificación de lenguaje para descripción de procesos de negocio en forma textual y transformaciones para la generación automática de los modelos y perspectivas asociadas (flujo de control, recursos, datos)
 
-* [ ] Prototipo funcional para la generación automática de modelos de procesos de negocio desde texto
+* [x] Prototipo funcional para la generación automática de modelos de procesos de negocio desde texto
 
-* [ ] Caso de estudio de aplicación de la propuesta en un dominio específico
+* [x] Caso de estudio de aplicación de la propuesta en un dominio específico
 
-* [ ] Informe del proyecto de grado final y durante todo el proyecto por capítulos según etapas
+* [x] Informe del proyecto de grado final y durante todo el proyecto por capítulos según etapas
