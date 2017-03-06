@@ -9,7 +9,7 @@
 ```
 git clone git@gitlab.fing.edu.uy:emiliano.alonzo/proyectando-a-tbpm.git
 cd proyectando-a-tbpm/app
-npm install
+sh instalar.sh 
 ```
 
 ### Utilización
