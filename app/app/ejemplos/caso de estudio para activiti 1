@@ -1,0 +1,27 @@
+el marketing realiza el subproceso dgrc_recibir_postulaciones; varias veces.
+unica alternativa de dgrc_recibir_postulaciones, se interrumpe si transcurre 1 minuto
+  el marketing consolida la informacion.
+  el marketing controla la informacion.
+  si se cumple,
+    nocumplerequerimientos es true entonces el marketing solicita informacion adicional.
+    si no no hace nada fin
+  si se cumple,
+    analizardisp es true entonces el marketing analiza la disponibilidad.
+    si no no hace nada fin
+  si se cumple,
+    evaluacionprevia es true entonces no hace nada
+    si no el marketing evalua los participantes. fin
+  si se cumple,
+    realizarpriorizacion es true entonces el marketing realiza priorizacion.
+    si no no hace nada fin
+  mientras negociarmascupos es true,
+    el marketing realiza una negociacion de cupos.
+    el marketing realiza el subproceso dgrc_adjudicar_movilidad. fin
+  al mismo tiempo,
+    1 el marketing envia mensaje a contraparte extranjera.
+    2 el marketing envia mensaje a servicio o postulante.
+  fin
+  si se cumple,
+    docadicional es true entonces el marketing procesa documentacion adicional.
+    si no no hace nada fin
+fin
