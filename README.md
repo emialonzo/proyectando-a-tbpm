@@ -59,3 +59,4 @@ El objetivo de este proyecto es especificar un lenguaje para descripción de pro
 * [x] Caso de estudio de aplicación de la propuesta en un dominio específico
 
 * [x] Informe del proyecto de grado final y durante todo el proyecto por capítulos según etapas
+
