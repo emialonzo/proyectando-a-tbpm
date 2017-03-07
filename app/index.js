@@ -9,7 +9,7 @@ const appIndex = 'file://' + __dirname +  '/app/index.html';
 const motorIndex = 'file://' + __dirname +  '/motor/index.html';
 
 // Report crashes to our server.
-electron.crashReporter.start();
+//electron.crashReporter.start();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -29,14 +29,14 @@ app.on('window-all-closed', function() {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+  mainWindow = new BrowserWindow({width: 1200, height: 600});
   mainWindow.loadURL(appIndex);
 
   // and load the index.html of the app.
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-  // mainWindow.setMenu(null)
+  //mainWindow.webContents.openDevTools();
+   mainWindow.setMenu(null)
 
 
   // console.log(dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]}));
@@ -57,7 +57,7 @@ ipcMain.on('abrir-motor', function(event, xml){
   engineWindow.loadURL(motorIndex);
 
 
-  
+
 
   engineWindow.on('closed', function() {
     engineWindow = null;
