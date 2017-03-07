@@ -1,0 +1,43 @@
+<definitions 
+  
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id' name='adjunto_interrumpible' processRef='id_adjunto_interrumpible'></participant>
+  </collaboration>
+  <process id='id_adjunto_interrumpible' isExecutable='true'>
+    <laneSet id='id_lane'>
+      <lane id='_sales' name='nombre_sales'>
+        <flowNodeRef>_F</flowNodeRef>
+        <flowNodeRef>idStart</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_7</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='idStart' name='StartEvent'></startEvent>
+    <userTask id='_3' name='hace algo'></userTask>
+    <userTask id='_6' name='no hace nada'></userTask>
+    <boundaryEvent id='_4' attachedToRef='_3' cancelActivity='true'>
+      <timerEventDefinition>
+        <timeDuration>P7D</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <exclusiveGateway id='_7' name='cierro_xor_7'></exclusiveGateway>
+    <endEvent id='EndEvent_1'></endEvent>
+    <sequenceFlow id='_idStart_3' sourceRef='idStart' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_3_7' sourceRef='_3' targetRef='_7'></sequenceFlow>
+    <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6'></sequenceFlow>
+    <sequenceFlow id='_6_7' sourceRef='_6' targetRef='_7'></sequenceFlow>
+    <sequenceFlow id='_7_F' sourceRef='_7' targetRef='EndEvent_1'></sequenceFlow>
+  </process>
+</definitions>

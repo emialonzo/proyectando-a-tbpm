@@ -1,0 +1,54 @@
+<XML version="1.0">
+<process>
+  <laneSet>
+    <lane id='Lane_administrador' name='administrador'>
+      <flowNodeRef>1</flowNodeRef>
+      <flowNodeRef>3</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+    </lane>
+    <lane id='Lane_encargadoDeServicios' name='encargadoDeServicios'>
+      <flowNodeRef>5</flowNodeRef>
+      <flowNodeRef>6</flowNodeRef>
+    </lane>
+    <lane id='Lane_asistenteDeServicios' name='asistenteDeServicios'>
+      <flowNodeRef>8</flowNodeRef>
+      <flowNodeRef>10</flowNodeRef>
+      <flowNodeRef>12</flowNodeRef>
+      <flowNodeRef>14</flowNodeRef>
+      <flowNodeRef>16</flowNodeRef>
+      <flowNodeRef>15</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='3' name='asigna tareas'></userTask>
+  <userTask id='5' name='ofrece servicios'></userTask>
+  <userTask id='8' name='ofrece serivicio X'></userTask>
+  <userTask id='10' name='ofrece serivicio Y'></userTask>
+  <userTask id='12' name='ofrece serivicio Z'></userTask>
+  <userTask id='14' name='ofrece servicio generico'></userTask>
+  <serviceTask/>
+  <exclusiveGateway id='6' default='8'></exclusiveGateway>
+  <exclusiveGateway id='16'></exclusiveGateway>
+  <parallelGateway id='1'></parallelGateway>
+  <parallelGateway id='15'></parallelGateway>
+  <intermediateCatchEvent/>
+  <intermediateThrowEvent/>
+  <boundaryEvent/>
+  <endEvent id='EndEvent_1'/>
+  <sequenceFlow id='1' sourceRef='1' targetRef='3'></sequenceFlow>
+  <sequenceFlow id='2' sourceRef='1' targetRef='5'></sequenceFlow>
+  <sequenceFlow id='3' sourceRef='3' targetRef='15'></sequenceFlow>
+  <sequenceFlow id='4' sourceRef='5' targetRef='6'></sequenceFlow>
+  <sequenceFlow id='5' sourceRef='6' targetRef='8'></sequenceFlow>
+  <sequenceFlow id='6' sourceRef='6' targetRef='10'></sequenceFlow>
+  <sequenceFlow id='7' sourceRef='6' targetRef='12'></sequenceFlow>
+  <sequenceFlow id='8' sourceRef='6' targetRef='14'></sequenceFlow>
+  <sequenceFlow id='9' sourceRef='8' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='10' sourceRef='10' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='11' sourceRef='12' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='12' sourceRef='14' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='13' sourceRef='16' targetRef='15'></sequenceFlow>
+  <sequenceFlow id='14' sourceRef='15' targetRef='EndEvent_1'></sequenceFlow>
+  <sequenceFlow id='15' sourceRef='StartEvent_1' targetRef='1'></sequenceFlow>
+</process>

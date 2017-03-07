@@ -1,0 +1,45 @@
+<definitions 
+  
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id' name='compuerta_and' processRef='id_compuerta_and'></participant>
+  </collaboration>
+  <process id='id_compuerta_and' isExecutable='true'>
+    <laneSet id='id_lane'>
+      <lane id='_marketing' name='nombre_marketing'>
+        <flowNodeRef>_F</flowNodeRef>
+        <flowNodeRef>idStart</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_7</flowNodeRef>
+        <flowNodeRef>_9</flowNodeRef>
+        <flowNodeRef>_10</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='idStart' name='StartEvent'></startEvent>
+    <parallelGateway id='_3' name='and_3'></parallelGateway>
+    <parallelGateway id='_10' name='cierro_and_10'></parallelGateway>
+    <userTask id='_5' name='asigna tareas'></userTask>
+    <userTask id='_7' name='ofrece servicios'></userTask>
+    <userTask id='_9' name='realiza otra cosa'></userTask>
+    <endEvent id='EndEvent_1'></endEvent>
+    <sequenceFlow id='_idStart_3' sourceRef='idStart' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_3_5' sourceRef='_3' targetRef='_5'></sequenceFlow>
+    <sequenceFlow id='_3_7' sourceRef='_3' targetRef='_7'></sequenceFlow>
+    <sequenceFlow id='_3_9' sourceRef='_3' targetRef='_9'></sequenceFlow>
+    <sequenceFlow id='_5_10' sourceRef='_5' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_7_10' sourceRef='_7' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_9_10' sourceRef='_9' targetRef='_10'></sequenceFlow>
+    <sequenceFlow id='_10_F' sourceRef='_10' targetRef='EndEvent_1'></sequenceFlow>
+  </process>
+</definitions>

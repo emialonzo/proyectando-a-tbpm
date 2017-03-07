@@ -1,0 +1,5 @@
+el docente decide si participa.
+si se cumple,
+docenteParticipa entonces el docente coordina y participa de reunion.
+si no no hace nada
+fin

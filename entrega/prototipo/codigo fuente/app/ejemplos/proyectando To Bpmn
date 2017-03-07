@@ -1,0 +1,13 @@
+el sistema lee la descripcion del proceso.
+lee la descripcion del proceso, es un formulario con los siguientes campos:
+  titulo que es un texto,
+  descripcion que es un texto obligatorio.
+el sistema utiliza el servicio aplicar parser.
+el sistema utiliza el servicio procesar modelo intermedio.
+el sistema utiliza el servicio generar xml.
+el proceso graphviz, utiliza el servicio generar imagen de flujos.
+si se cumple,
+utilizarYaoqiang entonces el proceso yaoqiang, utiliza el servicio obtener BPMNDI.
+el sistema utiliza el servicio inicializar modelador bpmnio.
+si no no hace nada fin
+el sistema despliega resultados.

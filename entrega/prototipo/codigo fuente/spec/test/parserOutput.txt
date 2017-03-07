@@ -1,0 +1,123 @@
+{
+  "tipo": "secuencia",
+  "sentencia": [
+    {
+      "tipo": "task",
+      "sentencia": {
+        "actor": "cocinero",
+        "accion": "cocina pedido"
+      }
+    },
+    {
+      "tipo": "and",
+      "sentencia": [
+        {
+          "tipo": "secuencia",
+          "sentencia": [
+            {
+              "tipo": "task",
+              "sentencia": {
+                "actor": "mozo",
+                "accion": "sirve pedido"
+              }
+            }
+          ]
+        },
+        {
+          "tipo": "secuencia",
+          "sentencia": [
+            {
+              "tipo": "task",
+              "sentencia": {
+                "actor": "hermana",
+                "accion": "es servida en la mesa"
+              }
+            },
+            {
+              "tipo": "xor",
+              "sentencia": [
+                {
+                  "condcion": "hayTrabajo",
+                  "tipo": "secuencia",
+                  "sentencia": [
+                    {
+                      "tipo": "task",
+                      "sentencia": {
+                        "actor": "juan",
+                        "accion": "trabaja"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "condcion": "defecto",
+                  "tipo": "secuencia",
+                  "sentencia": [
+                    {
+                      "tipo": "task",
+                      "sentencia": {
+                        "actor": "tio",
+                        "accion": "carlos canta"
+                      }
+                    },
+                    {
+                      "tipo": "xor",
+                      "sentencia": [
+                        {
+                          "condcion": "hayTrabajo",
+                          "tipo": "secuencia",
+                          "sentencia": [
+                            {
+                              "tipo": "task",
+                              "sentencia": {
+                                "actor": "juan",
+                                "accion": "trabaja"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "condcion": "otraCondicion",
+                          "tipo": "secuencia",
+                          "sentencia": [
+                            {
+                              "tipo": "task",
+                              "sentencia": {
+                                "actor": "pepe",
+                                "accion": "baila la cumparcita"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "condcion": "defecto",
+                          "tipo": "secuencia",
+                          "sentencia": [
+                            {
+                              "tipo": "task",
+                              "sentencia": {
+                                "actor": "tio",
+                                "accion": "carlos canta"
+                              }
+                            },
+                            {
+                              "tipo": "task",
+                              "sentencia": {
+                                "actor": "administrador",
+                                "accion": "baila la gracamiglia"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

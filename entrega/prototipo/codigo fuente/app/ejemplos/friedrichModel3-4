@@ -1,0 +1,7 @@
+el personal envia el formulario al cliente.
+mientras esperaRespuesta,
+al mismo tiempo,
+1 el personal espera por respuesta de cliente.
+2 el personal espera por 5 dias. el personal envia un recordatorio al cliente.
+fin
+fin

@@ -1,0 +1,40 @@
+{
+  "name": "text_to_bpmn",
+  "version": "1.0.0",
+  "description": "Procesar un lenguaje descripto por una gramática libre de contexto y obtener un modelo BPMN",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine",
+    "build": "electron-packager . proyecto --out=dist --ignore='^/dist$'  --arch=x64 --overwrite --platform=linux --version=0.36.1",
+    "start": "electron index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "devtron": "^1.1.1",
+    "electron-prebuilt": "^0.36.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-clean": "^0.3.1",
+    "gulp-jasmine": "^2.3.0",
+    "gulp-uglify": "^1.5.3",
+    "jasmine-reporters": "^2.1.1"
+  },
+  "bin": {
+    "text2bpmn": "app/comand_line.js"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "bpmn-js": "^0.14.1",
+    "commander": "^2.9.0",
+    "jquery": "1.9.1",
+    "pegjs": "^0.9.0",
+    "pretty-data": "^0.40.0",
+    "prettyjson": "^1.1.3",
+    "underscore": "^1.8.3",
+    "viz.js": "^1.3.0",
+    "x2js": "abdmob/x2js",
+    "xmljson": "^0.2.0",
+    "xpath": "0.0.22"
+  }
+}

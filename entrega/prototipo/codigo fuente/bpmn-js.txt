@@ -1,0 +1,4 @@
+## Instrucciones
+ sudo npm install -g bower
+ cd app/app/
+ bower install --save bpmn-js

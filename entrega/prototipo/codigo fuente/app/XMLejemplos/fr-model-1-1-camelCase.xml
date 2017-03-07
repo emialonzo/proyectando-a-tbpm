@@ -1,0 +1,78 @@
+<XML version="1.0">
+<process>
+  <laneSet>
+    <lane id='Lane_departamentoDeVentas' name='departamentoDeVentas'>
+      <flowNodeRef>1</flowNodeRef>
+      <flowNodeRef>2</flowNodeRef>
+      <flowNodeRef>4</flowNodeRef>
+      <flowNodeRef>5</flowNodeRef>
+      <flowNodeRef>7</flowNodeRef>
+      <flowNodeRef>18</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+    </lane>
+    <lane id='Lane_deposito' name='deposito'>
+      <flowNodeRef>9</flowNodeRef>
+      <flowNodeRef>10</flowNodeRef>
+      <flowNodeRef>12</flowNodeRef>
+      <flowNodeRef>14</flowNodeRef>
+      <flowNodeRef>24</flowNodeRef>
+      <flowNodeRef>23</flowNodeRef>
+    </lane>
+    <lane id='Lane_departamentoDeIngenieria' name='departamentoDeIngenieria'>
+      <flowNodeRef>16</flowNodeRef>
+      <flowNodeRef>22</flowNodeRef>
+      <flowNodeRef>17</flowNodeRef>
+    </lane>
+    <lane id='Lane_X' name='X'>
+      <flowNodeRef>20</flowNodeRef>
+      <flowNodeRef>21</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='1' name='recibe una orden'></userTask>
+  <userTask id='4' name='avisa al deposito y al departamentoDeIngenieria'></userTask>
+  <userTask id='9' name='chequea la cantidad de piezas'></userTask>
+  <userTask id='12' name='reserva pieza'></userTask>
+  <userTask id='14' name='reserva pieza'></userTask>
+  <userTask id='16' name='se perpara para ensamblar'></userTask>
+  <userTask id='17' name='ensambla la bici'></userTask>
+  <userTask id='18' name='envia la bicicleta al comprador'></userTask>
+  <userTask id='20' name='hace nada'></userTask>
+  <serviceTask/>
+  <exclusiveGateway id='2' default='3'></exclusiveGateway>
+  <exclusiveGateway id='7'></exclusiveGateway>
+  <exclusiveGateway id='10' default='10'></exclusiveGateway>
+  <exclusiveGateway id='24'></exclusiveGateway>
+  <exclusiveGateway id='23' default='14'></exclusiveGateway>
+  <exclusiveGateway id='21'></exclusiveGateway>
+  <parallelGateway id='5'></parallelGateway>
+  <parallelGateway id='22'></parallelGateway>
+  <intermediateCatchEvent/>
+  <intermediateThrowEvent/>
+  <boundaryEvent/>
+  <endEvent id='EndEvent_1'/>
+  <sequenceFlow id='1' sourceRef='1' targetRef='2'></sequenceFlow>
+  <sequenceFlow id='2' sourceRef='2' targetRef='4'></sequenceFlow>
+  <sequenceFlow id='3' sourceRef='2' targetRef='20'></sequenceFlow>
+  <sequenceFlow id='4' sourceRef='4' targetRef='5'></sequenceFlow>
+  <sequenceFlow id='5' sourceRef='5' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='6' sourceRef='5' targetRef='16'></sequenceFlow>
+  <sequenceFlow id='7' sourceRef='7' targetRef='9'></sequenceFlow>
+  <sequenceFlow id='8' sourceRef='9' targetRef='10'></sequenceFlow>
+  <sequenceFlow id='9' sourceRef='10' targetRef='12'></sequenceFlow>
+  <sequenceFlow id='10' sourceRef='10' targetRef='14'></sequenceFlow>
+  <sequenceFlow id='11' sourceRef='12' targetRef='24'></sequenceFlow>
+  <sequenceFlow id='12' sourceRef='14' targetRef='24'></sequenceFlow>
+  <sequenceFlow id='13' sourceRef='24' targetRef='23'></sequenceFlow>
+  <sequenceFlow id='14' sourceRef='23' targetRef='22'></sequenceFlow>
+  <sequenceFlow id='15' sourceRef='23' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='16' sourceRef='16' targetRef='22'></sequenceFlow>
+  <sequenceFlow id='17' sourceRef='16' targetRef='7'></sequenceFlow>
+  <sequenceFlow id='18' sourceRef='22' targetRef='17'></sequenceFlow>
+  <sequenceFlow id='19' sourceRef='17' targetRef='18'></sequenceFlow>
+  <sequenceFlow id='20' sourceRef='18' targetRef='21'></sequenceFlow>
+  <sequenceFlow id='21' sourceRef='20' targetRef='21'></sequenceFlow>
+  <sequenceFlow id='22' sourceRef='21' targetRef='EndEvent_1'></sequenceFlow>
+  <sequenceFlow id='23' sourceRef='StartEvent_1' targetRef='1'></sequenceFlow>
+</process>

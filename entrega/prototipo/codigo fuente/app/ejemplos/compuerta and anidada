@@ -1,0 +1,23 @@
+el marketing haceA.
+haceA, es un formulario con los siguientes campos: servicio que es un texto obligatorio.
+al mismo tiempo,
+    1 al mismo tiempo,
+        1 el marketing hace tareas.
+        2 el sales comprueba disponibilidad.
+      fin
+    2 el sales ofreceServicios.
+    al mismo tiempo,
+        1 el sales ofreceSerivicioX.
+        2 el sales ofreceSerivicioY.
+        3 el sales ofreceSerivicioZ.
+        4 al mismo tiempo,
+            1 al mismo tiempo,
+                1 el marketing monitorea recursos.
+                2 el sales eliminar recibos.
+              fin
+            2 el marketing hace tareas cambia servicios.
+            3 el sales revisa ventas.
+        fin
+    fin
+fin
+el sales sale.

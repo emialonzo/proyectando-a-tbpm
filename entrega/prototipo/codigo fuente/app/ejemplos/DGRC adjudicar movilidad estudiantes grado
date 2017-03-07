@@ -1,0 +1,37 @@
+la DGRC realiza el subproceso DGRC_recibir_postulaciones; varias veces.
+unica alternativa de DGRC_recibir_postulaciones, se interrumpe si transcurre 1 mes
+  la DGRC controla documentacion.
+  si se cumple,
+    analizarDisponibilidad entonces la DGRC analiza disponibilidad.
+    si no no hace nada
+  fin
+  si se cumple,
+    evaluacionExterna entonces la DGRC realiza evaluacion.
+    si no no hace nada
+  fin
+  si se cumple,
+    realizarPriorizacion entonces la DGRC realiza priorizacion.
+    si no no hace nada
+  fin
+  mientras necesitaReasignarCupo,
+    si se cumple,
+      necesitaNegociarCupos entonces la DGRC negocia cupos.
+      si no no hace nada
+    fin
+    si se cumple,
+      esxistenMovilidadesAAsignar entonces la DGRC realiza el subproceso DGRC_adjudicar_movilidad.
+      si no no hace nada
+    fin
+  fin
+  si se cumple,
+    huboadjudicacion entonces
+      al mismo tiempo,
+        1 la DGRC envia mensaje a contraparte extranjera.
+        2 la DGRC envia mensaje a servicio o postulante.
+      fin
+      si se cumple,
+        reqiuereDocumentacion entonces la DGRC procesa documentacion adicional.
+        si no no hace nada
+      fin
+    si no no hace nada fin
+fin

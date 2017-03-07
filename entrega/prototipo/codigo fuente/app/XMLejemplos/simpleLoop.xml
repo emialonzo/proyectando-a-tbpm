@@ -1,0 +1,27 @@
+<XML version="1.0">
+<process>
+  <laneSet>
+    <lane id='Lane_usuario' name='usuario'>
+      <flowNodeRef>1</flowNodeRef>
+      <flowNodeRef>3</flowNodeRef>
+      <flowNodeRef>4</flowNodeRef>
+      <flowNodeRef>StartEvent_1</flowNodeRef>
+      <flowNodeRef>EndEvent_1</flowNodeRef>
+    </lane>
+  </laneSet>
+  <startEvent id='StartEvent_1'/>
+  <userTask id='3' name='hace algo'></userTask>
+  <serviceTask/>
+  <exclusiveGateway id='1'></exclusiveGateway>
+  <exclusiveGateway id='4' default='3'></exclusiveGateway>
+  <parallelGateway/>
+  <intermediateCatchEvent/>
+  <intermediateThrowEvent/>
+  <boundaryEvent/>
+  <endEvent id='EndEvent_1'/>
+  <sequenceFlow id='1' sourceRef='1' targetRef='3'></sequenceFlow>
+  <sequenceFlow id='2' sourceRef='3' targetRef='4'></sequenceFlow>
+  <sequenceFlow id='3' sourceRef='4' targetRef='EndEvent_1'></sequenceFlow>
+  <sequenceFlow id='4' sourceRef='4' targetRef='1'></sequenceFlow>
+  <sequenceFlow id='5' sourceRef='StartEvent_1' targetRef='1'></sequenceFlow>
+</process>

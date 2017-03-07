@@ -1,0 +1,69 @@
+<definitions 
+  
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration>
+    <participant id='pool_id' name='compuerta_xor' processRef='id_compuerta_xor'></participant>
+  </collaboration>
+  <process id='id_compuerta_xor' isExecutable='true'>
+    <property id='dato' itemSubjectRef='xsd:string' name='dato'></property>
+    <laneSet id='id_lane'>
+      <lane id='_marketing' name='nombre_marketing'>
+        <flowNodeRef>_F</flowNodeRef>
+        <flowNodeRef>idStart</flowNodeRef>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_4</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_8</flowNodeRef>
+        <flowNodeRef>_10</flowNodeRef>
+        <flowNodeRef>_11</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='idStart' name='StartEvent'></startEvent>
+    <userTask id='_3' name='ingresa datos'>
+      <ioSpecification>
+        <dataOutput id='data_3_dato' itemSubjectRef='xsd:string' name='data_3_dato'></dataOutput>
+        <inputSet/>
+        <outputSet>
+          <dataOutputRefs>data_3_dato</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataOutputAssociation>
+        <sourceRef>data_3_dato</sourceRef>
+        <targetRef>dato</targetRef>
+      </dataOutputAssociation>
+    </userTask>
+    <userTask id='_6' name='hace una cosa'></userTask>
+    <userTask id='_8' name='hace otra cosa'></userTask>
+    <userTask id='_10' name='no hace nada'></userTask>
+    <exclusiveGateway id='_4' name='xor_4' default='_4_10'></exclusiveGateway>
+    <exclusiveGateway id='_11' name='cierro_xor_11'></exclusiveGateway>
+    <endEvent id='EndEvent_1'></endEvent>
+    <sequenceFlow id='_idStart_3' sourceRef='idStart' targetRef='_3'></sequenceFlow>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_6' sourceRef='_4' targetRef='_6' name='dato==&quot;menor&quot;'>
+      <conditionExpression xsi:type='tFormalExpression'>
+        <![CDATA[dato=="menor"]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id='_4_8' sourceRef='_4' targetRef='_8' name='dato==&quot;mayor&quot;'>
+      <conditionExpression xsi:type='tFormalExpression'>
+        <![CDATA[dato=="mayor"]]>
+      </conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id='_4_10' sourceRef='_4' targetRef='_10' name='defecto'></sequenceFlow>
+    <sequenceFlow id='_6_11' sourceRef='_6' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_8_11' sourceRef='_8' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_10_11' sourceRef='_10' targetRef='_11'></sequenceFlow>
+    <sequenceFlow id='_11_F' sourceRef='_11' targetRef='EndEvent_1'></sequenceFlow>
+  </process>
+</definitions>
