@@ -9,7 +9,7 @@ const appIndex = 'file://' + __dirname +  '/app/index.html';
 const motorIndex = 'file://' + __dirname +  '/motor/index.html';
 
 // Report crashes to our server.
-//electron.crashReporter.start();
+electron.crashReporter.start();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
