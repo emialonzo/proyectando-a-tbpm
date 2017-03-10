@@ -1,0 +1,119 @@
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration id='Collaboration_id'>
+    <participant id='pool_id_ejemploadministrativo' name='pool_ejemploadministrativo' processRef='id_ejemploadministrativo'/>
+  </collaboration>
+  <process id='id_ejemploadministrativo' isExecutable='true' name='ejemploadministrativo'>
+    <laneSet id='laneSet_id_ejemploadministrativo'>
+      <lane id='Lane_administrativo' name='administrativo'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+      <lane id='Lane_administrador' name='administrador'>
+        <flowNodeRef>_4</flowNodeRef>
+      </lane>
+      <lane id='Lane_gerenta' name='gerenta'>
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='_StartEvent_1'/>
+    <userTask id='_4' name='envia el expediente'></userTask>
+    <userTask id='_5' name='confirma expediente'></userTask>
+    <manualTask id='_6' name='quemar papeles'/>
+    <serviceTask id='_3' name='obtener expediente'/>
+    <endEvent id='_EndEvent_1'/>
+    <sequenceFlow id='_3_4' sourceRef='_3' targetRef='_4'></sequenceFlow>
+    <sequenceFlow id='_4_5' sourceRef='_4' targetRef='_5'></sequenceFlow>
+    <sequenceFlow id='_5_6' sourceRef='_5' targetRef='_6'></sequenceFlow>
+    <sequenceFlow id='_6_F' sourceRef='_6' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id='Yaoqiang_Diagram-Collaboration_id' name='Untitled Diagram' resolution='96.0'>
+    <bpmndi:BPMNPlane bpmnElement='Collaboration_id'>
+      <bpmndi:BPMNShape bpmnElement='pool_id_ejemploadministrativo' id='Yaoqiang-pool_id_ejemploadministrativo' isExpanded='true' isHorizontal='true'>
+        <dc:Bounds height='200.0' width='749.0' x='0.0' y='0.0'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='220.0' width='22.296875' x='6.3515625' y='-10.0'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_EndEvent_1' id='Yaoqiang-_EndEvent_1'>
+        <dc:Bounds height='32.0' width='32.0' x='707.0' y='84.75'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='720.0' y='125.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_3' id='Yaoqiang-_3'>
+        <dc:Bounds height='55.0' width='85.0' x='127.0' y='73.25'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='32.8046875' width='68.0' x='135.5' y='86.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_6' id='Yaoqiang-_6'>
+        <dc:Bounds height='55.0' width='85.0' x='562.0' y='73.25'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='32.8046875' width='51.0' x='579.0' y='86.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_5' id='Yaoqiang-_5'>
+        <dc:Bounds height='55.0' width='85.0' x='417.0' y='73.25'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='32.8046875' width='68.0' x='425.5' y='86.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_4' id='Yaoqiang-_4'>
+        <dc:Bounds height='55.0' width='85.0' x='272.0' y='73.25'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='32.8046875' width='68.0' x='280.5' y='86.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement='_StartEvent_1' id='Yaoqiang-_StartEvent_1'>
+        <dc:Bounds height='32.0' width='32.0' x='35.0' y='84.75'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='48.0' y='125.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement='_4_5' id='Yaoqiang-_4_5'>
+        <di:waypoint x='357.0' y='100.75'></di:waypoint>
+        <di:waypoint x='417.0' y='100.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='384.0' y='91.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement='_5_6' id='Yaoqiang-_5_6'>
+        <di:waypoint x='502.0' y='100.75'></di:waypoint>
+        <di:waypoint x='562.0' y='100.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='529.0' y='91.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement='_StartEvent_1_3' id='Yaoqiang-_StartEvent_1_3'>
+        <di:waypoint x='66.99804675577616' y='100.75'></di:waypoint>
+        <di:waypoint x='127.0' y='100.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='93.99902337788808' y='91.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement='_6_F' id='Yaoqiang-_6_F'>
+        <di:waypoint x='647.0' y='100.75'></di:waypoint>
+        <di:waypoint x='707.0019532442238' y='100.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='674.0009766221119' y='91.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement='_3_4' id='Yaoqiang-_3_4'>
+        <di:waypoint x='212.0' y='100.75'></di:waypoint>
+        <di:waypoint x='272.0' y='100.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height='18.8046875' width='6.0' x='239.0' y='91.34765625'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

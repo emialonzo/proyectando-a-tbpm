@@ -1,0 +1,10 @@
+el usuario pide libro.
+el bibliotecario utiliza el servicio busca disponibilidad.
+si se cumple,
+librodisponible es "verdadero" entonces el asistente de biblioteca, entrega libro. 
+si no el usuario espera por el libro. el usuario recibe el libro.
+alternativa de espera por el libro, se interrumpe si transcurre 2 horas 
+al mismo tiempo,
+1 el usuario cancela el pedido.
+2 el bibliotecario cancela reserva. fin fin
+fin
