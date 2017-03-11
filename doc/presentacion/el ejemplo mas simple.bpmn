@@ -1,0 +1,67 @@
+<definitions 
+  xmlns='http://www.omg.org/spec/BPMN/20100524/MODEL' 
+  xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' 
+  xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' 
+  xmlns:di='http://www.omg.org/spec/DD/20100524/DI' 
+  xmlns:activiti='http://activiti.org/bpmn' 
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema' 
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' expressionLanguage='http://www.w3.org/1999/XPath' targetNamespace='http://sourceforge.net/bpmn/definitions/_1459655886338'>
+  <collaboration id='Collaboration_id'>
+    <participant id='pool_id_el_ejemplo_mas_simple.' name='pool_el_ejemplo_mas_simple.' processRef='id_el_ejemplo_mas_simple.'/>
+  </collaboration>
+  <process id='id_el_ejemplo_mas_simple.' isExecutable='true' name='el_ejemplo_mas_simple.'>
+    <laneSet id='laneSet_id_el_ejemplo_mas_simple.'>
+      <lane id='Lane_usuario' name='usuario'>
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_StartEvent_1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id='_StartEvent_1'/>
+    <userTask id='_3' name='realizar tarea'/>
+    <endEvent id='_EndEvent_1'/>
+    <sequenceFlow id='_3_F' sourceRef='_3' targetRef='_EndEvent_1'></sequenceFlow>
+    <sequenceFlow id='_StartEvent_1_3' sourceRef='_StartEvent_1' targetRef='_3'></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id='Yaoqiang_Diagram-Collaboration_id' name='Untitled Diagram' resolution='96'>
+    <bpmndi:BPMNPlane bpmnElement='Collaboration_id'>
+      <bpmndi:BPMNShape id='Yaoqiang-pool_id_el_ejemplo_mas_simple.' bpmnElement='pool_id_el_ejemplo_mas_simple.' isHorizontal='true' isExpanded='true'>
+        <dc:Bounds x='478' y='86' width='314' height='200'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='6.3515625' y='-16' width='22.296875' height='232'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Yaoqiang-_EndEvent_1' bpmnElement='_EndEvent_1'>
+        <dc:Bounds x='750' y='171' width='32' height='32'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='721' y='211' width='90' height='19'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Yaoqiang-_3' bpmnElement='_3'>
+        <dc:Bounds x='605' y='159' width='85' height='55'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='145.5' y='86.34765625' width='48' height='32.8046875'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id='Yaoqiang-_StartEvent_1' bpmnElement='_StartEvent_1'>
+        <dc:Bounds x='513' y='171' width='32' height='32'/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='484' y='211' width='90' height='19'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id='Yaoqiang-_3_F' bpmnElement='_3_F'>
+        <di:waypoint xsi:type='dc:Point' x='690' y='186.75'></di:waypoint>
+        <di:waypoint xsi:type='dc:Point' x='750.0019532442238' y='186.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='675' y='177' width='90' height='19'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id='Yaoqiang-_StartEvent_1_3' bpmnElement='_StartEvent_1_3'>
+        <di:waypoint xsi:type='dc:Point' x='544.9980467557762' y='186.75'></di:waypoint>
+        <di:waypoint xsi:type='dc:Point' x='605' y='186.75'></di:waypoint>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x='530' y='177' width='90' height='19'/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

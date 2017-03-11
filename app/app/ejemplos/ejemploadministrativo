@@ -1,0 +1,1 @@
+el administrativo utiliza el servicio obtener expediente. el administrador envia el expediente. envia el expediente, es un formulario con los siguientes campos: numero que es un numero obligatorio, descripcion que es un texto. la gerenta confirma expediente. confirma expediente, muestra los campos: numero, descripcion. el gerenta realiza la tarea manual quemar papeles.
