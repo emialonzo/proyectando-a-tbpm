@@ -1,0 +1,12 @@
+el sales pide libro.
+el sales utiliza el servicio busca disponibilidad.
+si se cumple,
+librodisponible es "true" entonces el sales envia mensaje a bookstore.
+el sales espera por mensaje de bookstore.
+el sales realiza la tarea manual entrega libro.
+si no el sales espera por el libro. el sales realiza la tarea manual recibe el libro.
+alternativa de espera por el libro, se interrumpe si transcurre 30 segundos
+al mismo tiempo,
+1 el sales cancela el pedido.
+2 el marketing cancela reserva. fin fin
+fin

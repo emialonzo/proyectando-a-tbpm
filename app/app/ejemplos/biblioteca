@@ -1,8 +1,10 @@
 el usuario pide libro.
 el bibliotecario utiliza el servicio busca disponibilidad.
 si se cumple,
-librodisponible es "verdadero" entonces el asistente de biblioteca, entrega libro. 
-si no el usuario espera por el libro. el usuario recibe el libro.
+librodisponible es "verdadero" entonces el asistente envia mensaje a bookstore.
+el asistente espera por mensaje de bookstore.
+el asistente de biblioteca, realiza la tarea manual entrega libro.
+si no el usuario espera por el libro. el usuario realiza la tarea manual recibe el libro.
 alternativa de espera por el libro, se interrumpe si transcurre 2 horas 
 al mismo tiempo,
 1 el usuario cancela el pedido.
