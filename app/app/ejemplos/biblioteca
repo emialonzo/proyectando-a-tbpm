@@ -1,4 +1,6 @@
-el usuario pide libro.
+el usuario pide libro. pide libro, es un formulario con los siguientes campos:
+nombre que es un texto obligatorio,
+numero que es un numero.
 el bibliotecario utiliza el servicio busca disponibilidad.
 si se cumple,
 librodisponible es "verdadero" entonces el asistente envia mensaje a bookstore.
@@ -8,5 +10,7 @@ si no el usuario espera por el libro. el usuario realiza la tarea manual recibe 
 alternativa de espera por el libro, se interrumpe si transcurre 2 horas 
 al mismo tiempo,
 1 el usuario cancela el pedido.
-2 el bibliotecario cancela reserva. fin fin
+2 el bibliotecario cancela reserva. cancela reserva, muestra los campos: nombre, numero.
+fin
+fin
 fin
